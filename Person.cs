@@ -30,8 +30,8 @@
             set { _lastName = value; }
         }
 
-        private Address _homeAddress;
-        public Address HomeAddress
+        private List<Address> _homeAddress;
+        public List<Address> HomeAddress
         {
             get { return _homeAddress; }
             set { _homeAddress = value; }
@@ -44,8 +44,8 @@
             set { _email = value; }
         }
 
-        private string _phoneNumber;
-        public string PhoneNumber
+        private List<string> _phoneNumber;
+        public List<string> PhoneNumber
         {
             get { return _phoneNumber; }
             set { _phoneNumber = value; }
