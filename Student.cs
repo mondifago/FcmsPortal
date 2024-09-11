@@ -67,6 +67,15 @@ public class Student
         set { _dateOfEnrollment = value; }
     }
 
+    private Payment _paymentStatus;
+
+    public Payment PaymentStatus
+    {
+        get { return _paymentStatus; }
+        set { _paymentStatus = value; }
+    }
+
+
 
 
 

@@ -8,7 +8,7 @@ public enum PreNurserySubjects
     SocialHabit,
     CreativeArt,
     PhysicalandHealthHabit,
-    CRS,
+    Crs,
     Rhymes,
     Phonics,
     Handwriting

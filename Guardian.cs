@@ -30,5 +30,13 @@
             set { _occupation = value; }
         }
 
+        private Payment _paymentInfo;
+
+        public Payment PaymentInfo
+        {
+            get { return _paymentInfo; }
+            set { _paymentInfo = value; }
+        }
+
     }
 }
