@@ -96,6 +96,15 @@
             set { _phoneNumber = value; }
         }
 
+        private Calendar _myCalendar;
+
+        public Calendar MyCalendar
+        {
+            get { return _myCalendar; }
+            set { _myCalendar = value; }
+        }
+
+
         private bool _isActive;
         public bool IsActive
         {
