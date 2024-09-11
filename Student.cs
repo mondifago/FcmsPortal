@@ -75,6 +75,13 @@ public class Student
         set { _paymentStatus = value; }
     }
 
+    private Subjects _studentSujects;
+
+    public Subjects StudentSubjects
+    {
+        get { return _studentSujects; }
+        set { _studentSujects = value; }
+    }
 
 
 
