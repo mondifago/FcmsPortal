@@ -3,7 +3,6 @@
     public class Guardian
     {
         private Person _theGuardian;
-
         public Person TheGuardian
         {
             get { return _theGuardian; }
@@ -11,7 +10,6 @@
         }
 
         private string _relationshipToStudent;
-
         public string RelationshipToStudent
         {
             get { return _relationshipToStudent; }
@@ -19,7 +17,6 @@
         }
 
         private List<int> _childrenIds;
-
         public List<int> ChildrenIds
         {
             get { return _childrenIds; }
@@ -27,7 +24,6 @@
         }
 
         private string _occupation;
-
         public string Occupation
         {
             get { return _occupation; }
