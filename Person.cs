@@ -104,6 +104,29 @@
             set { _myCalendar = value; }
         }
 
+        private Attendance _myAttendance;
+
+        public Attendance MyAttendance
+        {
+            get { return _myAttendance; }
+            set { _myAttendance = value; }
+        }
+
+        private Curriculum myCurriculum;
+
+        public Curriculum MyCurriculum
+        {
+            get { return myCurriculum; }
+            set { myCurriculum = value; }
+        }
+
+        private TestScore _myScore;
+
+        public TestScore MyScore
+        {
+            get { return _myScore; }
+            set { _myScore = value; }
+        }
 
         private bool _isActive;
         public bool IsActive

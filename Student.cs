@@ -83,10 +83,12 @@ public class Student
         set { _studentSujects = value; }
     }
 
+    private Guardian _guardianInfo;
 
-
-
-
-
+    public Guardian GuardianInfo
+    {
+        get { return _guardianInfo; }
+        set { _guardianInfo = value; }
+    }
 
 }
