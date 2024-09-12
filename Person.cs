@@ -120,12 +120,28 @@
             set { myCurriculum = value; }
         }
 
-        private TestScore _myScore;
+        private List<TestScore> _myScore;
 
-        public TestScore MyScore
+        public List<TestScore> MyScore
         {
             get { return _myScore; }
             set { _myScore = value; }
+        }
+
+        private ClassLevel _myClassLevel;
+
+        public ClassLevel MyClassLevel
+        {
+            get { return _myClassLevel; }
+            set { _myClassLevel = value; }
+        }
+
+        private EducationLevel _myEducationLevel;
+
+        public EducationLevel MyProperty
+        {
+            get { return _myEducationLevel; }
+            set { _myEducationLevel = value; }
         }
 
         private bool _isActive;
