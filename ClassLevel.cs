@@ -2,36 +2,36 @@
 {
     public class ClassLevel
     {
-        private Kindergarten _myKindergarten;
+        private Kindergarten _kindergartenLevel;
 
-        public Kindergarten MyKindergarten
+        public Kindergarten KindergartenLevel
         {
-            get { return _myKindergarten; }
-            set { _myKindergarten = value; }
+            get { return _kindergartenLevel; }
+            set { _kindergartenLevel = value; }
         }
 
-        private Primary _myPrimary;
+        private Primary _primaryLevel;
 
-        public Primary MyPrimary
+        public Primary PrimaryLevel
         {
-            get { return _myPrimary; }
-            set { _myPrimary = value; }
+            get { return _primaryLevel; } 
+            set { _primaryLevel = value; }
         }
 
-        private JuniorCollege _myJuniorCollege;
+        private JuniorCollege _juniorCollegeLevel;
 
-        public JuniorCollege MyJuniorCollege
+        public JuniorCollege JuniorCollegeLevel
         {
-            get { return _myJuniorCollege; }
-            set { _myJuniorCollege = value; }
+            get { return _juniorCollegeLevel; }
+            set { _juniorCollegeLevel = value; }
         }
 
-        private SeniorCollege _mySeniorCollege;
+        private SeniorCollege _seniorCollegeLevel;
 
-        public SeniorCollege MySeniorCollege
+        public SeniorCollege SeniorCollegeLevel
         {
-            get { return _mySeniorCollege; }
-            set { _mySeniorCollege = value; }
+            get { return _seniorCollegeLevel; }
+            set { _seniorCollegeLevel = value; }
         }
 
     }
