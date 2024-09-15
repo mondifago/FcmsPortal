@@ -33,6 +33,15 @@
             get { return _seniorCollegeLevel; }
             set { _seniorCollegeLevel = value; }
         }
+        
+        public EducationLevel Level { get; private set; }
+        public object SubLevel { get; private set; }
+
+        public void SetClassLevel(EducationLevel level, object subLevel)
+        {
+            Level = level;
+            SubLevel = subLevel;
+        }
 
     }
 }
