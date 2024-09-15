@@ -91,4 +91,10 @@ public class Student
         set { _guardianInfo = value; }
     }
 
+    private bool _isPresent;
+    public bool IsPresent
+    {
+        get { return _isPresent; }
+        set { _isPresent = value; }
+    }
 }
