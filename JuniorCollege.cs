@@ -1,9 +1,20 @@
 ﻿namespace FcmsPortal
 {
-    public enum JuniorCollege
+    public class JuniorCollege : ClassLevel
     {
-        Jss1,
-        Jss2,
-        Jss3
+        public enum Classes
+        {
+            Jss1,
+            Jss2,
+            Jss3
+        }
+
+        public Classes GetClass { get; set; }
+
+        public override string GetLevelName()
+        {
+            return GetClass.ToString();
+        }
     }
+
 }

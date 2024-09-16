@@ -23,30 +23,30 @@ public class Student
         set { _positionAmoungSiblings = value; }
     }
 
-    private string _educationLevel;
-    public string EducationLevel
+    private EducationLevel _educationLevel;
+    public EducationLevel EducationLevel
     {
         get { return _educationLevel; }
         set { _educationLevel = value; }
     }
 
-    private string _educationLevelSort;
+    private EducationLevel _educationLevelSort;
 
-    public string EducationLevelSort
+    public EducationLevel EducationLevelSort
     {
         get { return _educationLevelSort; }
         set { _educationLevelSort = value; }
     }
 
-    private string _classLevel;
-    public string ClassLevel
+    private ClassLevel _classLevel;
+    public ClassLevel ClassLevel
     {
         get { return _classLevel; }
         set { _classLevel = value; }
     }
 
-    private string _classLevelSort;
-    public string ClassLevelSort
+    private ClassLevel _classLevelSort;
+    public ClassLevel ClassLevelSort
     {
         get { return _classLevelSort; }
         set { _classLevelSort = value; }
@@ -91,10 +91,5 @@ public class Student
         set { _guardianInfo = value; }
     }
 
-    private bool _isPresent;
-    public bool IsPresent
-    {
-        get { return _isPresent; }
-        set { _isPresent = value; }
-    }
+
 }

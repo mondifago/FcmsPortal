@@ -1,10 +1,22 @@
 ﻿namespace FcmsPortal
 {
-    public enum Kindergarten
+    public class Kindergarten : ClassLevel
     {
-        Daycare,
-        PlayGroup,
-        PreNursery,
-        Nursery
+        public enum Classes
+        {
+            Daycare,
+            PlayGroup,
+            PreNursery,
+            Nursery
+        }
+
+        public Classes GetClass { get; set; }
+
+        public override string GetLevelName()
+        {
+            return GetClass.ToString();
+        }
     }
+
+
 }
