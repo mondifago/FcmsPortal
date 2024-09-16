@@ -2,121 +2,77 @@
 {
     public class Attendance
     {
-        private List<Student> students;
-        private Dictionary<int, bool> attendanceRecord;
+        private List<IAttendee> attendees;
+        private Dictionary<IAttendee, bool> attendanceRecord;
 
         public Attendance()
         {
-            students = new List<Student>();
-            attendanceRecord = new Dictionary<int, bool>();
+            attendees = new List<IAttendee>();
+            attendanceRecord = new Dictionary<IAttendee, bool>();
         }
 
-        public void StartAttendance()
+        public void StartAttendance(string type)
         {
-            // Step 1: User selects the education level
-            EducationLevel selectedLevel = SelectEducationLevel();
+            Console.WriteLine($"\n--- {type} Attendance System ---");
 
-            // Step 2: Sub-levels are populated based on education level
-            ClassLevel selectedSubLevel = SelectSubLevel(selectedLevel);
+            // Step 1: Retrieve the list of attendees
+            RetrieveAttendees(type);
 
-            // Step 3: Retrieve the list of students in the selected level and sub-level
-            RetrieveStudents(selectedLevel, selectedSubLevel);
-
-            // Step 4: Display students and mark attendance
+            // Step 2: Display attendees and mark attendance
             MarkAttendance();
 
-            // Step 5: Review and Submit the attendance to the database, with date and time
-            SubmitAttendance();
+            // Step 3: Review and Submit the attendance to the database, with date and time
+            SubmitAttendance(type);
         }
 
-        private EducationLevel SelectEducationLevel()
-        {
-            Console.WriteLine("Select Education Level:");
-            foreach (EducationLevel level in Enum.GetValues(typeof(EducationLevel)))
-            {
-                Console.WriteLine($"{(int)level}. {level}");
-            }
-
-            int selection;
-            while (!int.TryParse(Console.ReadLine(), out selection) || !Enum.IsDefined(typeof(EducationLevel), selection))
-            {
-                Console.WriteLine("Invalid selection. Please try again.");
-            }
-
-            return (EducationLevel)selection;
-        }
-
-        private ClassLevel SelectSubLevel(EducationLevel level)
-        {
-            Console.WriteLine($"Select {level} Sub-Level:");
-
-            Type subLevelType = level switch
-            {
-                EducationLevel.Kindergarten => typeof(Kindergarten.Classes),
-                EducationLevel.Primary => typeof(Primary.Classes),
-                EducationLevel.JuniorCollege => typeof(JuniorCollege.Classes),
-                EducationLevel.SeniorCollege => typeof(SeniorCollege.Classes),
-                _ => throw new ArgumentException("Invalid education level")
-            };
-
-            var subLevels = Enum.GetValues(subLevelType);
-            for (int i = 0; i < subLevels.Length; i++)
-            {
-                Console.WriteLine($"{i}. {subLevels.GetValue(i)}");
-            }
-
-            int selection;
-            while (!int.TryParse(Console.ReadLine(), out selection) || selection < 0 || selection >= subLevels.Length)
-            {
-                Console.WriteLine("Invalid selection. Please try again.");
-            }
-
-            return level switch
-            {
-                EducationLevel.Kindergarten => new Kindergarten { GetClass = (Kindergarten.Classes)selection },
-                EducationLevel.Primary => new Primary { GetClass = (Primary.Classes)selection },
-                EducationLevel.JuniorCollege => new JuniorCollege { GetClass = (JuniorCollege.Classes)selection },
-                EducationLevel.SeniorCollege => new SeniorCollege { GetClass = (SeniorCollege.Classes)selection },
-                _ => throw new ArgumentException("Invalid education level")
-            };
-        }
-
-        private void RetrieveStudents(EducationLevel level, ClassLevel subLevel)
+        private void RetrieveAttendees(string type)
         {
             // In a real application, this would query a database
             // For this example, we'll create some dummy data
-            students = new List<Student>
+            if (type.ToLower() == "student")
             {
-                new Student { StudentId = 1, TheStudent = new Person { FirstName = "John", LastName = "Doe" }, EducationLevel = level, ClassLevel = subLevel },
-                new Student { StudentId = 2, TheStudent = new Person { FirstName = "Jane", LastName = "Smith" }, EducationLevel = level, ClassLevel = subLevel },
-                new Student { StudentId = 3, TheStudent = new Person { FirstName = "Alice", LastName = "Johnson" }, EducationLevel = level, ClassLevel = subLevel }
-            };
+                attendees = new List<IAttendee>
+                {
+                    new StudentAttendee { StudentId = 1001, TheStudent = new Person { FirstName = "John", MiddleName = "Michael", LastName = "Doe" }, EducationLevel = EducationLevel.JuniorCollege, ClassLevel = new JuniorCollege { GetClass = JuniorCollege.Classes.Jss2 } },
+                    new StudentAttendee { StudentId = 1002, TheStudent = new Person { FirstName = "Jane", MiddleName = "Elizabeth", LastName = "Smith" }, EducationLevel = EducationLevel.Primary, ClassLevel = new Primary { GetClass = Primary.Classes.Primary3 } },
+                    new StudentAttendee { StudentId = 1003, TheStudent = new Person { FirstName = "Alice", MiddleName = "Marie", LastName = "Johnson" }, EducationLevel = EducationLevel.SeniorCollege, ClassLevel = new SeniorCollege { GetClass = SeniorCollege.Classes.Sss1 } }
+                };
+            }
+            else if (type.ToLower() == "staff")
+            {
+                attendees = new List<IAttendee>
+                {
+                    new StaffAttendee { StaffId = 2001, TheStaff = new Person { FirstName = "Mark", MiddleName = "Robert", LastName = "Taylor" }, AdminRole = "Teacher" },
+                    new StaffAttendee { StaffId = 2002, TheStaff = new Person { FirstName = "Sarah", MiddleName = "Jane", LastName = "Brown" }, AdminRole = "Administrator" },
+                    new StaffAttendee { StaffId = 2003, TheStaff = new Person { FirstName = "David", MiddleName = "William", LastName = "Wilson" }, AdminRole = "Counselor" }
+                };
+            }
         }
 
         private void MarkAttendance()
         {
-            foreach (var student in students)
+            foreach (var attendee in attendees)
             {
-                Console.WriteLine($"Is {student.TheStudent.FirstName} {student.TheStudent.LastName} present? (Y/N)");
+                Console.WriteLine($"Is {attendee.PersonInfo.FirstName} {attendee.PersonInfo.MiddleName} {attendee.PersonInfo.LastName} (ID: {attendee.Id}, {attendee.Role}) present? (Y/N)");
                 string response = Console.ReadLine().ToUpper();
                 while (response != "Y" && response != "N")
                 {
                     Console.WriteLine("Invalid input. Please enter Y or N.");
                     response = Console.ReadLine().ToUpper();
                 }
-                attendanceRecord[student.StudentId] = (response == "Y");
+                attendanceRecord[attendee] = (response == "Y");
             }
         }
 
-        private void SubmitAttendance()
+        private void SubmitAttendance(string type)
         {
-            Console.WriteLine("\nAttendance Summary:");
-            foreach (var student in students)
+            Console.WriteLine($"\n{type} Attendance Summary:");
+            foreach (var attendee in attendees)
             {
-                Console.WriteLine($"{student.TheStudent.FirstName} {student.TheStudent.LastName}: {(attendanceRecord[student.StudentId] ? "Present" : "Absent")}");
+                Console.WriteLine($"{attendee.PersonInfo.FirstName} {attendee.PersonInfo.MiddleName} {attendee.PersonInfo.LastName} (ID: {attendee.Id}, {attendee.Role}): {(attendanceRecord[attendee] ? "Present" : "Absent")}");
             }
 
-            Console.WriteLine("\nDo you want to submit this attendance record? (Y/N)");
+            Console.WriteLine($"\nDo you want to submit this {type.ToLower()} attendance record? (Y/N)");
             string response = Console.ReadLine().ToUpper();
             while (response != "Y" && response != "N")
             {
@@ -127,11 +83,11 @@
             if (response == "Y")
             {
                 // In a real application, this would save to a database
-                Console.WriteLine($"Attendance submitted for {DateTime.Now}");
+                Console.WriteLine($"{type} attendance submitted for {DateTime.Now}");
             }
             else
             {
-                Console.WriteLine("Attendance submission cancelled.");
+                Console.WriteLine($"{type} attendance submission cancelled.");
             }
         }
     }

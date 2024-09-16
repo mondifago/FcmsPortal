@@ -66,6 +66,15 @@ public class Staff
         set { _staffSubjects = value; }
     }
 
+    private int _staffId;
+    public int StaffId
+    {
+        get { return _staffId; }
+        set { _staffId = value; }
+    }
+
+
+
 
 }
 
