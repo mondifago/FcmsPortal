@@ -31,12 +31,11 @@
             // For this example, we'll create some dummy data
             if (type.ToLower() == "student")
             {
-                attendees = new List<IAttendee>
-                {
-                    new StudentAttendee { StudentId = 1001, TheStudent = new Person { FirstName = "John", MiddleName = "Michael", LastName = "Doe" }, EducationLevel = EducationLevel.JuniorCollege, ClassLevel = new JuniorCollege { GetClass = JuniorCollege.Classes.Jss2 } },
-                    new StudentAttendee { StudentId = 1002, TheStudent = new Person { FirstName = "Jane", MiddleName = "Elizabeth", LastName = "Smith" }, EducationLevel = EducationLevel.Primary, ClassLevel = new Primary { GetClass = Primary.Classes.Primary3 } },
-                    new StudentAttendee { StudentId = 1003, TheStudent = new Person { FirstName = "Alice", MiddleName = "Marie", LastName = "Johnson" }, EducationLevel = EducationLevel.SeniorCollege, ClassLevel = new SeniorCollege { GetClass = SeniorCollege.Classes.Sss1 } }
-                };
+                EducationLevel selectedLevel = SelectEducationLevel();
+
+                ClassLevel selectedSubLevel = SelectSubLevel(selectedLevel);
+
+                RetrieveStudents(selectedLevel, selectedSubLevel);
             }
             else if (type.ToLower() == "staff")
             {
@@ -89,6 +88,70 @@
             {
                 Console.WriteLine($"{type} attendance submission cancelled.");
             }
+        }
+
+        private EducationLevel SelectEducationLevel()
+        {
+            Console.WriteLine("Select Education Level:");
+            foreach (EducationLevel level in Enum.GetValues(typeof(EducationLevel)))
+            {
+                Console.WriteLine($"{(int)level}. {level}");
+            }
+
+            int selection;
+            while (!int.TryParse(Console.ReadLine(), out selection) || !Enum.IsDefined(typeof(EducationLevel), selection))
+            {
+                Console.WriteLine("Invalid selection. Please try again.");
+            }
+
+            return (EducationLevel)selection;
+        }
+
+        private ClassLevel SelectSubLevel(EducationLevel level)
+        {
+            Console.WriteLine($"Select {level} Sub-Level:");
+
+            Type subLevelType = level switch
+            {
+                EducationLevel.Kindergarten => typeof(Kindergarten.Classes),
+                EducationLevel.Primary => typeof(Primary.Classes),
+                EducationLevel.JuniorCollege => typeof(JuniorCollege.Classes),
+                EducationLevel.SeniorCollege => typeof(SeniorCollege.Classes),
+                _ => throw new ArgumentException("Invalid education level")
+            };
+
+            var subLevels = Enum.GetValues(subLevelType);
+            for (int i = 0; i < subLevels.Length; i++)
+            {
+                Console.WriteLine($"{i}. {subLevels.GetValue(i)}");
+            }
+
+            int selection;
+            while (!int.TryParse(Console.ReadLine(), out selection) || selection < 0 || selection >= subLevels.Length)
+            {
+                Console.WriteLine("Invalid selection. Please try again.");
+            }
+
+            return level switch
+            {
+                EducationLevel.Kindergarten => new Kindergarten { GetClass = (Kindergarten.Classes)selection },
+                EducationLevel.Primary => new Primary { GetClass = (Primary.Classes)selection },
+                EducationLevel.JuniorCollege => new JuniorCollege { GetClass = (JuniorCollege.Classes)selection },
+                EducationLevel.SeniorCollege => new SeniorCollege { GetClass = (SeniorCollege.Classes)selection },
+                _ => throw new ArgumentException("Invalid education level")
+            };
+        }
+
+        private void RetrieveStudents(EducationLevel level, ClassLevel subLevel)
+        {
+            // In a real application, this would query a database
+            // For this example, we'll create some dummy data
+            attendees = new List<IAttendee>
+            {
+                new StudentAttendee { StudentId = 1001, TheStudent = new Person { FirstName = "John", MiddleName = "Michael", LastName = "Doe" },EducationLevel = level, ClassLevel = subLevel },
+                new StudentAttendee { StudentId = 1002, TheStudent = new Person { FirstName = "Jane", MiddleName = "Elizabeth", LastName = "Smith" }, EducationLevel = level, ClassLevel = subLevel },
+                new StudentAttendee { StudentId = 1003, TheStudent = new Person { FirstName = "Alice", MiddleName = "Marie", LastName = "Johnson" }, EducationLevel = level, ClassLevel = subLevel }
+            };
         }
     }
 }
