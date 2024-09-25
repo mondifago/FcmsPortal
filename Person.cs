@@ -96,9 +96,9 @@
             set { _phoneNumber = value; }
         }
 
-        private Calendar _myCalendar;
+        private LearningPathSemester _myCalendar;
 
-        public Calendar MyCalendar
+        public LearningPathSemester MyCalendar
         {
             get { return _myCalendar; }
             set { _myCalendar = value; }
