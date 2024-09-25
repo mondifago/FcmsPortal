@@ -104,14 +104,6 @@
             set { _myCalendar = value; }
         }
 
-        private Attendance _myAttendance;
-
-        public Attendance MyAttendance
-        {
-            get { return _myAttendance; }
-            set { _myAttendance = value; }
-        }
-
         private Curriculum myCurriculum;
 
         public Curriculum MyCurriculum
@@ -126,14 +118,6 @@
         {
             get { return _myScore; }
             set { _myScore = value; }
-        }
-
-        private ClassLevel _myClassLevel;
-
-        public ClassLevel MyClassLevel
-        {
-            get { return _myClassLevel; }
-            set { _myClassLevel = value; }
         }
 
         private EducationLevel _myEducationLevel;

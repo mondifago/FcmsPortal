@@ -58,9 +58,9 @@ public class Staff
         set { _nextOfKinContactDetails = value; }
     }
 
-    private Subjects _staffSubjects;
+    private List<string> _staffSubjects;
 
-    public Subjects StaffSubjects
+    public List<string> StaffSubjects
     {
         get { return _staffSubjects; }
         set { _staffSubjects = value; }

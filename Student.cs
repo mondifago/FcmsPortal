@@ -38,15 +38,15 @@ public class Student
         set { _educationLevelSort = value; }
     }
 
-    private ClassLevel _classLevel;
-    public ClassLevel ClassLevel
+    private string _classLevel;
+    public string ClassLevel
     {
         get { return _classLevel; }
         set { _classLevel = value; }
     }
 
-    private ClassLevel _classLevelSort;
-    public ClassLevel ClassLevelSort
+    private string _classLevelSort;
+    public string ClassLevelSort
     {
         get { return _classLevelSort; }
         set { _classLevelSort = value; }
@@ -75,9 +75,9 @@ public class Student
         set { _paymentStatus = value; }
     }
 
-    private Subjects _studentSujects;
+    private List<string> _studentSujects;
 
-    public Subjects StudentSubjects
+    public List<string> StudentSubjects
     {
         get { return _studentSujects; }
         set { _studentSujects = value; }
