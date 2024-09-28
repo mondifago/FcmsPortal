@@ -96,9 +96,9 @@
             set { _phoneNumber = value; }
         }
 
-        private LearningPathSemester _myCalendar;
+        private LearningPath _myCalendar;
 
-        public LearningPathSemester MyCalendar
+        public LearningPath MyCalendar
         {
             get { return _myCalendar; }
             set { _myCalendar = value; }
@@ -120,12 +120,12 @@
             set { _myScore = value; }
         }
 
-        private EducationLevel _myEducationLevel;
+        private EducationLevel _educationLevel;
 
-        public EducationLevel MyProperty
+        public EducationLevel EducationLevel
         {
-            get { return _myEducationLevel; }
-            set { _myEducationLevel = value; }
+            get { return _educationLevel; }
+            set { _educationLevel = value; }
         }
 
         private bool _isActive;
