@@ -112,14 +112,6 @@
             set { myCurriculum = value; }
         }
 
-        private List<TestScore> _myScore;
-
-        public List<TestScore> MyScore
-        {
-            get { return _myScore; }
-            set { _myScore = value; }
-        }
-
         private EducationLevel _educationLevel;
 
         public EducationLevel EducationLevel
