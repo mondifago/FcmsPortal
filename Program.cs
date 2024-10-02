@@ -28,31 +28,29 @@
                 }
             };
 
-
-
-            /*
-            //create one teacher one student
-
-            var teacher = new Staff { FirstName = "John", MiddleName = "Paul", LastName = "Kent" };
-            var student1 = new Person { FirstName = "Scott", MiddleName = "Silas", LastName = "Anthony" };
-
-            fcmSchool.Staff.Add(teacher);
-            fcmSchool.Students.Add(student1);
-
-
-            //create a class session biology class for babies:
-
-            var cl = new ClassSession()
+            //create a mathematics teacher
+            Staff mathTeacher = new Staff
             {
-                Name = "Bio 101",
-                Topic = "Digestive system",
-                Teacher = teacher,
-                Students = new List<Person> { student1 },
-                EducationLevel = EducationLevel.Kindergarten,
-                ClassLevel = "Pre-Nursry",
-                Semester = 2,
-                Duration = TimeSpan.FromHours(1)
-            };*/
+                StaffId = 1234,
+                AreaOfSpecialization = new List<Course> { new Course { Name = "Mathematics" } },
+                JobRole = "Primary Education Teacher",
+                TheStaff = new Person
+                {
+                    FirstName = "John",
+                    MiddleName = "Michael",
+                    LastName = "Smith",
+                    Sex = Gender.Male,
+                    EducationLevel = EducationLevel.Primary,
+                }
+            };
+
+            // Add the mathematics teacher to the school's staff list
+            fcmSchool.Staff.Add(mathTeacher);
+
+
+
+
+
 
         }
 
