@@ -96,20 +96,20 @@
             set { _phoneNumber = value; }
         }
 
-        private LearningPath _myCalendar;
+        private LearningPath _calendar;
 
-        public LearningPath MyCalendar
+        public LearningPath Calendar
         {
-            get { return _myCalendar; }
-            set { _myCalendar = value; }
+            get { return _calendar; }
+            set { _calendar = value; }
         }
 
-        private Curriculum myCurriculum;
+        private Curriculum _curriculum;
 
-        public Curriculum MyCurriculum
+        public Curriculum Curriculum
         {
-            get { return myCurriculum; }
-            set { myCurriculum = value; }
+            get { return _curriculum; }
+            set { _curriculum = value; }
         }
 
         private EducationLevel _educationLevel;
@@ -118,6 +118,37 @@
         {
             get { return _educationLevel; }
             set { _educationLevel = value; }
+        }
+
+        public string ClassLevel { get; set; }
+
+        private Payment _paymentStatus;
+
+        public Payment PaymentStatus
+        {
+            get { return _paymentStatus; }
+            set { _paymentStatus = value; }
+        }
+
+        private string _nextOfKin;
+        public string NextOfKin
+        {
+            get { return _nextOfKin; }
+            set { _nextOfKin = value; }
+        }
+
+        private string _nextOfKinContactDetails;
+        public string NextOfKinContactDetails
+        {
+            get { return _nextOfKinContactDetails; }
+            set { _nextOfKinContactDetails = value; }
+        }
+
+        private bool _hasSystemAccess;
+        public bool HasSystemAccess
+        {
+            get { return _hasSystemAccess; }
+            set { _hasSystemAccess = value; }
         }
 
         private bool _isActive;

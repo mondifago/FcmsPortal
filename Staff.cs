@@ -9,18 +9,11 @@ public class Staff
         set { _theStaff = value; }
     }
 
-    private string _adminRole;
-    public string AdminRole
+    private string _jobRole;
+    public string JobRole
     {
-        get { return _adminRole; }
-        set { _adminRole = value; }
-    }
-
-    private bool _hasSystemAccess;
-    public bool HasSystemAccess
-    {
-        get { return _hasSystemAccess; }
-        set { _hasSystemAccess = value; }
+        get { return _jobRole; }
+        set { _jobRole = value; }
     }
 
     private List<string> _qualifications;
@@ -44,26 +37,12 @@ public class Staff
         set { _dateOfEmployment = value; }
     }
 
-    private string _nextOfKin;
-    public string NextOfKin
-    {
-        get { return _nextOfKin; }
-        set { _nextOfKin = value; }
-    }
+    private List<Course> _areaOfSpecialization;
 
-    private string _nextOfKinContactDetails;
-    public string NextOfKinContactDetails
+    public List<Course> AreaOfSpecialization
     {
-        get { return _nextOfKinContactDetails; }
-        set { _nextOfKinContactDetails = value; }
-    }
-
-    private List<string> _staffSubjects;
-
-    public List<string> StaffSubjects
-    {
-        get { return _staffSubjects; }
-        set { _staffSubjects = value; }
+        get { return _areaOfSpecialization; }
+        set { _areaOfSpecialization = value; }
     }
 
     private int _staffId;

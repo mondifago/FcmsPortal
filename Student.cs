@@ -23,26 +23,12 @@ public class Student
         set { _positionAmoungSiblings = value; }
     }
 
-    private EducationLevel _educationLevel;
-    public EducationLevel EducationLevel
-    {
-        get { return _educationLevel; }
-        set { _educationLevel = value; }
-    }
-
     private EducationLevel _educationLevelSort;
 
     public EducationLevel EducationLevelSort
     {
         get { return _educationLevelSort; }
         set { _educationLevelSort = value; }
-    }
-
-    private string _classLevel;
-    public string ClassLevel
-    {
-        get { return _classLevel; }
-        set { _classLevel = value; }
     }
 
     private string _classLevelSort;
@@ -65,22 +51,6 @@ public class Student
     {
         get { return _dateOfEnrollment; }
         set { _dateOfEnrollment = value; }
-    }
-
-    private Payment _paymentStatus;
-
-    public Payment PaymentStatus
-    {
-        get { return _paymentStatus; }
-        set { _paymentStatus = value; }
-    }
-
-    private List<string> _studentSujects;
-
-    public List<string> StudentSubjects
-    {
-        get { return _studentSujects; }
-        set { _studentSujects = value; }
     }
 
     private Guardian _guardianInfo;

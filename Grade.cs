@@ -4,8 +4,8 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Person GradingTeacher { get; set; }
-        public Person Student { get; set; }
+        public Staff GradingTeacher { get; set; }
+        public Student Student { get; set; }
         public int QuizScore { get; set; }
     }
 }

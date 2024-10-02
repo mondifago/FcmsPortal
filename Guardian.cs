@@ -16,8 +16,8 @@
             set { _relationshipToStudent = value; }
         }
 
-        private List<int> _childrenIds;
-        public List<int> ChildrenIds
+        private List<Student> _childrenIds;
+        public List<Student> ChildrenIds
         {
             get { return _childrenIds; }
             set { _childrenIds = value; }
@@ -28,14 +28,6 @@
         {
             get { return _occupation; }
             set { _occupation = value; }
-        }
-
-        private Payment _paymentInfo;
-
-        public Payment PaymentInfo
-        {
-            get { return _paymentInfo; }
-            set { _paymentInfo = value; }
         }
 
     }
