@@ -52,7 +52,16 @@
             Student student1 = new Student
             {
                 StudentId = 304,
-                GuardianInfo = new Guardian { TheGuardian = { FirstName = "Adam", LastName = "Mark" } },
+                GuardianInfo = new Guardian
+                {
+                    RelationshipToStudent = "Father",
+                    TheGuardian = new Person
+                    {
+                        FirstName = "Adam",
+                        MiddleName = "Ben",
+                        LastName = "Mark"
+                    }
+                },
                 TheStudent = new Person
                 {
                     FirstName = "Lucky",
