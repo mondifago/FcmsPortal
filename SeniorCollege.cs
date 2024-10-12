@@ -1,9 +1,17 @@
 ﻿namespace FcmsPortal
 {
-    public enum SeniorCollege
+    public class SeniorCollege : ClassLevel
     {
-        Sss1,
-        Sss2,
-        Sss3
+        public enum Classes
+        {
+            Sss1,
+            Sss2,
+            Sss3
+        }
+        public Classes GetClass { get; set; }
+        public override string GetLevelName()
+        {
+            return GetClass.ToString();
+        }
     }
 }
