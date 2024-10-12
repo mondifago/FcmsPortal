@@ -38,7 +38,7 @@
 
             // Initialize GuardianInfo
             student1.GuardianInfo = new Guardian();
-            student1.GuardianInfo.RelationshipToStudent = "Father";
+            student1.GuardianInfo.RelationshipToStudent = Relationship.Father;
 
             // Initialize TheGuardian within GuardianInfo
             student1.GuardianInfo.TheGuardian = new Person();
@@ -81,7 +81,7 @@
             //create student's Guardian
             Guardian guardian1 = new Guardian();
             guardian1.Occupation = "Engineer";
-            guardian1.RelationshipToStudent = "Father";
+            guardian1.RelationshipToStudent = Relationship.Father;
             guardian1.ChildInfo = new List<Student>() { student1 };
             guardian1.TheGuardian = new Person() { FirstName = "Adam", MiddleName = "ben", LastName = "Mark" };
             guardian1.TheGuardian.PhoneNumber = new List<string> { "35237522372", "4527245742" };

@@ -9,8 +9,8 @@
             set { _theGuardian = value; }
         }
 
-        private string _relationshipToStudent;
-        public string RelationshipToStudent
+        private Relationship _relationshipToStudent;
+        public Relationship RelationshipToStudent
         {
             get { return _relationshipToStudent; }
             set { _relationshipToStudent = value; }

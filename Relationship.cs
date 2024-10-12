@@ -1,6 +1,6 @@
 ﻿namespace FcmsPortal
 {
-    public enum RelationshipToStudent
+    public enum Relationship
     {
         Father,
         Mother,
