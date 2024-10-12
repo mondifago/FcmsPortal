@@ -16,11 +16,11 @@
             set { _relationshipToStudent = value; }
         }
 
-        private List<Student> _childrenIds;
-        public List<Student> ChildrenIds
+        private List<Student> _childInfo;
+        public List<Student> ChildInfo
         {
-            get { return _childrenIds; }
-            set { _childrenIds = value; }
+            get { return _childInfo; }
+            set { _childInfo = value; }
         }
 
         private string _occupation;

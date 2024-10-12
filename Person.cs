@@ -122,13 +122,7 @@
 
         public string ClassLevel { get; set; }
 
-        private Payment _paymentStatus;
-
-        public Payment PaymentStatus
-        {
-            get { return _paymentStatus; }
-            set { _paymentStatus = value; }
-        }
+        public Schoolfees SchoolFees { get; set; }
 
         private string _nextOfKin;
         public string NextOfKin

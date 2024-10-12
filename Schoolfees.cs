@@ -1,13 +1,13 @@
 ﻿namespace FcmsPortal
 {
-    internal class Schoolfees
+    public class Schoolfees
     {
         public double totalamount;
         public List<Payment> Payments;
     }
     public class Payment
     {
-        double amount;
-        DateTime date;
+        public double Amount { get; set; }
+        public DateTime Date { get; set; }
     }
 }
