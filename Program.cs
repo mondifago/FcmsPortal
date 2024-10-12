@@ -53,7 +53,7 @@
             student1.TheStudent.LastName = "Mark";
             student1.TheStudent.Sex = Gender.Male;
             student1.TheStudent.EducationLevel = EducationLevel.Primary;
-            student1.TheStudent.ClassLevel = "Primary 3";
+            student1.TheStudent.ClassLevel = new JuniorCollege() { GetCurrentLevel = JuniorCollege.Level.Jss3 };
 
             // Add the student to the school's student list
             fcmSchool.Students.Add(student1);

@@ -2,16 +2,16 @@
 {
     public class JuniorCollege : ClassLevel
     {
-        public enum Classes
+        public enum Level
         {
             Jss1,
             Jss2,
             Jss3
         }
-        public Classes GetClass { get; set; }
+        public Level GetCurrentLevel { get; set; }
         public override string GetLevelName()
         {
-            return GetClass.ToString();
+            return GetCurrentLevel.ToString();
 
         }
     }

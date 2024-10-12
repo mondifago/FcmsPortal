@@ -2,16 +2,16 @@
 {
     public class SeniorCollege : ClassLevel
     {
-        public enum Classes
+        public enum Level
         {
             Sss1,
             Sss2,
             Sss3
         }
-        public Classes GetClass { get; set; }
+        public Level GetCurrentLevel { get; set; }
         public override string GetLevelName()
         {
-            return GetClass.ToString();
+            return GetCurrentLevel.ToString();
         }
     }
 }

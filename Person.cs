@@ -119,8 +119,7 @@
             get { return _educationLevel; }
             set { _educationLevel = value; }
         }
-
-        public string ClassLevel { get; set; }
+        public ClassLevel ClassLevel { get; set; }
 
         public Schoolfees SchoolFees { get; set; }
 
