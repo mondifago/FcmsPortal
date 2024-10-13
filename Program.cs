@@ -63,7 +63,7 @@
             Person staff1 = new Person();
 
             mathTeacher.StaffId = 1234;
-            mathTeacher.AreaOfSpecialization = new List<Course> { new Course { Name = "Mathematics" } };
+            mathTeacher.AreaOfSpecialization = new PrimaryCourses() { GetCourse = PrimaryCourses.Course.Mathematics };
             mathTeacher.JobRole = "Primary Education Teacher";
 
             mathTeacher.TheStaff = staff1;

@@ -37,9 +37,9 @@ public class Staff
         set { _dateOfEmployment = value; }
     }
 
-    private List<Course> _areaOfSpecialization;
+    private Course _areaOfSpecialization;
 
-    public List<Course> AreaOfSpecialization
+    public Course AreaOfSpecialization
     {
         get { return _areaOfSpecialization; }
         set { _areaOfSpecialization = value; }
