@@ -3,7 +3,7 @@
     public class LearningPath
     {
         public int Id { get; set; }
-        public Course Name { get; set; } //e.g Biology 
+        public Course Course { get; set; } //e.g Biology 
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
         public int Semester { get; set; }
