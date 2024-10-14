@@ -7,6 +7,7 @@
         /// create one student
         /// create the student's math teacher
         /// create the student's parent
+        /// create primary 3 math session
         /// create an admin staff
         /// </summary>
         /// <param name="args"></param>
@@ -94,7 +95,23 @@
                 }
             };
 
-
+            //create primary 3 Mathematics class session
+            ClassSession multiplicationClass = new ClassSession();
+            multiplicationClass.Course = new PrimaryCourses() { GetCourse = PrimaryCourses.Course.Mathematics };
+            multiplicationClass.Topic = " Multiplication Table";
+            multiplicationClass.Description = " Learning multiplication of single digit numbers";
+            multiplicationClass.EducationLevel = EducationLevel.Primary;
+            multiplicationClass.ClassLevel = new Primary() { GetCurrentLevel = Primary.Level.Primary3 };
+            multiplicationClass.Semester = Semester.First;
+            multiplicationClass.Teacher = mathTeacher;
+            multiplicationClass.Students = new List<Student>() { student1 };
+            multiplicationClass.Duration = TimeSpan.FromMinutes(45);
+            multiplicationClass.AttendanceLog = new List<ClassAttendanceLogEntry>
+            {
+            new ClassAttendanceLogEntry() { Attendees = new List<Student>() {student1} }
+            };
+            multiplicationClass.Grade = new Grade();
+            multiplicationClass.Grade.QuizScore = 100;
         }
 
     }
