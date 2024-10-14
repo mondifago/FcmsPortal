@@ -2,11 +2,11 @@ namespace FcmsPortal;
 
 public class Staff
 {
-    private Person _theStaff;
-    public Person TheStaff
+    private Person _person;
+    public Person Person
     {
-        get { return _theStaff; }
-        set { _theStaff = value; }
+        get { return _person; }
+        set { _person = value; }
     }
 
     private string _jobRole;

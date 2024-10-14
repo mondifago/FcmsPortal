@@ -41,20 +41,20 @@
             student1.GuardianInfo = new Guardian();
             student1.GuardianInfo.RelationshipToStudent = Relationship.Father;
 
-            // Initialize TheGuardian within GuardianInfo
-            student1.GuardianInfo.TheGuardian = new Person();
-            student1.GuardianInfo.TheGuardian.FirstName = "Adam";
-            student1.GuardianInfo.TheGuardian.MiddleName = "Ben";
-            student1.GuardianInfo.TheGuardian.LastName = "Mark";
+            // Initialize Person within GuardianInfo
+            student1.GuardianInfo.Person = new Person();
+            student1.GuardianInfo.Person.FirstName = "Adam";
+            student1.GuardianInfo.Person.MiddleName = "Ben";
+            student1.GuardianInfo.Person.LastName = "Mark";
 
-            // Initialize TheStudent
-            student1.TheStudent = new Person();
-            student1.TheStudent.FirstName = "Lucky";
-            student1.TheStudent.MiddleName = "Steve";
-            student1.TheStudent.LastName = "Mark";
-            student1.TheStudent.Sex = Gender.Male;
-            student1.TheStudent.EducationLevel = EducationLevel.Primary;
-            student1.TheStudent.ClassLevel = new Primary() { GetCurrentLevel = Primary.Level.Primary3 };
+            // Initialize Person
+            student1.Person = new Person();
+            student1.Person.FirstName = "Lucky";
+            student1.Person.MiddleName = "Steve";
+            student1.Person.LastName = "Mark";
+            student1.Person.Sex = Gender.Male;
+            student1.Person.EducationLevel = EducationLevel.Primary;
+            student1.Person.ClassLevel = new Primary() { GetCurrentLevel = Primary.Level.Primary3 };
 
             // Add the student to the school's student list
             fcmSchool.Students.Add(student1);
@@ -67,7 +67,7 @@
             mathTeacher.AreaOfSpecialization = new PrimaryCourses() { GetCourse = PrimaryCourses.Course.Mathematics };
             mathTeacher.JobRole = "Primary Education Teacher";
 
-            mathTeacher.TheStaff = staff1;
+            mathTeacher.Person = staff1;
 
             staff1.FirstName = "John";
             staff1.MiddleName = "Michael";
@@ -84,9 +84,9 @@
             guardian1.Occupation = "Engineer";
             guardian1.RelationshipToStudent = Relationship.Father;
             guardian1.ChildInfo = new List<Student>() { student1 };
-            guardian1.TheGuardian = new Person() { FirstName = "Adam", MiddleName = "ben", LastName = "Mark" };
-            guardian1.TheGuardian.PhoneNumber = new List<string> { "35237522372", "4527245742" };
-            guardian1.TheGuardian.SchoolFees = new Schoolfees
+            guardian1.Person = new Person() { FirstName = "Adam", MiddleName = "ben", LastName = "Mark" };
+            guardian1.Person.PhoneNumber = new List<string> { "35237522372", "4527245742" };
+            guardian1.Person.SchoolFees = new Schoolfees
             {
                 totalamount = 1000.00,
                 Payments = new List<Payment>

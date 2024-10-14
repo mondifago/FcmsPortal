@@ -2,11 +2,11 @@ namespace FcmsPortal;
 
 public class Student
 {
-    private Person _theStudent;
-    public Person TheStudent
+    private Person _person;
+    public Person Person
     {
-        get { return _theStudent; }
-        set { _theStudent = value; }
+        get { return _person; }
+        set { _person = value; }
     }
 
     private int _studentId;

@@ -2,11 +2,11 @@
 {
     public class Guardian
     {
-        private Person _theGuardian;
-        public Person TheGuardian
+        private Person _person;
+        public Person Person
         {
-            get { return _theGuardian; }
-            set { _theGuardian = value; }
+            get { return _person; }
+            set { _person = value; }
         }
 
         private Relationship _relationshipToStudent;
