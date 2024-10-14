@@ -16,10 +16,10 @@
             Crs,
             Phonics
         }
-        public Course GetCourse { get; set; }
+        public Course Subject { get; set; }
         public override string GetCourseName()
         {
-            return GetCourse.ToString();
+            return Subject.ToString();
         }
     }
 }

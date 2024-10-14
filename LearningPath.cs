@@ -6,7 +6,7 @@
         public Course Course { get; set; } //e.g Biology 
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
-        public int Semester { get; set; }
+        public Semester Semester { get; set; }
         public List<ClassSession> ClassInfos { get; set; } = new List<ClassSession>();
         public List<ScheduleEntry> Schedule { get; set; } = new List<ScheduleEntry>();
     }

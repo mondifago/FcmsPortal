@@ -54,7 +54,7 @@
             student1.Person.LastName = "Mark";
             student1.Person.Sex = Gender.Male;
             student1.Person.EducationLevel = EducationLevel.Primary;
-            student1.Person.ClassLevel = new Primary() { GetCurrentLevel = Primary.Level.Primary3 };
+            student1.Person.ClassLevel = new Primary() { CurrentLevel = Primary.Level.Primary3 };
 
             // Add the student to the school's student list
             fcmSchool.Students.Add(student1);
@@ -64,7 +64,7 @@
             Person staff1 = new Person();
 
             mathTeacher.StaffId = 1234;
-            mathTeacher.AreaOfSpecialization = new PrimaryCourses() { GetCourse = PrimaryCourses.Course.Mathematics };
+            mathTeacher.AreaOfSpecialization = new PrimaryCourses() { Subject = PrimaryCourses.Course.Mathematics };
             mathTeacher.JobRole = "Primary Education Teacher";
 
             mathTeacher.Person = staff1;
@@ -74,7 +74,7 @@
             staff1.LastName = "Smith";
             staff1.Sex = Gender.Male;
             staff1.EducationLevel = EducationLevel.Primary;
-            staff1.ClassLevel = new Primary() { GetCurrentLevel = Primary.Level.Primary3 };
+            staff1.ClassLevel = new Primary() { CurrentLevel = Primary.Level.Primary3 };
 
             // Add the mathematics teacher to the school's staff list
             fcmSchool.Staff.Add(mathTeacher);
@@ -97,11 +97,11 @@
 
             //create primary 3 Mathematics class session
             ClassSession multiplicationClass = new ClassSession();
-            multiplicationClass.Course = new PrimaryCourses() { GetCourse = PrimaryCourses.Course.Mathematics };
+            multiplicationClass.Course = new PrimaryCourses() { Subject = PrimaryCourses.Course.Mathematics };
             multiplicationClass.Topic = " Multiplication Table";
             multiplicationClass.Description = " Learning multiplication of single digit numbers";
             multiplicationClass.EducationLevel = EducationLevel.Primary;
-            multiplicationClass.ClassLevel = new Primary() { GetCurrentLevel = Primary.Level.Primary3 };
+            multiplicationClass.ClassLevel = new Primary() { CurrentLevel = Primary.Level.Primary3 };
             multiplicationClass.Semester = Semester.First;
             multiplicationClass.Teacher = mathTeacher;
             multiplicationClass.Students = new List<Student>() { student1 };

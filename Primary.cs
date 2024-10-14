@@ -11,10 +11,10 @@
             Primary5,
             Primary6
         }
-        public Level GetCurrentLevel { get; set; }
+        public Level CurrentLevel { get; set; }
         public override string GetLevelName()
         {
-            return GetCurrentLevel.ToString();
+            return CurrentLevel.ToString();
 
         }
     }
