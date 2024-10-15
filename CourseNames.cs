@@ -13,13 +13,23 @@
                         "Dancing",
                     };
                     break;
+                case Levels.PreNursery:
+                    return new List<string>()
+                    {
+                        " dhhsgd",
+                        "asjgagdg",
+                        "hdsdgj",
+                    };
+                    break;
             }
         }
     }
     enum Levels
     {
         Kindergarten,
-        prescool,
-        primaray
+        PreNursery,
+        primaray,
+        JuniorCollege,
+        SeniorCollege
     }
 }
