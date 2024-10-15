@@ -5,9 +5,9 @@
         public enum Level
         {
             KG_Daycare,
-            KG_PlayGroup,
-            PreNursery,
-            Nursery
+            KG_KG_PlayGroup,
+            KG_PreNursery,
+            KG_Nursery
         }
         public Level CurrentLevel { get; set; }
         public override string GetLevelName()
