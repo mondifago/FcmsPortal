@@ -4,9 +4,9 @@
     {
         public enum Level
         {
-            Jss1,
-            Jss2,
-            Jss3
+            JuniorCollege1,
+            JuniorCollege2,
+            JuniorCollege3
         }
         public Level CurrentLevel { get; set; }
         public override string GetLevelName()
