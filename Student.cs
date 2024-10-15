@@ -23,21 +23,6 @@ public class Student
         set { _positionAmoungSiblings = value; }
     }
 
-    private EducationLevel _educationLevelSort;
-
-    public EducationLevel EducationLevelSort
-    {
-        get { return _educationLevelSort; }
-        set { _educationLevelSort = value; }
-    }
-
-    private ClassLevel _classLevelSort;
-    public ClassLevel ClassLevelSort
-    {
-        get { return _classLevelSort; }
-        set { _classLevelSort = value; }
-    }
-
     private string _lastSchoolAttended;
 
     public string LastSchoolAttended
