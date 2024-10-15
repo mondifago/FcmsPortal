@@ -61,7 +61,7 @@
             Staff mathTeacher = new Staff();
             Person staff1 = new Person();
             mathTeacher.StaffId = 1234;
-            mathTeacher.AreaOfSpecialization = CourseNames.GetCourseNames(Levels.Kindergarten)[0];
+            mathTeacher.AreaOfSpecialization = Course.GetCourseNames(Levels.Primary)[0];
             mathTeacher.JobRole = "Primary Education Teacher";
             mathTeacher.Person = staff1;
             staff1.FirstName = "John";
@@ -92,7 +92,7 @@
 
             //create primary 3 Mathematics class session
             ClassSession multiplicationClass = new ClassSession();
-            multiplicationClass.Course = new PrimaryCourses() { Subject = PrimaryCourses.Course.Mathematics };
+            multiplicationClass.Course = Course.GetCourseNames(Levels.Primary)[0];
             multiplicationClass.Topic = " Multiplication Table";
             multiplicationClass.Description = " Learning multiplication of single digit numbers";
             multiplicationClass.Teacher = mathTeacher;
