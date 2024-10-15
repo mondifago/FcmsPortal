@@ -52,7 +52,7 @@
             student1.Person.LastName = "Mark";
             student1.Person.Sex = Gender.Male;
             student1.Person.EducationLevel = EducationLevel.Primary;
-            student1.Person.ClassLevel = new Primary() { CurrentLevel = Primary.Level.Primary3 };
+            student1.Person.ClassLevel = ClassLevel.Primary3;
 
             // Add the student to the school's student list
             fcmSchool.Students.Add(student1);
@@ -69,7 +69,7 @@
             staff1.LastName = "Smith";
             staff1.Sex = Gender.Male;
             staff1.EducationLevel = EducationLevel.Primary;
-            staff1.ClassLevel = new Primary() { CurrentLevel = Primary.Level.Primary3 };
+            staff1.ClassLevel = ClassLevel.Primary3;
 
             // Add the mathematics teacher to the school's staff list
             fcmSchool.Staff.Add(mathTeacher);
