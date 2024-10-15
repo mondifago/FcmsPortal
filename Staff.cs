@@ -37,9 +37,9 @@ public class Staff
         set { _dateOfEmployment = value; }
     }
 
-    private Course _areaOfSpecialization;
+    private string _areaOfSpecialization;
 
-    public Course AreaOfSpecialization
+    public string AreaOfSpecialization
     {
         get { return _areaOfSpecialization; }
         set { _areaOfSpecialization = value; }

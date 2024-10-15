@@ -8,6 +8,7 @@
         /// create the student's math teacher
         /// create the student's parent
         /// create primary 3 math session
+        /// put the multiplication class session for  primary 3 in a schedule
         /// create an admin staff
         /// </summary>
         /// <param name="args"></param>
@@ -18,14 +19,11 @@
             // create a school with name and address
             Address address = new Address();
             School fcmSchool = new School();
-
             fcmSchool.Name = "FCM School";
             fcmSchool.Staff = new List<Staff>();
             fcmSchool.Students = new List<Student>();
             fcmSchool.Guardians = new List<Guardian>();
-
             fcmSchool.SchoolAddress = address;
-
             address.Street = "120 City Road";
             address.City = "Asaba";
             address.State = "Delta State";
@@ -62,13 +60,10 @@
             //create student's mathematics teacher
             Staff mathTeacher = new Staff();
             Person staff1 = new Person();
-
             mathTeacher.StaffId = 1234;
-            mathTeacher.AreaOfSpecialization = new PrimaryCourses() { Subject = PrimaryCourses.Course.Mathematics };
+            mathTeacher.AreaOfSpecialization = CourseNames.GetCourseNames(Levels.Kindergarten)[0];
             mathTeacher.JobRole = "Primary Education Teacher";
-
             mathTeacher.Person = staff1;
-
             staff1.FirstName = "John";
             staff1.MiddleName = "Michael";
             staff1.LastName = "Smith";
@@ -100,18 +95,22 @@
             multiplicationClass.Course = new PrimaryCourses() { Subject = PrimaryCourses.Course.Mathematics };
             multiplicationClass.Topic = " Multiplication Table";
             multiplicationClass.Description = " Learning multiplication of single digit numbers";
-            multiplicationClass.EducationLevel = EducationLevel.Primary;
-            multiplicationClass.ClassLevel = new Primary() { CurrentLevel = Primary.Level.Primary3 };
-            multiplicationClass.Semester = Semester.First;
             multiplicationClass.Teacher = mathTeacher;
             multiplicationClass.Students = new List<Student>() { student1 };
-            multiplicationClass.Duration = TimeSpan.FromMinutes(45);
             multiplicationClass.AttendanceLog = new List<ClassAttendanceLogEntry>
             {
             new ClassAttendanceLogEntry() { Attendees = new List<Student>() {student1} }
             };
             multiplicationClass.Grade = new Grade();
             multiplicationClass.Grade.QuizScore = 100;
+
+
+            //put the multiplication class session for  primary 3 in a schedule
+            ScheduleEntry scheduleEntry1 = new ScheduleEntry();
+            scheduleEntry1.Id = 301001;
+            scheduleEntry1.DateTime = new DateTime(2024, 12, 15, 09, 00, 00);
+            scheduleEntry1.Duration = TimeSpan.FromMinutes(45);
+            scheduleEntry1.ClassSession = multiplicationClass;
         }
 
     }

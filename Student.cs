@@ -31,8 +31,8 @@ public class Student
         set { _educationLevelSort = value; }
     }
 
-    private string _classLevelSort;
-    public string ClassLevelSort
+    private ClassLevel _classLevelSort;
+    public ClassLevel ClassLevelSort
     {
         get { return _classLevelSort; }
         set { _classLevelSort = value; }

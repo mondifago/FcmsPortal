@@ -4,8 +4,8 @@
     {
         public enum Level
         {
-            Daycare,
-            PlayGroup,
+            KG_Daycare,
+            KG_PlayGroup,
             PreNursery,
             Nursery
         }
