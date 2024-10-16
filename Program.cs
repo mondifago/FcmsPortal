@@ -9,6 +9,7 @@
         /// create the student's parent
         /// create primary 3 math session
         /// put the multiplication class session for  primary 3 in a schedule
+        /// put the multiplication class schedule in a learning path
         /// create an admin staff
         /// </summary>
         /// <param name="args"></param>
@@ -111,6 +112,19 @@
             scheduleEntry1.DateTime = new DateTime(2024, 12, 15, 09, 00, 00);
             scheduleEntry1.Duration = TimeSpan.FromMinutes(45);
             scheduleEntry1.ClassSession = multiplicationClass;
+
+
+            //put the multiplication class schedule in a learning path
+            LearningPath learningPath1 = new LearningPath();
+            learningPath1.Id = 301;
+            learningPath1.EducationLevel = EducationLevel.Primary;
+            learningPath1.ClassLevel = ClassLevel.Primary3;
+            learningPath1.Semester = Semester.First;
+            learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1 };
+            learningPath1.StudentsPaymentSuccesful = new List<Student>() { student1 };
+
+
+
         }
 
     }
