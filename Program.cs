@@ -127,6 +127,12 @@
             var classSession2 = new ClassSession();
             var classSession3 = new ClassSession();
 
+
+            //create corresponding schedule for them
+            var scheduleEntry2 = new ScheduleEntry();
+            var scheduleEntry3 = new ScheduleEntry();
+
+
         }
 
     }
