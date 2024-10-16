@@ -123,7 +123,9 @@
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1 };
             learningPath1.StudentsPaymentSuccesful = new List<Student>() { student1 };
 
-
+            //create two more class sessions
+            var classSession2 = new ClassSession();
+            var classSession3 = new ClassSession();
 
         }
 
