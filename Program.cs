@@ -132,7 +132,9 @@
             var scheduleEntry2 = new ScheduleEntry();
             var scheduleEntry3 = new ScheduleEntry();
 
-
+            //put class session 2 and 3 into schedule entry 2 and 3
+            scheduleEntry2.ClassSession = classSession2;
+            scheduleEntry3.ClassSession = classSession3;
         }
 
     }
