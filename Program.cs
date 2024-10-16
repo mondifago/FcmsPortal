@@ -135,7 +135,17 @@
             //put class session 2 and 3 into schedule entry 2 and 3
             scheduleEntry2.ClassSession = classSession2;
             scheduleEntry3.ClassSession = classSession3;
+
+            //add all schedules to the first learning path
+            Console.WriteLine(learningPath1.Schedule.Count);
+
+            learningPath1.Schedule.Add(scheduleEntry1);
+            learningPath1.Schedule.Add(scheduleEntry2);
+
+            Console.WriteLine(learningPath1.Schedule.Count);
+
         }
+
 
     }
 }
