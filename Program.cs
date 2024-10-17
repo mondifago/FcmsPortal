@@ -119,7 +119,7 @@
             learningPath1.Id = 301;
             learningPath1.EducationLevel = EducationLevel.Primary;
             learningPath1.ClassLevel = ClassLevel.Primary3;
-            learningPath1.Semester = Semester.First;
+            learningPath1.Semester = 1;
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1 };
             learningPath1.StudentsPaymentSuccesful = new List<Student>() { student1 };
 
