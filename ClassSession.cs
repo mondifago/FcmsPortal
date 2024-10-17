@@ -13,6 +13,4 @@
         public Grade Grade { get; set; }
         public string TeacherRemarks { get; set; }
     }
-
-
 }

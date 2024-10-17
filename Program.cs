@@ -84,7 +84,7 @@
             guardian1.Person.PhoneNumber = new List<string> { "35237522372", "4527245742" };
             guardian1.Person.SchoolFees = new Schoolfees
             {
-                totalamount = 1000.00,
+                TotalAmount = 1000.00,
                 Payments = new List<Payment>
                 {
                     new Payment { Amount = 6.666, Date = new DateTime(1967, 12, 22) }
