@@ -102,8 +102,8 @@
             {
             new ClassAttendanceLogEntry() { Attendees = new List<Student>() {student1} }
             };
-            multiplicationClass.Grade = new Grade();
-            multiplicationClass.Grade = 100.0;
+            multiplicationClass.Grade = new Grade(1223, "Mathmatics", formula);
+            multiplicationClass.Grade.
 
 
             //put the multiplication class session for  primary 3 in a schedule

@@ -2,12 +2,17 @@
 {
     public class Grade
     {
-        public Student Student { get; private set; }
-        public Course Course { get; private set; }
-        public List<double> HomeworkScores { get; private set; } = new List<double>();
-        public List<double> QuizScores { get; private set; } = new List<double>();
-        public double AttendanceScore { get; private set; }
-        public double ExamScore { get; private set; }
+        public int ClassSessionId { get; private set; }
+        public Dictionary<Student, Score> Scores { get; private set; } = new Dictionary<Student, Score>();
         public GradingFormula Formula { get; private set; }
+
+        public Grade(int classSessionId, GradingFormula formula)
+        {
+            ClassSessionId = classSessionId;
+            Formula = formula;
+        }
+
+
+
     }
 }
