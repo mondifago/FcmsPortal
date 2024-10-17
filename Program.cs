@@ -97,7 +97,6 @@
             multiplicationClass.Topic = " Multiplication Table";
             multiplicationClass.Description = " Learning multiplication of single digit numbers";
             multiplicationClass.Teacher = mathTeacher;
-            multiplicationClass.Students = new List<Student>() { student1 };
             multiplicationClass.AttendanceLog = new List<ClassAttendanceLogEntry>
             {
             new ClassAttendanceLogEntry() { Attendees = new List<Student>() {student1} }
