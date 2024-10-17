@@ -103,7 +103,7 @@
             new ClassAttendanceLogEntry() { Attendees = new List<Student>() {student1} }
             };
             multiplicationClass.Grade = new Grade();
-            multiplicationClass.Grade.QuizScore = 100;
+            multiplicationClass.Grade = 100.0;
 
 
             //put the multiplication class session for  primary 3 in a schedule
