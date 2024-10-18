@@ -35,6 +35,20 @@
             //create a primary 3 student
             Student student1 = new Student();
             student1.StudentId = 304;
+            TestGrade t1 = new TestGrade()
+            {
+                Course = "Mathematics",
+                Teacher = new Staff()
+                {
+                    Person = new Person()
+                    {
+                        FirstName = "Mike"
+                    }
+                },
+                GradeType = GradeType.Quiz,
+                Score = 27.3,
+                Date = DateTime.Now,
+            };
 
             // Initialize GuardianInfo
             student1.GuardianInfo = new Guardian();
@@ -54,6 +68,7 @@
             student1.Person.Sex = Gender.Male;
             student1.Person.EducationLevel = EducationLevel.Primary;
             student1.Person.ClassLevel = ClassLevel.PRI_3;
+
 
             // Add the student to the school's student list
             fcmSchool.Students.Add(student1);
