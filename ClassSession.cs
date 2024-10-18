@@ -10,7 +10,7 @@
         public string HomeWork { get; set; }
         public Staff Teacher { get; set; }
         public List<ClassAttendanceLogEntry> AttendanceLog { get; set; } = new List<ClassAttendanceLogEntry>();
-        public Grade Grade { get; set; }
+        public CourseGrade Grade { get; set; }
         public string TeacherRemarks { get; set; }
     }
 }
