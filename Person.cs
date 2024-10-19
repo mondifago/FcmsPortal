@@ -37,8 +37,8 @@
             set { _sex = value; }
         }
 
-        private DateOnly _dateOfBirth;
-        public DateOnly DateOfBirth
+        private DateTime _dateOfBirth;
+        public DateTime DateOfBirth
         {
             get { return _dateOfBirth; }
             set { _dateOfBirth = value; }
@@ -48,7 +48,7 @@
         {
             get
             {
-                var today = DateOnly.FromDateTime(DateTime.Today);
+                var today = DateTime.Today;
                 int age = today.Year - _dateOfBirth.Year;
                 if (today < _dateOfBirth.AddYears(age))
                 {

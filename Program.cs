@@ -66,8 +66,10 @@
             student1.Person.MiddleName = "Steve";
             student1.Person.LastName = "Mark";
             student1.Person.Sex = Gender.Male;
+            student1.Person.DateOfBirth = new DateTime(1990, 12, 30);
             student1.Person.EducationLevel = EducationLevel.Primary;
             student1.Person.ClassLevel = ClassLevel.PRI_3;
+            Console.WriteLine(student1.Person.Age);
 
 
             // Add the student to the school's student list
