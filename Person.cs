@@ -48,15 +48,12 @@
         {
             get
             {
-                // Calculate the age based on DateOfBirth
                 var today = DateOnly.FromDateTime(DateTime.Today);
                 int age = today.Year - _dateOfBirth.Year;
-                // Adjust the age if the birthday hasn't occurred yet this year
                 if (today < _dateOfBirth.AddYears(age))
                 {
                     age--;
                 }
-
                 return age;
             }
         }
@@ -102,14 +99,6 @@
         {
             get { return _calendar; }
             set { _calendar = value; }
-        }
-
-        private Curriculum _curriculum;
-
-        public Curriculum Curriculum
-        {
-            get { return _curriculum; }
-            set { _curriculum = value; }
         }
 
         private EducationLevel _educationLevel;
