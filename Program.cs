@@ -118,9 +118,8 @@
             {
             new ClassAttendanceLogEntry() { Attendees = new List<Student>() {student1} }
             };
-
-
-
+            
+            
             //put the multiplication class session for  primary 3 in a schedule
             ScheduleEntry scheduleEntry1 = new ScheduleEntry();
             scheduleEntry1.Id = 301001;
