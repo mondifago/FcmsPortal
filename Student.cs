@@ -9,11 +9,11 @@ public class Student
         set { _person = value; }
     }
 
-    private int _studentId;
-    public int StudentId
+    private int _id;
+    public int ID
     {
-        get { return _studentId; }
-        set { _studentId = value; }
+        get { return _id; }
+        set { _id = value; }
     }
 
     private string _positionAmoungSiblings;
@@ -24,7 +24,6 @@ public class Student
     }
 
     private string _lastSchoolAttended;
-
     public string LastSchoolAttended
     {
         get { return _lastSchoolAttended; }
@@ -39,7 +38,6 @@ public class Student
     }
 
     private Guardian _guardianInfo;
-
     public Guardian GuardianInfo
     {
         get { return _guardianInfo; }

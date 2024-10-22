@@ -1,4 +1,6 @@
-﻿namespace FcmsPortal
+﻿using FcmsPortal.Enums;
+
+namespace FcmsPortal
 {
     internal class Program
     {
@@ -34,7 +36,7 @@
 
             //create a primary 3 student
             Student student1 = new Student();
-            student1.StudentId = 304;
+            student1.ID = 304;
             TestGrade t1 = new TestGrade()
             {
                 Course = "Mathematics",
@@ -78,8 +80,8 @@
             //create student's mathematics teacher
             Staff mathTeacher = new Staff();
             Person staff1 = new Person();
-            mathTeacher.StaffId = 1234;
-            mathTeacher.AreaOfSpecialization = Course.GetCourseNames(EducationLevel.Primary)[0];
+            mathTeacher.Id = 1234;
+            mathTeacher.AreaOfSpecialization = CourseDEfaults.GetCourseNames(EducationLevel.Primary)[0];
             mathTeacher.JobRole = "Primary Education Teacher";
             mathTeacher.Person = staff1;
             staff1.FirstName = "John";
@@ -110,7 +112,7 @@
 
             //create primary 3 Mathematics class session
             ClassSession multiplicationClass = new ClassSession();
-            multiplicationClass.Course = Course.GetCourseNames(EducationLevel.Primary)[0];
+            multiplicationClass.Course = CourseDEfaults.GetCourseNames(EducationLevel.Primary)[0];
             multiplicationClass.Topic = " Multiplication Table";
             multiplicationClass.Description = " Learning multiplication of single digit numbers";
             multiplicationClass.Teacher = mathTeacher;
@@ -118,8 +120,8 @@
             {
             new ClassAttendanceLogEntry() { Attendees = new List<Student>() {student1} }
             };
-            
-            
+
+
             //put the multiplication class session for  primary 3 in a schedule
             ScheduleEntry scheduleEntry1 = new ScheduleEntry();
             scheduleEntry1.Id = 301001;

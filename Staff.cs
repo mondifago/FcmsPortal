@@ -2,6 +2,13 @@ namespace FcmsPortal;
 
 public class Staff
 {
+    private int _id;
+    public int Id
+    {
+        get { return _id; }
+        set { _id = value; }
+    }
+
     private Person _person;
     public Person Person
     {
@@ -38,23 +45,11 @@ public class Staff
     }
 
     private string _areaOfSpecialization;
-
     public string AreaOfSpecialization
     {
         get { return _areaOfSpecialization; }
         set { _areaOfSpecialization = value; }
     }
-
-    private int _staffId;
-    public int StaffId
-    {
-        get { return _staffId; }
-        set { _staffId = value; }
-    }
-
-
-
-
 }
 
 

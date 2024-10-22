@@ -1,4 +1,6 @@
-﻿namespace FcmsPortal
+﻿using FcmsPortal.Enums;
+
+namespace FcmsPortal.ViewModel
 {
     public class Curriculum
     {
@@ -6,6 +8,5 @@
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
         public List<ClassSession> ClassSessions { get; set; } = new List<ClassSession>();
-
     }
 }

@@ -16,13 +16,6 @@
             set { _relationshipToStudent = value; }
         }
 
-        private List<Student> _childInfo;
-        public List<Student> ChildInfo
-        {
-            get { return _childInfo; }
-            set { _childInfo = value; }
-        }
-
         private string _occupation;
         public string Occupation
         {

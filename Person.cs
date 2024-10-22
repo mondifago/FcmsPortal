@@ -1,4 +1,6 @@
-﻿namespace FcmsPortal
+﻿using FcmsPortal.Enums;
+
+namespace FcmsPortal
 {
     public class Person
     {
@@ -108,7 +110,20 @@
             get { return _educationLevel; }
             set { _educationLevel = value; }
         }
-        public ClassLevel ClassLevel { get; set; }
+
+        private ClassLevel _classLevel;
+        public ClassLevel ClassLevel
+        {
+            get => _classLevel;
+            set
+            {
+                if (!IsValidClassLevelForEducationLevel(EducationLevel, value))
+                {
+                    throw new ArgumentException("Invalid ClassLevel for the current EducationLevel.");
+                }
+                _classLevel = value;
+            }
+        }
 
         public Schoolfees SchoolFees { get; set; }
 
@@ -138,6 +153,18 @@
         {
             get { return _isActive; }
             set { _isActive = value; }
+        }
+
+        private bool IsValidClassLevelForEducationLevel(EducationLevel educationLevel, ClassLevel classLevel)
+        {
+            return educationLevel switch
+            {
+                EducationLevel.Kindergarten => classLevel is ClassLevel.KG_Daycare or ClassLevel.KG_PlayGroup or ClassLevel.KG_PreNursery or ClassLevel.KG_Nursery,
+                EducationLevel.Primary => classLevel is ClassLevel.PRI_1 or ClassLevel.PRI_2 or ClassLevel.PRI_3 or ClassLevel.PRI_4 or ClassLevel.PRI_5 or ClassLevel.PRI_6,
+                EducationLevel.JuniorCollege => classLevel is ClassLevel.JC_1 or ClassLevel.JC_2 or ClassLevel.JC_3,
+                EducationLevel.SeniorCollege => classLevel is ClassLevel.SC_1 or ClassLevel.SC_2 or ClassLevel.SC_3,
+                _ => false // Default case for unhandled EducationLevels
+            };
         }
     }
 }

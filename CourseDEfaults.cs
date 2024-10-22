@@ -1,6 +1,6 @@
 ﻿namespace FcmsPortal
 {
-    public class Course
+    public class CourseDefaults
     {
         public static List<string> GetCourseNames(EducationLevel educationLevel)
         {
@@ -68,5 +68,4 @@
             };
         }
     }
-
 }

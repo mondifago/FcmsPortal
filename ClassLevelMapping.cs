@@ -1,8 +1,10 @@
+using FcmsPortal.Enums;
+
 namespace FcmsPortal;
 
-public static class ClassLevelMapping
+public class ClassLevelMapping
 {
-    public static Dictionary<EducationLevel, List<ClassLevel>> GetClassLevelsByEducationLevel()
+    public Dictionary<EducationLevel, List<ClassLevel>> GetClassLevelsByEducationLevel()
     {
         return new Dictionary<EducationLevel, List<ClassLevel>>
         {
@@ -13,3 +15,7 @@ public static class ClassLevelMapping
         };
     }
 }
+
+
+
+

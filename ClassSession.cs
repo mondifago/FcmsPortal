@@ -2,7 +2,7 @@
 {
     public class ClassSession
     {
-        public int ID;
+        public int Id { get; set; }
         public string Course { get; set; }
         public string Topic { get; set; }
         public string Description { get; set; }
