@@ -1,4 +1,4 @@
-﻿namespace FcmsPortal
+﻿namespace FcmsPortal.Enums
 {
     public enum AddressType
     {

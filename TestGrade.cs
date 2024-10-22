@@ -1,4 +1,6 @@
-﻿namespace FcmsPortal
+﻿using FcmsPortal.Enums;
+
+namespace FcmsPortal
 {
     public class TestGrade
     {
