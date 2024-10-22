@@ -2,7 +2,6 @@ namespace FcmsPortal;
 
 public static class ClassLevelMapping
 {
-    // Dictionary mapping EducationLevel to List of ClassLevels
     public static Dictionary<EducationLevel, List<ClassLevel>> GetClassLevelsByEducationLevel()
     {
         return new Dictionary<EducationLevel, List<ClassLevel>>

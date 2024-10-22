@@ -46,8 +46,6 @@ public class Student
         set { _guardianInfo = value; }
     }
 
-    public TestGrade TestGrade { get; set; }
-
     public CourseGrade CourseGrade { get; set; }
 
 }
