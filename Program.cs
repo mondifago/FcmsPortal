@@ -25,7 +25,6 @@ namespace FcmsPortal
             fcmSchool.Name = "FCM School";
             fcmSchool.Staff = new List<Staff>();
             fcmSchool.Students = new List<Student>();
-            fcmSchool.Guardians = new List<Guardian>();
             fcmSchool.SchoolAddress = address;
             address.Street = "120 City Road";
             address.City = "Asaba";
@@ -81,7 +80,7 @@ namespace FcmsPortal
             Staff mathTeacher = new Staff();
             Person staff1 = new Person();
             mathTeacher.Id = 1234;
-            mathTeacher.AreaOfSpecialization = CourseDEfaults.GetCourseNames(EducationLevel.Primary)[0];
+            mathTeacher.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.Primary)[0];
             mathTeacher.JobRole = "Primary Education Teacher";
             mathTeacher.Person = staff1;
             staff1.FirstName = "John";
@@ -98,7 +97,6 @@ namespace FcmsPortal
             Guardian guardian1 = new Guardian();
             guardian1.Occupation = "Engineer";
             guardian1.RelationshipToStudent = Relationship.Father;
-            guardian1.ChildInfo = new List<Student>() { student1 };
             guardian1.Person = new Person() { FirstName = "Adam", MiddleName = "ben", LastName = "Mark" };
             guardian1.Person.PhoneNumber = new List<string> { "35237522372", "4527245742" };
             guardian1.Person.SchoolFees = new Schoolfees
@@ -112,7 +110,7 @@ namespace FcmsPortal
 
             //create primary 3 Mathematics class session
             ClassSession multiplicationClass = new ClassSession();
-            multiplicationClass.Course = CourseDEfaults.GetCourseNames(EducationLevel.Primary)[0];
+            multiplicationClass.Course = CourseDefaults.GetCourseNames(EducationLevel.Primary)[0];
             multiplicationClass.Topic = " Multiplication Table";
             multiplicationClass.Description = " Learning multiplication of single digit numbers";
             multiplicationClass.Teacher = mathTeacher;

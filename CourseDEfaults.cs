@@ -2,11 +2,11 @@
 {
     public class CourseDefaults
     {
-        public static List<string> GetCourseNames(EducationLevel educationLevel)
+        public static List<string> GetCourseNames(Enums.EducationLevel educationLevel)
         {
             return educationLevel switch
             {
-                EducationLevel.Kindergarten => new List<string>
+                Enums.EducationLevel.Kindergarten => new List<string>
                 {
                     "Mathematics",
                     "EnglishLanguage",
@@ -19,7 +19,7 @@
                     "Phonics",
                     "Handwriting"
                 },
-                EducationLevel.Primary => new List<string>
+                Enums.EducationLevel.Primary => new List<string>
                 {
                    "Mathematics",
                    "EnglishLanguage",
@@ -33,7 +33,7 @@
                    "Crs",
                    "Phonics"
                 },
-                EducationLevel.JuniorCollege => new List<string>
+                Enums.EducationLevel.JuniorCollege => new List<string>
                 {
                    "Mathematics",
                    "EnglishLanguage",
@@ -46,7 +46,7 @@
                    "History",
                    "French"
                 },
-                EducationLevel.SeniorCollege => new List<string>
+                Enums.EducationLevel.SeniorCollege => new List<string>
                 {
                    "Mathematics",
                    "EnglishLanguage",
