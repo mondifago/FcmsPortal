@@ -104,7 +104,7 @@ namespace FcmsPortal
                 TotalAmount = 1000.00,
                 Payments = new List<Payment>
                 {
-                    new Payment { Amount = 6.666, Date = new DateTime(1967, 12, 22) }
+                    new Payment { Amount = 6.666, Date = new DateTime(2024, 02, 22) }
                 }
             };
 
@@ -123,7 +123,7 @@ namespace FcmsPortal
             //put the multiplication class session for  primary 3 in a schedule
             ScheduleEntry scheduleEntry1 = new ScheduleEntry();
             scheduleEntry1.Id = 301001;
-            scheduleEntry1.DateTime = new DateTime(2024, 12, 15, 09, 00, 00);
+            scheduleEntry1.DateTime = new DateTime(2024, 02, 15, 09, 00, 00);
             scheduleEntry1.Duration = TimeSpan.FromMinutes(45);
             scheduleEntry1.ClassSession = multiplicationClass;
 
@@ -158,10 +158,28 @@ namespace FcmsPortal
 
             Console.WriteLine(learningPath1.Schedule.Count);
 
+            //add all learning paths to school
+            fcmSchool.LearningPath = new List<LearningPath> { learningPath1 };
 
+            //generate curriculum for 
+            var curriculum = LogicMethods.GenerateCurriculum(fcmSchool, 2024, ClassLevel.PRI_3, EducationLevel.Primary, 1, 301);
+            int year = curriculum.Year;
+            Console.WriteLine($"Curriculum for {year}:");
+            Console.WriteLine($"Education Level: {curriculum.EducationLevel}");
+            Console.WriteLine($"Class Level: {curriculum.ClassLevel}");
+            Console.WriteLine($"Year: {curriculum.Year}");
+            Console.WriteLine($"Semester: {curriculum.Semester}");
+            Console.WriteLine("=============================================");
+
+            foreach (var entry in curriculum.ClassSessions)
+            {
+                Console.WriteLine($"Course: {entry.Course}, Topic: {entry.Topic}");
+                Console.WriteLine($"Lesson Note: {entry.LessonNote}");
+                Console.WriteLine($"Teacher's Remark: {entry.TeacherRemarks}");
+                Console.WriteLine("------------------------------------------------");
+            }
 
         }
-
 
     }
 }
