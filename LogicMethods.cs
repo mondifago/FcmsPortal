@@ -33,5 +33,22 @@ namespace FcmsPortal
 
             return curriculum;
         }
+        
+        //Check for any payment for a student
+       public static bool IsStudentPaymentMade(Student student)
+        {
+            return student.Person.SchoolFees.Payments != null && student.Person.SchoolFees.Payments.Any(p => p.Amount > 0);
+        }
+        //Check for successful payment for a student based on specific amount
+        public static bool IsStudentPaymentSuccessful(Student student, double requiredAmount)
+        {
+            return student.Person.SchoolFees.Payments != null && student.Person.SchoolFees.Payments.Any(p => p.Amount >= requiredAmount);
+        }
+       
+        
+        
+        
+
+
     }
 }
