@@ -39,15 +39,18 @@ namespace FcmsPortal
         {
             return student.Person.SchoolFees.Payments != null && student.Person.SchoolFees.Payments.Any(p => p.Amount > 0);
         }
-        //Check for successful payment for a student based on specific amount
-        public static bool IsStudentPaymentSuccessful(Student student, double requiredAmount)
+        //Check for successful payment for a student based on half of Total amount required
+        public static bool IsStudentPaymentSuccessful(Student student)
         {
-            return student.Person.SchoolFees.Payments != null && student.Person.SchoolFees.Payments.Any(p => p.Amount >= requiredAmount);
+            double requiredAmount = student.Person.SchoolFees.TotalAmount / 2;
+            return student.Person.SchoolFees.Payments != null 
+                   && student.Person.SchoolFees.Payments.Any(p => p.Amount >= requiredAmount);
         }
+
        //Enroll student to learning path based on successful payment
        public static void EnrollStudentInLearningPath(Student student, LearningPath learningPath)
        {
-           if (IsStudentPaymentSuccessful(student, Double.MinValue))
+           if (IsStudentPaymentSuccessful(student))
            {
                learningPath.Students.Add(student);
            }
@@ -57,9 +60,14 @@ namespace FcmsPortal
            }
        }
 
-        
-        
-        
+       public static void MakePayment()
+       {
+           
+       }
+
+
+
+
 
 
     }
