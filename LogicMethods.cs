@@ -44,7 +44,19 @@ namespace FcmsPortal
         {
             return student.Person.SchoolFees.Payments != null && student.Person.SchoolFees.Payments.Any(p => p.Amount >= requiredAmount);
         }
-       
+       //Enroll student to learning path based on successful payment
+       public static void EnrollStudentInLearningPath(Student student, LearningPath learningPath)
+       {
+           if (IsStudentPaymentSuccessful(student, Double.MinValue))
+           {
+               learningPath.Students.Add(student);
+           }
+           else
+           {
+               throw new InvalidOperationException("Student cannot be enrolled without successful payment.");
+           }
+       }
+
         
         
         
