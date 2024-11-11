@@ -60,10 +60,22 @@ namespace FcmsPortal
            }
        }
 
-       public static void MakePayment()
+       public static void MakePayment(Student student, double amount, string paymentMethod)
        {
-           
+           if (student?.Person?.SchoolFees == null)
+           {
+               throw new ArgumentException("Invalid student or school fees record.");
+           }
+           var payment = new Payment
+           {
+               Amount = amount,
+               Date = DateTime.Now,
+               PaymentMethod = paymentMethod
+           };
+           student.Person.SchoolFees.Payments.Add(payment);
+           Console.WriteLine($"Payment of {amount:C} successfully made by {student.Person.FirstName}. Remaining Balance: {student.Person.SchoolFees.Balance:C}");
        }
+
 
 
 
