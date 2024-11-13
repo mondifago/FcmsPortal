@@ -182,8 +182,10 @@ namespace FcmsPortal
             student1.Person.SchoolFees = new Schoolfees();
             student1.Person.SchoolFees.TotalAmount = 1000.0;
             LogicMethods.MakePayment(student1, 200.0, "Cash");
-            
+
             LogicMethods.MakePayment(student1, 100.0, "Credit Card");
+
+            LogicMethods.ShowAllPayments(student1);
         }
 
     }

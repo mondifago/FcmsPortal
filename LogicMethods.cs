@@ -33,9 +33,9 @@ namespace FcmsPortal
 
             return curriculum;
         }
-        
+
         //Check for any payment for a student
-       public static bool IsStudentPaymentMade(Student student)
+        public static bool IsStudentPaymentMade(Student student)
         {
             return student.Person.SchoolFees.Payments != null && student.Person.SchoolFees.Payments.Any(p => p.Amount > 0);
         }
@@ -43,38 +43,57 @@ namespace FcmsPortal
         public static bool IsStudentPaymentSuccessful(Student student)
         {
             double requiredAmount = student.Person.SchoolFees.TotalAmount / 2;
-            return student.Person.SchoolFees.Payments != null 
+            return student.Person.SchoolFees.Payments != null
                    && student.Person.SchoolFees.Payments.Any(p => p.Amount >= requiredAmount);
         }
 
-       //Enroll student to learning path based on successful payment
-       public static void EnrollStudentInLearningPath(Student student, LearningPath learningPath)
-       {
-           if (IsStudentPaymentSuccessful(student))
-           {
-               learningPath.Students.Add(student);
-           }
-           else
-           {
-               throw new InvalidOperationException("Student cannot be enrolled without successful payment.");
-           }
-       }
+        //Enroll student to learning path based on successful payment
+        public static void EnrollStudentInLearningPath(Student student, LearningPath learningPath)
+        {
+            if (IsStudentPaymentSuccessful(student))
+            {
+                learningPath.Students.Add(student);
+            }
+            else
+            {
+                throw new InvalidOperationException("Student cannot be enrolled without successful payment.");
+            }
+        }
 
-       public static void MakePayment(Student student, double amount, string paymentMethod)
-       {
-           if (student?.Person?.SchoolFees == null)
-           {
-               throw new ArgumentException("Invalid student or school fees record.");
-           }
-           var payment = new Payment
-           {
-               Amount = amount,
-               Date = DateTime.Now,
-               PaymentMethod = paymentMethod
-           };
-           student.Person.SchoolFees.Payments.Add(payment);
-           Console.WriteLine($"Payment of {amount:C} successfully made by {student.Person.FirstName}. Remaining Balance: {student.Person.SchoolFees.Balance:C}");
-       }
+        //student make payment
+        public static void MakePayment(Student student, double amount, string paymentMethod)
+        {
+            if (student?.Person?.SchoolFees == null)
+            {
+                throw new ArgumentException("Invalid student or school fees record.");
+            }
+            var payment = new Payment
+            {
+                Amount = amount,
+                Date = DateTime.Now,
+                PaymentMethod = paymentMethod
+            };
+            student.Person.SchoolFees.Payments.Add(payment);
+            Console.WriteLine($"Payment of {amount:C} successfully made by {student.Person.FirstName}. Remaining Balance: {student.Person.SchoolFees.Balance:C}");
+        }
+
+        //show all student's payments
+        public static void ShowAllPayments(Student student)
+        {
+            if (student.Person.SchoolFees.Payments.Count == 0)
+            {
+                Console.WriteLine("No payments have been made.");
+                return;
+            }
+
+            Console.WriteLine("List of Payments:");
+            foreach (var payment in student.Person.SchoolFees.Payments)
+            {
+                Console.WriteLine($"Amount: {payment.Amount}, Date: {payment.Date}, Reference: {payment.Reference}");
+            }
+        }
+
+
 
 
 
