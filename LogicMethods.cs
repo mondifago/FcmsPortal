@@ -93,6 +93,52 @@ namespace FcmsPortal
             }
         }
 
+        // Create a new student
+        public static Student CreateNewStudent(
+        int id,
+        string studentFirstName,
+        string studentMiddleName,
+        string studentLastName,
+        Gender studentGender,
+        DateTime studentDateOfBirth,
+        EducationLevel educationLevel,
+        ClassLevel classLevel,
+        string guardianFirstName,
+        string guardianMiddleName,
+        string guardianLastName,
+        Relationship guardianRelationship
+        )
+        {
+
+            var newStudent = new Student
+            {
+                ID = id,
+                Person = new Person
+                {
+                    FirstName = studentFirstName,
+                    MiddleName = studentMiddleName,
+                    LastName = studentLastName,
+                    Sex = studentGender,
+                    DateOfBirth = studentDateOfBirth,
+                    EducationLevel = educationLevel,
+                    ClassLevel = classLevel
+                },
+                GuardianInfo = new Guardian
+                {
+                    RelationshipToStudent = guardianRelationship,
+                    Person = new Person
+                    {
+                        FirstName = guardianFirstName,
+                        MiddleName = guardianMiddleName,
+                        LastName = guardianLastName
+                    }
+                }
+            };
+
+            return newStudent;
+        }
+
+
 
 
 
