@@ -289,6 +289,27 @@ namespace FcmsPortal
             return studentCalendar;
         }
 
+        //generate teacher's calendar
+        public static List<ScheduleEntry> GenerateTeacherCalendar(School school, Staff teacher)
+        {
+            List<ScheduleEntry> teacherCalendar = new();
+
+            foreach (var learningPath in school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession.Teacher != null && schedule.ClassSession.Teacher.Id == teacher.Id)
+                    {
+                        teacherCalendar.Add(schedule);
+                    }
+                }
+            }
+            teacherCalendar.Sort((entry1, entry2) => entry1.DateTime.CompareTo(entry2.DateTime));
+
+            return teacherCalendar;
+        }
+
+
 
 
 
