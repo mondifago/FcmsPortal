@@ -160,6 +160,40 @@ namespace FcmsPortal
             return newSchool;
         }
 
+        //create new teacher
+        public static Staff CreateNewTeacher(
+        int id,
+        string firstName,
+        string middleName,
+        string lastName,
+        Gender gender,
+        DateTime dateOfBirth,
+        DateOnly dateOfEmployment,
+        string jobRole,
+        string areaOfSpecialization,
+        List<string>? qualifications = null,
+        List<string>? workExperience = null
+        )
+        {
+            var teacher = new Staff
+            {
+                Id = id,
+                Person = new Person
+                {
+                    FirstName = firstName,
+                    MiddleName = middleName,
+                    LastName = lastName,
+                    Sex = gender,
+                    DateOfBirth = dateOfBirth
+                },
+                JobRole = jobRole,
+                AreaOfSpecialization = areaOfSpecialization,
+                Qualifications = qualifications ?? new List<string>(),
+                WorkExperience = workExperience ?? new List<string>(),
+                DateOfEmployment = dateOfEmployment
+            };
+            return teacher;
+        }
 
 
 
