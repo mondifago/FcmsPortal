@@ -221,6 +221,11 @@ namespace FcmsPortal
             return classSession;
         }
 
+        // add a teacher to a class session
+        public static void AddTeacherToClassSession(ClassSession classSession, Staff teacher)
+        {
+            classSession.Teacher = teacher;
+        }
 
 
 
