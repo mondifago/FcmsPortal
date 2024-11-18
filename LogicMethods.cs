@@ -240,6 +240,20 @@ namespace FcmsPortal
             return scheduleEntry;
         }
 
+        //schedule a class session
+        public static void ScheduleClassSession(LearningPath learningPath, ClassSession classSession, int scheduleId, DateTime dateTime, TimeSpan duration)
+        {
+            var scheduleEntry = new ScheduleEntry
+            {
+                Id = scheduleId,
+                DateTime = dateTime,
+                Duration = duration,
+                ClassSession = classSession
+            };
+
+            learningPath.Schedule.Add(scheduleEntry);
+        }
+
 
 
 
