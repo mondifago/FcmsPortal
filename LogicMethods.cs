@@ -139,6 +139,28 @@ namespace FcmsPortal
             return newStudent;
         }
 
+        //create new school
+        public static School CreateNewSchool(
+        string schoolName,
+        Address schoolAddress,
+        List<Staff>? initialStaff = null,
+        List<Student>? initialStudents = null
+        )
+        {
+            var newSchool = new School
+            {
+                Name = schoolName,
+                SchoolAddress = schoolAddress,
+                Staff = initialStaff ?? new List<Staff>(),
+                Students = initialStudents ?? new List<Student>(),
+                LearningPath = new List<LearningPath>(),
+                SchoolCalendar = new List<SchoolCalendar>(),
+                Grades = new List<CourseGrade>()
+            };
+            return newSchool;
+        }
+
+
 
 
 
