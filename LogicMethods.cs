@@ -254,6 +254,18 @@ namespace FcmsPortal
             learningPath.Schedule.Add(scheduleEntry);
         }
 
+        //create new learning path
+        public static LearningPath CreateLearningPath(int id, EducationLevel educationLevel, ClassLevel classLevel, int semester)
+        {
+            var learningPath = new LearningPath
+            {
+                Id = id,
+                EducationLevel = educationLevel,
+                ClassLevel = classLevel,
+                Semester = semester
+            };
+            return learningPath;
+        }
 
 
 
