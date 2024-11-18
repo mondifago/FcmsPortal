@@ -267,6 +267,11 @@ namespace FcmsPortal
             return learningPath;
         }
 
+        //add a schedule to a learning path
+        public static void AddScheduleToLearningPath(LearningPath learningPath, ScheduleEntry scheduleEntry)
+        {
+            learningPath.Schedule.Add(scheduleEntry);
+        }
 
 
 
