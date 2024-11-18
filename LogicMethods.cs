@@ -309,6 +309,19 @@ namespace FcmsPortal
             return teacherCalendar;
         }
 
+        //generate school calendar
+        public static List<ScheduleEntry> GenerateSchoolCalendar(School school)
+        {
+            List<ScheduleEntry> schoolCalendar = new();
+            foreach (var learningPath in school.LearningPath)
+            {
+                schoolCalendar.AddRange(learningPath.Schedule);
+            }
+            schoolCalendar.Sort((entry1, entry2) => entry1.DateTime.CompareTo(entry2.DateTime));
+
+            return schoolCalendar;
+        }
+
 
 
 
