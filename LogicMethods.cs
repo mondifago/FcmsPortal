@@ -227,6 +227,19 @@ namespace FcmsPortal
             classSession.Teacher = teacher;
         }
 
+        //create new schedule
+        public static ScheduleEntry CreateScheduleEntry(int id, DateTime dateTime, TimeSpan duration, ClassSession classSession)
+        {
+            var scheduleEntry = new ScheduleEntry
+            {
+                Id = id,
+                DateTime = dateTime,
+                Duration = duration,
+                ClassSession = classSession
+            };
+            return scheduleEntry;
+        }
+
 
 
 
