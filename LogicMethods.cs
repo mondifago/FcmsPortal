@@ -273,6 +273,22 @@ namespace FcmsPortal
             learningPath.Schedule.Add(scheduleEntry);
         }
 
+        //generate a student's calendar
+        public static List<ScheduleEntry> GenerateStudentCalendar(School school, Student student)
+        {
+            List<ScheduleEntry> studentCalendar = new();
+            foreach (var learningPath in school.LearningPath)
+            {
+                if (learningPath.Students.Contains(student))
+                {
+                    studentCalendar.AddRange(learningPath.Schedule);
+                }
+            }
+            studentCalendar.Sort((entry1, entry2) => entry1.DateTime.CompareTo(entry2.DateTime));
+
+            return studentCalendar;
+        }
+
 
 
 
