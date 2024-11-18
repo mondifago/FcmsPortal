@@ -106,7 +106,8 @@ namespace FcmsPortal
         string guardianFirstName,
         string guardianMiddleName,
         string guardianLastName,
-        Relationship guardianRelationship
+        Relationship guardianRelationship,
+        School school
         )
         {
 
@@ -134,7 +135,7 @@ namespace FcmsPortal
                     }
                 }
             };
-
+            school.Students.Add(newStudent);
             return newStudent;
         }
 
