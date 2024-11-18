@@ -195,6 +195,32 @@ namespace FcmsPortal
             return teacher;
         }
 
+        //create new class session
+        public static ClassSession CreateNewClassSession(
+        int id,
+        string course,
+        string topic,
+        string description,
+        string lessonNote,
+        string homeWork,
+        Staff teacher,
+        string teacherRemarks
+        )
+        {
+            var classSession = new ClassSession
+            {
+                Id = id,
+                Course = course,
+                Topic = topic,
+                Description = description,
+                LessonNote = lessonNote,
+                HomeWork = homeWork,
+                Teacher = teacher,
+                TeacherRemarks = teacherRemarks
+            };
+            return classSession;
+        }
+
 
 
 
