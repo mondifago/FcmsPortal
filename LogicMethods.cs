@@ -336,6 +336,37 @@ namespace FcmsPortal
             return schoolCalendar;
         }
 
+        //take attendance for class session
+        public static void TakeAttendanceForClassSession(ClassSession classSession, List<Student> presentStudents, Staff teacher)
+        {
+            if (classSession == null)
+            {
+                throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
+            }
+            if (teacher == null)
+            {
+                throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
+            }
+            if (presentStudents == null || !presentStudents.Any())
+            {
+                throw new ArgumentException("The list of present students cannot be null or empty.", nameof(presentStudents));
+            }
+            if (classSession.Teacher != teacher)
+            {
+                throw new InvalidOperationException("Only the assigned teacher can take attendance for this class session.");
+            }
+
+            var attendanceLogEntry = new ClassAttendanceLogEntry
+            {
+                Id = classSession.AttendanceLog.Count + 1,
+                Teacher = teacher,
+                Attendees = presentStudents,
+                TimeStamp = DateTime.Now
+            };
+
+            classSession.AttendanceLog.Add(attendanceLogEntry);
+        }
+
 
 
 
