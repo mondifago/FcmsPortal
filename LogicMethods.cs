@@ -74,69 +74,6 @@ namespace FcmsPortal
                 PaymentMethod = paymentMethod
             };
             student.Person.SchoolFees.Payments.Add(payment);
-            Console.WriteLine($"Payment of {amount:C} successfully made by {student.Person.FirstName}. Remaining Balance: {student.Person.SchoolFees.Balance:C}");
-        }
-
-        //show all student's payments
-        public static void ShowAllPayments(Student student)
-        {
-            if (student.Person.SchoolFees.Payments.Count == 0)
-            {
-                Console.WriteLine("No payments have been made.");
-                return;
-            }
-
-            Console.WriteLine("List of Payments:");
-            foreach (var payment in student.Person.SchoolFees.Payments)
-            {
-                Console.WriteLine($"Amount: {payment.Amount}, Date: {payment.Date}, Reference: {payment.Reference}");
-            }
-        }
-
-        // Create a new student
-        public static Student CreateNewStudent(
-        int id,
-        string studentFirstName,
-        string studentMiddleName,
-        string studentLastName,
-        Gender studentGender,
-        DateTime studentDateOfBirth,
-        EducationLevel educationLevel,
-        ClassLevel classLevel,
-        string guardianFirstName,
-        string guardianMiddleName,
-        string guardianLastName,
-        Relationship guardianRelationship,
-        School school
-        )
-        {
-
-            var newStudent = new Student
-            {
-                ID = id,
-                Person = new Person
-                {
-                    FirstName = studentFirstName,
-                    MiddleName = studentMiddleName,
-                    LastName = studentLastName,
-                    Sex = studentGender,
-                    DateOfBirth = studentDateOfBirth,
-                    EducationLevel = educationLevel,
-                    ClassLevel = classLevel
-                },
-                GuardianInfo = new Guardian
-                {
-                    RelationshipToStudent = guardianRelationship,
-                    Person = new Person
-                    {
-                        FirstName = guardianFirstName,
-                        MiddleName = guardianMiddleName,
-                        LastName = guardianLastName
-                    }
-                }
-            };
-            school.Students.Add(newStudent);
-            return newStudent;
         }
 
         //create new school
@@ -224,7 +161,8 @@ namespace FcmsPortal
         // add a teacher to a class session
         public static void AddTeacherToClassSession(ClassSession classSession, Staff teacher)
         {
-            classSession.Teacher = teacher;
+            if (teacher != null)
+                classSession.Teacher = teacher;
         }
 
         //create new schedule
