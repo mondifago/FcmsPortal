@@ -144,6 +144,11 @@ namespace FcmsPortal
         string teacherRemarks
         )
         {
+            if (teacher == null)
+            {
+                throw new NullReferenceException("The teacher cannot be null when creating a class session.");
+            }
+
             var classSession = new ClassSession
             {
                 Id = id,
