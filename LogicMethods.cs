@@ -50,15 +50,29 @@ namespace FcmsPortal
         //Enroll student to learning path based on successful payment
         public static void EnrollStudentInLearningPath(Student student, LearningPath learningPath)
         {
-            if (IsStudentPaymentSuccessful(student))
+            if (student == null)
             {
-                learningPath.Students.Add(student);
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
             }
-            else
+
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "LearningPath cannot be null.");
+            }
+
+            if (!IsStudentPaymentSuccessful(student))
             {
                 throw new InvalidOperationException("Student cannot be enrolled without successful payment.");
             }
+
+            if (learningPath.Students.Contains(student))
+            {
+                throw new InvalidOperationException("Student is already enrolled in the learning path.");
+            }
+
+            learningPath.Students.Add(student);
         }
+
 
         //student make payment
         public static void MakePayment(Student student, double amount, string paymentMethod)
