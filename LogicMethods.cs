@@ -180,8 +180,16 @@ namespace FcmsPortal
         // add a teacher to a class session
         public static void AddTeacherToClassSession(ClassSession classSession, Staff teacher)
         {
-            if (teacher != null)
-                classSession.Teacher = teacher;
+            if (classSession == null)
+            {
+                throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
+            }
+
+            if (teacher == null)
+            {
+                throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
+            }
+            classSession.Teacher = teacher;
         }
 
         //create new schedule
