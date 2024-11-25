@@ -268,6 +268,15 @@ namespace FcmsPortal
         //generate a student's calendar
         public static List<ScheduleEntry> GenerateStudentCalendar(School school, Student student)
         {
+            if (school == null)
+            {
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            }
+
+            if (student == null)
+            {
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+            }
             List<ScheduleEntry> studentCalendar = new();
             foreach (var learningPath in school.LearningPath)
             {
@@ -284,6 +293,15 @@ namespace FcmsPortal
         //generate teacher's calendar
         public static List<ScheduleEntry> GenerateTeacherCalendar(School school, Staff teacher)
         {
+            if (school == null)
+            {
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            }
+
+            if (teacher == null)
+            {
+                throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
+            }
             List<ScheduleEntry> teacherCalendar = new();
 
             foreach (var learningPath in school.LearningPath)
@@ -304,6 +322,10 @@ namespace FcmsPortal
         //generate school calendar
         public static List<ScheduleEntry> GenerateSchoolCalendar(School school)
         {
+            if (school == null)
+            {
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            }
             List<ScheduleEntry> schoolCalendar = new();
             foreach (var learningPath in school.LearningPath)
             {
