@@ -195,6 +195,10 @@ namespace FcmsPortal
         //create new schedule
         public static ScheduleEntry CreateScheduleEntry(int id, DateTime dateTime, TimeSpan duration, ClassSession classSession)
         {
+            if (classSession == null)
+            {
+                throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
+            }
             var scheduleEntry = new ScheduleEntry
             {
                 Id = id,
