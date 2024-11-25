@@ -212,6 +212,15 @@ namespace FcmsPortal
         //schedule a class session
         public static void ScheduleClassSession(LearningPath learningPath, ClassSession classSession, int scheduleId, DateTime dateTime, TimeSpan duration)
         {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "LearningPath cannot be null.");
+            }
+
+            if (classSession == null)
+            {
+                throw new ArgumentNullException(nameof(classSession), "ClassSession cannot be null.");
+            }
             var scheduleEntry = new ScheduleEntry
             {
                 Id = scheduleId,
@@ -239,6 +248,20 @@ namespace FcmsPortal
         //add a schedule to a learning path
         public static void AddScheduleToLearningPath(LearningPath learningPath, ScheduleEntry scheduleEntry)
         {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+
+            if (scheduleEntry == null)
+            {
+                throw new ArgumentNullException(nameof(scheduleEntry), "Schedule entry cannot be null.");
+            }
+
+            if (learningPath.Schedule.Any(s => s.Id == scheduleEntry.Id))
+            {
+                throw new ArgumentException($"A schedule with ID {scheduleEntry.Id} already exists in the learning path.");
+            }
             learningPath.Schedule.Add(scheduleEntry);
         }
 
