@@ -185,7 +185,7 @@ namespace FcmsPortal
 
             LogicMethods.MakePayment(student1, 100.0, "Credit Card");
 
-            LogicMethods.ShowAllPayments(student1);
+            //LogicMethods.ShowAllPayments(student1);
         }
 
     }

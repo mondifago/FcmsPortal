@@ -8,6 +8,7 @@ namespace FcmsPortal
         public Staff Teacher { get; set; }
         public double Score { get; set; }
         public DateTime Date { get; set; }
+        public int Semester { get; set; }
         public GradeType GradeType { get; set; }
     }
 }
