@@ -90,62 +90,6 @@ namespace FcmsPortal
             student.Person.SchoolFees.Payments.Add(payment);
         }
 
-        //create new school
-        public static School CreateNewSchool(
-        string schoolName,
-        Address schoolAddress,
-        List<Staff>? initialStaff = null,
-        List<Student>? initialStudents = null
-        )
-        {
-            var newSchool = new School
-            {
-                Name = schoolName,
-                SchoolAddress = schoolAddress,
-                Staff = initialStaff ?? new List<Staff>(),
-                Students = initialStudents ?? new List<Student>(),
-                LearningPath = new List<LearningPath>(),
-                SchoolCalendar = new List<SchoolCalendar>(),
-                Grades = new List<CourseGrade>()
-            };
-            return newSchool;
-        }
-
-        //create new teacher
-        public static Staff CreateNewTeacher(
-        int id,
-        string firstName,
-        string middleName,
-        string lastName,
-        Gender gender,
-        DateTime dateOfBirth,
-        DateOnly dateOfEmployment,
-        string jobRole,
-        string areaOfSpecialization,
-        List<string>? qualifications = null,
-        List<string>? workExperience = null
-        )
-        {
-            var teacher = new Staff
-            {
-                Id = id,
-                Person = new Person
-                {
-                    FirstName = firstName,
-                    MiddleName = middleName,
-                    LastName = lastName,
-                    Sex = gender,
-                    DateOfBirth = dateOfBirth
-                },
-                JobRole = jobRole,
-                AreaOfSpecialization = areaOfSpecialization,
-                Qualifications = qualifications ?? new List<string>(),
-                WorkExperience = workExperience ?? new List<string>(),
-                DateOfEmployment = dateOfEmployment
-            };
-            return teacher;
-        }
-
         //create new class session
         public static ClassSession CreateNewClassSession(
         int id,
@@ -366,6 +310,7 @@ namespace FcmsPortal
 
             classSession.AttendanceLog.Add(attendanceLogEntry);
         }
+
 
 
 
