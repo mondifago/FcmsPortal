@@ -341,6 +341,32 @@ namespace FcmsPortal
             return attendanceLogs;
         }
 
+        //Get attendance of all the students in a particular learning path for a day
+        public static List<ClassAttendanceLogEntry> GetAttendanceForLearningPathOnDay(
+        LearningPath learningPath,
+        DateTime date)
+        {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+
+            var relevantScheduleEntries = learningPath.Schedule
+                .Where(se => se.DateTime.Date == date.Date)
+                .ToList();
+
+            if (!relevantScheduleEntries.Any())
+            {
+                Console.WriteLine($"No class sessions were scheduled for the date {date.ToShortDateString()}.");
+                return new List<ClassAttendanceLogEntry>();
+            }
+
+            var attendanceLogs = relevantScheduleEntries
+                .SelectMany(se => se.ClassSession.AttendanceLog)
+                .ToList();
+
+            return attendanceLogs;
+        }
 
 
 
