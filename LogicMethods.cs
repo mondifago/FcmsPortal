@@ -368,6 +368,42 @@ namespace FcmsPortal
             return attendanceLogs;
         }
 
+        //Get attendance of a teacher for a specified time period
+        public static List<ClassAttendanceLogEntry> GetTeacherAttendanceForPeriod(
+           Staff teacher,
+           List<LearningPath> learningPaths,
+           DateTime startDate,
+           DateTime endDate)
+        {
+            if (teacher == null)
+                throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
+
+            if (learningPaths == null || !learningPaths.Any())
+                throw new ArgumentException("Learning paths list cannot be null or empty.", nameof(learningPaths));
+
+            if (endDate < startDate)
+                throw new ArgumentException("End date must be greater than or equal to start date.");
+
+            var teacherAttendance = new List<ClassAttendanceLogEntry>();
+
+            foreach (var learningPath in learningPaths)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    var classSession = schedule.ClassSession;
+                    var attendanceLogs = classSession.AttendanceLog
+                        .Where(log => log.Teacher.Id == teacher.Id &&
+                                      log.TimeStamp >= startDate &&
+                                      log.TimeStamp <= endDate)
+                        .ToList();
+
+                    teacherAttendance.AddRange(attendanceLogs);
+                }
+            }
+
+            return teacherAttendance;
+        }
+
 
 
 
