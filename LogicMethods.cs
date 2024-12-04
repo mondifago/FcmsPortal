@@ -72,8 +72,7 @@ namespace FcmsPortal
 
             learningPath.Students.Add(student);
         }
-
-
+        
         //student make payment
         public static void MakePayment(Student student, double amount, string paymentMethod)
         {
@@ -89,38 +88,7 @@ namespace FcmsPortal
             };
             student.Person.SchoolFees.Payments.Add(payment);
         }
-
-        //create new class session
-        public static ClassSession CreateNewClassSession(
-        int id,
-        string course,
-        string topic,
-        string description,
-        string lessonNote,
-        string homeWork,
-        Staff teacher,
-        string teacherRemarks
-        )
-        {
-            if (teacher == null)
-            {
-                throw new NullReferenceException("The teacher cannot be null when creating a class session.");
-            }
-
-            var classSession = new ClassSession
-            {
-                Id = id,
-                Course = course,
-                Topic = topic,
-                Description = description,
-                LessonNote = lessonNote,
-                HomeWork = homeWork,
-                Teacher = teacher,
-                TeacherRemarks = teacherRemarks
-            };
-            return classSession;
-        }
-
+        
         // add a teacher to a class session
         public static void AddTeacherToClassSession(ClassSession classSession, Staff teacher)
         {
@@ -298,7 +266,7 @@ namespace FcmsPortal
             classSession.AttendanceLog.Add(attendanceLogEntry);
         }
 
-        //Retieve a student's attendance for a particular course in a semester
+        //Retrieve a student's attendance for a particular course in a semester
         public static List<ClassAttendanceLogEntry> GetStudentAttendanceForCourse(
         Student student,
         string course,
@@ -400,7 +368,6 @@ namespace FcmsPortal
                     teacherAttendance.AddRange(attendanceLogs);
                 }
             }
-
             return teacherAttendance;
         }
 
