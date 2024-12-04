@@ -6,5 +6,8 @@
         public Student Student { get; set; }
         public string Answer { get; set; }
         public DateTime SubmissionDate { get; set; }
+        public bool IsGraded { get; set; }
+        public string Feedback { get; set; }
+        public double? Grade { get; set; }
     }
 }
