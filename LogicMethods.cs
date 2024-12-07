@@ -72,7 +72,7 @@ namespace FcmsPortal
 
             learningPath.Students.Add(student);
         }
-        
+
         //student make payment
         public static void MakePayment(Student student, double amount, string paymentMethod)
         {
@@ -88,7 +88,7 @@ namespace FcmsPortal
             };
             student.Person.SchoolFees.Payments.Add(payment);
         }
-        
+
         // add a teacher to a class session
         public static void AddTeacherToClassSession(ClassSession classSession, Staff teacher)
         {
@@ -370,7 +370,48 @@ namespace FcmsPortal
             }
             return teacherAttendance;
         }
- 
+
+        //To retrieve all Grades of all students for a particular course
+        public static List<TestGrade> GetAllGradesForCourse(string courseName, List<Student> students)
+        {
+            if (string.IsNullOrWhiteSpace(courseName))
+                throw new ArgumentException("Course name cannot be null or empty.", nameof(courseName));
+
+            if (students == null || !students.Any())
+                return new List<TestGrade>();
+
+            var allGrades = new List<TestGrade>();
+
+            foreach (var student in students)
+            {
+                var courseGrades = student.CourseGrade?.TestGrades
+                    .Where(grade => grade.Course == courseName)
+                    .ToList();
+
+                if (courseGrades != null)
+                    allGrades.AddRange(courseGrades);
+            }
+
+            return allGrades;
+        }
+
+        //To retrieve the homework Grades of a students for a particular course
+        public static List<TestGrade> GetHomeworkScoresForCourse(Student student, string courseName)
+        {
+            if (student == null)
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(courseName))
+                throw new ArgumentException("Course name cannot be null or empty.", nameof(courseName));
+
+            // Filter for homework grades for the specified course
+            return student.CourseGrade?.TestGrades
+                .Where(grade => grade.Course == courseName && grade.GradeType == GradeType.Homework)
+                .ToList() ?? new List<TestGrade>();
+        }
+
+
+
 
 
 
