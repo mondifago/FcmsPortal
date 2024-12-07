@@ -8,6 +8,6 @@
         public DateTime SubmissionDate { get; set; }
         public bool IsGraded { get; set; }
         public string Feedback { get; set; }
-        public double? Grade { get; set; }
+        public TestGrade HomeworkGrade { get; set; }
     }
 }
