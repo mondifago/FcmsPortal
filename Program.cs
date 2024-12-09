@@ -58,7 +58,7 @@ namespace FcmsPortal
 
             //create student 3
             Student student3 = new Student();
-            student3.ID = 103;
+            student3.ID = 303;
             student3.Person = new Person();
             student3.Person.FirstName = "Zac";
             student3.Person.MiddleName = "Z";
@@ -103,19 +103,28 @@ namespace FcmsPortal
             staff3.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[0];
             fcmSchool.Staff.Add(staff3);
 
+            //retrieving SC_3 students in Senior College based on Education Level and Class level selection
+            var sc3Students = LogicMethods.GetStudentsByLevel(fcmSchool, EducationLevel.SeniorCollege, ClassLevel.SC_3);
+
+            Console.WriteLine("SC_3 Students:");
+            foreach (var student in sc3Students)
+            {
+                Console.WriteLine($"ID: {student.ID}, Name: {student.Person.FirstName} {student.Person.MiddleName} {student.Person.LastName}");
+            }
 
 
 
 
 
 
+            /*
 
             //put the multiplication class session for  primary 3 in a schedule
             ScheduleEntry scheduleEntry1 = new ScheduleEntry();
             scheduleEntry1.Id = 301001;
             scheduleEntry1.DateTime = new DateTime(2024, 02, 15, 09, 00, 00);
             scheduleEntry1.Duration = TimeSpan.FromMinutes(45);
-            scheduleEntry1.ClassSession = multiplicationClass;
+
 
 
             //put the multiplication class schedule in a learning path
@@ -175,7 +184,7 @@ namespace FcmsPortal
 
             LogicMethods.MakePayment(student1, 100.0, "Credit Card");
 
-            //LogicMethods.ShowAllPayments(student1);
+            //LogicMethods.ShowAllPayments(student1); */
         }
 
     }
