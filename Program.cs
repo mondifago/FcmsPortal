@@ -6,8 +6,8 @@ namespace FcmsPortal
     {
         /// <summary>
         /// create one school
-        /// create one student
-        /// create the student's math teacher
+        /// create 3 students
+        /// create admin staff
         /// create the student's parent
         /// create primary 3 math session
         /// put the multiplication class session for  primary 3 in a schedule
@@ -32,92 +32,82 @@ namespace FcmsPortal
             address.PostalCode = "P.O.Box 150";
             address.Country = "Nigeria";
 
-
-            //create a primary 3 student
+            //create student 1
             Student student1 = new Student();
-            student1.ID = 304;
-            TestGrade t1 = new TestGrade()
-            {
-                Course = "Mathematics",
-                Teacher = new Staff()
-                {
-                    Person = new Person()
-                    {
-                        FirstName = "Mike"
-                    }
-                },
-                GradeType = GradeType.Quiz,
-                Score = 27.3,
-                Date = DateTime.Now,
-            };
-
-            // Initialize GuardianInfo
-            student1.GuardianInfo = new Guardian();
-            student1.GuardianInfo.RelationshipToStudent = Relationship.Father;
-
-            // Initialize Person within GuardianInfo
-            student1.GuardianInfo.Person = new Person();
-            student1.GuardianInfo.Person.FirstName = "Adam";
-            student1.GuardianInfo.Person.MiddleName = "Ben";
-            student1.GuardianInfo.Person.LastName = "Mark";
-
+            student1.ID = 301;
             // Initialize Person
             student1.Person = new Person();
-            student1.Person.FirstName = "Lucky";
-            student1.Person.MiddleName = "Steve";
-            student1.Person.LastName = "Mark";
-            student1.Person.Sex = Gender.Male;
-            student1.Person.DateOfBirth = new DateTime(1990, 12, 30);
-            student1.Person.EducationLevel = EducationLevel.Primary;
-            student1.Person.ClassLevel = ClassLevel.PRI_3;
-            Console.WriteLine(student1.Person.Age);
-
-
+            student1.Person.FirstName = "Joe";
+            student1.Person.MiddleName = "J";
+            student1.Person.LastName = "Jake";
+            student1.Person.EducationLevel = EducationLevel.SeniorCollege;
+            student1.Person.ClassLevel = ClassLevel.SC_3;
             // Add the student to the school's student list
             fcmSchool.Students.Add(student1);
 
-            //create student's mathematics teacher
-            Staff mathTeacher = new Staff();
-            Person staff1 = new Person();
-            mathTeacher.Id = 1234;
-            mathTeacher.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.Primary)[0];
-            mathTeacher.JobRole = "Primary Education Teacher";
-            mathTeacher.Person = staff1;
-            staff1.FirstName = "John";
-            staff1.MiddleName = "Michael";
-            staff1.LastName = "Smith";
-            staff1.Sex = Gender.Male;
-            staff1.EducationLevel = EducationLevel.Primary;
-            staff1.ClassLevel = ClassLevel.PRI_3;
+            //create student 2
+            Student student2 = new Student();
+            student2.ID = 302;
+            student2.Person = new Person();
+            student2.Person.FirstName = "Dan";
+            student2.Person.MiddleName = "D";
+            student2.Person.LastName = "Deen";
+            student2.Person.EducationLevel = EducationLevel.SeniorCollege;
+            student2.Person.ClassLevel = ClassLevel.SC_3;
+            fcmSchool.Students.Add(student2);
 
-            // Add the mathematics teacher to the school's staff list
-            fcmSchool.Staff.Add(mathTeacher);
+            //create student 3
+            Student student3 = new Student();
+            student3.ID = 103;
+            student3.Person = new Person();
+            student3.Person.FirstName = "Zac";
+            student3.Person.MiddleName = "Z";
+            student3.Person.LastName = "Zik";
+            student3.Person.EducationLevel = EducationLevel.SeniorCollege;
+            student3.Person.ClassLevel = ClassLevel.SC_3;
+            fcmSchool.Students.Add(student3);
 
-            //create student's Guardian
-            Guardian guardian1 = new Guardian();
-            guardian1.Occupation = "Engineer";
-            guardian1.RelationshipToStudent = Relationship.Father;
-            guardian1.Person = new Person() { FirstName = "Adam", MiddleName = "ben", LastName = "Mark" };
-            guardian1.Person.PhoneNumber = new List<string> { "35237522372", "4527245742" };
-            guardian1.Person.SchoolFees = new Schoolfees
-            {
-                TotalAmount = 1000.00,
-                Payments = new List<Payment>
-                {
-                    new Payment { Amount = 6.666, Date = new DateTime(2024, 02, 22) }
-                }
-            };
+            //create admin staff
+            Staff staff1 = new Staff();
+            staff1.Id = 101;
+            staff1.Person = new Person();
+            staff1.Person.FirstName = "Mr. Fin";
+            staff1.Person.MiddleName = "F";
+            staff1.Person.LastName = "Fen";
+            staff1.JobRole = "Principal";
+            fcmSchool.Staff.Add(staff1);
 
-            //create primary 3 Mathematics class session
-            ClassSession multiplicationClass = new ClassSession();
-            multiplicationClass.Course = CourseDefaults.GetCourseNames(EducationLevel.Primary)[0];
-            multiplicationClass.Topic = " Multiplication Table";
-            multiplicationClass.Description = " Learning multiplication of single digit numbers";
-            multiplicationClass.Teacher = mathTeacher;
-            multiplicationClass.AttendanceLog = new List<ClassAttendanceLogEntry>
-            {
-            new ClassAttendanceLogEntry() { Attendees = new List<Student>() {student1} }
-            };
+            //create Biology teacher
+            Staff staff2 = new Staff();
+            staff2.Id = 102;
+            staff2.Person = new Person();
+            staff2.Person.FirstName = "Mr Eric";
+            staff2.Person.MiddleName = "E";
+            staff2.Person.LastName = "Een";
+            staff2.Person.EducationLevel = EducationLevel.SeniorCollege;
+            staff2.Person.ClassLevel = ClassLevel.SC_3;
+            staff2.JobRole = "Biology Teacher";
+            staff2.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[0];
+            fcmSchool.Staff.Add(staff2);
+
+            //create Geography teacher
+            Staff staff3 = new Staff();
+            staff3.Id = 103;
+            staff3.Person = new Person();
+            staff3.Person.FirstName = "Mrs Qin";
+            staff3.Person.MiddleName = "Q";
+            staff3.Person.LastName = "Que";
+            staff3.Person.EducationLevel = EducationLevel.SeniorCollege;
+            staff3.Person.ClassLevel = ClassLevel.SC_3;
+            staff3.JobRole = "Geography Teacher";
+            staff3.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[0];
+            fcmSchool.Staff.Add(staff3);
+
+
+
+
+
+
 
 
             //put the multiplication class session for  primary 3 in a schedule
