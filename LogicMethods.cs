@@ -5,6 +5,18 @@ namespace FcmsPortal
 {
     internal static class LogicMethods
     {
+        // Filter students based on specified education level and class level
+        public static List<Student> GetStudentsByLevel(School school, EducationLevel educationLevel, ClassLevel classLevel)
+        {
+            if (school == null)
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+
+            return school.Students
+                .Where(student => student.Person.EducationLevel == educationLevel
+                                  && student.Person.ClassLevel == classLevel)
+                .ToList();
+        }
+
         public static Curriculum GenerateCurriculum(School school, int year, ClassLevel classLevel, EducationLevel educationLevel, int semester, int id)
         {
             var curriculum = new Curriculum
