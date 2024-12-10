@@ -109,62 +109,7 @@ namespace FcmsPortal
             };
             student.Person.SchoolFees.Payments.Add(payment);
         }
-
-        // add a teacher to a class session
-        public static void AddTeacherToClassSession(ClassSession classSession, Staff teacher)
-        {
-            if (classSession == null)
-            {
-                throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
-            }
-
-            if (teacher == null)
-            {
-                throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
-            }
-            classSession.Teacher = teacher;
-        }
-
-        //create new schedule
-        public static ScheduleEntry CreateScheduleEntry(int id, DateTime dateTime, TimeSpan duration, ClassSession classSession)
-        {
-            if (classSession == null)
-            {
-                throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
-            }
-            var scheduleEntry = new ScheduleEntry
-            {
-                Id = id,
-                DateTime = dateTime,
-                Duration = duration,
-                ClassSession = classSession
-            };
-            return scheduleEntry;
-        }
-
-        //schedule a class session
-        public static void ScheduleClassSession(LearningPath learningPath, ClassSession classSession, int scheduleId, DateTime dateTime, TimeSpan duration)
-        {
-            if (learningPath == null)
-            {
-                throw new ArgumentNullException(nameof(learningPath), "LearningPath cannot be null.");
-            }
-
-            if (classSession == null)
-            {
-                throw new ArgumentNullException(nameof(classSession), "ClassSession cannot be null.");
-            }
-            var scheduleEntry = new ScheduleEntry
-            {
-                Id = scheduleId,
-                DateTime = dateTime,
-                Duration = duration,
-                ClassSession = classSession
-            };
-
-            learningPath.Schedule.Add(scheduleEntry);
-        }
-
+        
         //add a schedule to a learning path
         public static void AddScheduleToLearningPath(LearningPath learningPath, ScheduleEntry scheduleEntry)
         {
