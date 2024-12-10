@@ -8,8 +8,8 @@ namespace FcmsPortal
         /// create one school
         /// create 3 students
         /// create admin staff
-        /// create the student's parent
-        /// create primary 3 math session
+        /// retrieve SC_3 students from school list
+        /// retrieve Senior college teachers from school list
         /// put the multiplication class session for  primary 3 in a schedule
         /// put the multiplication class schedule in a learning path
         /// create an admin staff
@@ -105,7 +105,6 @@ namespace FcmsPortal
 
             //retrieving SC_3 students in Senior College based on Education Level and Class level selection
             var sc3Students = LogicMethods.GetStudentsByLevel(fcmSchool, EducationLevel.SeniorCollege, ClassLevel.SC_3);
-
             Console.WriteLine("SC_3 Students:");
             foreach (var student in sc3Students)
             {
@@ -119,6 +118,24 @@ namespace FcmsPortal
             {
                 Console.WriteLine($"ID: {staff.Id}, Name: {staff.Person.FirstName} {staff.Person.MiddleName} {staff.Person.LastName} Area of specialization: {staff.AreaOfSpecialization}");
             }
+
+            //create a biology class session and assign a teacher to it
+            var classSession1 = new ClassSession();
+            classSession1.Id = 1;
+            classSession1.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
+            classSession1.Topic = "Digestive System";
+            classSession1.Description = "Function of Organs in Digestive System";
+            classSession1.LessonNote = "Make the students understand the function of every organ within the Digestive system";
+            classSession1.Teacher = staff2;
+
+            //create the second biology class session
+            var classSession2 = new ClassSession();
+            classSession2.Id = 2;
+            classSession2.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
+            classSession2.Topic = "Digestive Sytem";
+            classSession2.Description = "Function of Enzymes in Digestive System";
+            classSession1.LessonNote = "Make the students understand the function of every Enzyme within the Digestive system";
+            classSession1.Teacher = staff2;
 
 
 
@@ -142,9 +159,9 @@ namespace FcmsPortal
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1 };
             learningPath1.StudentsPaymentSuccesful = new List<Student>() { student1 };
 
-            //create two more class sessions
-            var classSession2 = new ClassSession();
-            var classSession3 = new ClassSession();
+            
+            
+            
 
 
             //create corresponding schedule for them
