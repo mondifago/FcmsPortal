@@ -180,6 +180,15 @@ namespace FcmsPortal
             scheduleEntry4.DateTime = new DateTime(2026, 04, 17, 09, 00, 00);
             scheduleEntry4.Duration = TimeSpan.FromMinutes(30);
             scheduleEntry4.ClassSession = classSession4;
+            
+            //put all the schedule in a learning path
+            LearningPath learningPath1 = new LearningPath();
+            learningPath1.Id = 3301;
+            learningPath1.EducationLevel = EducationLevel.SeniorCollege;
+            learningPath1.ClassLevel = ClassLevel.SC_3;
+            learningPath1.Semester = 1;
+            learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
+            learningPath1.Students = new List<Student>() { student1, student2, student3 };
 
 
 
@@ -193,14 +202,7 @@ namespace FcmsPortal
             /*
 
 
-            //put the multiplication class schedule in a learning path
-            LearningPath learningPath1 = new LearningPath();
-            learningPath1.Id = 301;
-            learningPath1.EducationLevel = EducationLevel.Primary;
-            learningPath1.ClassLevel = ClassLevel.PRI_3;
-            learningPath1.Semester = 1;
-            learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1 };
-            learningPath1.StudentsPaymentSuccesful = new List<Student>() { student1 };
+            
 
             //create corresponding schedule for them
             var scheduleEntry2 = new ScheduleEntry();
