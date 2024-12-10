@@ -112,7 +112,13 @@ namespace FcmsPortal
                 Console.WriteLine($"ID: {student.ID}, Name: {student.Person.FirstName} {student.Person.MiddleName} {student.Person.LastName}");
             }
 
-
+            //retrieving teachers who are specialized for handling senior college courses
+            var sCStaff = LogicMethods.GetStaffByEducationLevel(fcmSchool, EducationLevel.SeniorCollege);
+            Console.WriteLine("Senior College Teachers:");
+            foreach (var staff in sCStaff)
+            {
+                Console.WriteLine($"ID: {staff.Id}, Name: {staff.Person.FirstName} {staff.Person.MiddleName} {staff.Person.LastName}");
+            }
 
 
 

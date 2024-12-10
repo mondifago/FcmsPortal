@@ -17,6 +17,15 @@ namespace FcmsPortal
                 .ToList();
         }
 
+        //filter staff based on specified education level
+        public static List<Staff> GetStaffByEducationLevel(School school, EducationLevel educationLevel)
+        {
+            if (school == null)
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            return school.Staff
+                .Where(staff => staff.Person.EducationLevel == educationLevel).ToList();
+        }
+
         public static Curriculum GenerateCurriculum(School school, int year, ClassLevel classLevel, EducationLevel educationLevel, int semester, int id)
         {
             var curriculum = new Curriculum
