@@ -144,10 +144,10 @@ namespace FcmsPortal
             classSession3.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
             classSession3.Topic = "The Solar System";
             classSession3.Description = "Planets of the solar System";
-            classSession3.LessonNote = "Make the students know the name of the nine planets of the system";
+            classSession3.LessonNote = "Make the students know the name of the nine planets";
             classSession3.Teacher = staff3;
 
-            //craete another geography class session
+            //create another geography class session
             var classSession4 = new ClassSession();
             classSession4.Id = 4;
             classSession4.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
@@ -155,6 +155,32 @@ namespace FcmsPortal
             classSession4.Description = "Introduction to Continents";
             classSession4.LessonNote = "Make the students know the name and location of the all the continents";
             classSession4.Teacher = staff3;
+            
+            //create schedule for all existing class sessions
+            ScheduleEntry scheduleEntry1 = new ScheduleEntry();
+            scheduleEntry1.Id = 11;
+            scheduleEntry1.DateTime = new DateTime(2026, 04, 15, 10, 00, 00);
+            scheduleEntry1.Duration = TimeSpan.FromMinutes(30);
+            scheduleEntry1.ClassSession = classSession1;
+
+            ScheduleEntry scheduleEntry2 = new ScheduleEntry();
+            scheduleEntry2.Id = 22;
+            scheduleEntry2.DateTime = new DateTime(2026, 04, 17, 10, 00, 00);
+            scheduleEntry2.Duration = TimeSpan.FromMinutes(30);
+            scheduleEntry2.ClassSession = classSession2;
+
+            ScheduleEntry scheduleEntry3 = new ScheduleEntry();
+            scheduleEntry3.Id = 33;
+            scheduleEntry3.DateTime = new DateTime(2026, 04, 15, 11, 00, 00);
+            scheduleEntry3.Duration = TimeSpan.FromMinutes(30);
+            scheduleEntry3.ClassSession = classSession3;
+
+            ScheduleEntry scheduleEntry4 = new ScheduleEntry();
+            scheduleEntry4.Id = 44;
+            scheduleEntry4.DateTime = new DateTime(2026, 04, 17, 09, 00, 00);
+            scheduleEntry4.Duration = TimeSpan.FromMinutes(30);
+            scheduleEntry4.ClassSession = classSession4;
+
 
 
 
@@ -166,13 +192,6 @@ namespace FcmsPortal
 
             /*
 
-            //put the multiplication class session for  primary 3 in a schedule
-            ScheduleEntry scheduleEntry1 = new ScheduleEntry();
-            scheduleEntry1.Id = 301001;
-            scheduleEntry1.DateTime = new DateTime(2024, 02, 15, 09, 00, 00);
-            scheduleEntry1.Duration = TimeSpan.FromMinutes(45);
-
-
 
             //put the multiplication class schedule in a learning path
             LearningPath learningPath1 = new LearningPath();
@@ -182,11 +201,6 @@ namespace FcmsPortal
             learningPath1.Semester = 1;
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1 };
             learningPath1.StudentsPaymentSuccesful = new List<Student>() { student1 };
-
-            
-            
-            
-
 
             //create corresponding schedule for them
             var scheduleEntry2 = new ScheduleEntry();
@@ -207,7 +221,7 @@ namespace FcmsPortal
             //add all learning paths to school
             fcmSchool.LearningPath = new List<LearningPath> { learningPath1 };
 
-            //generate curriculum for 
+            //generate curriculum for
             var curriculum = LogicMethods.GenerateCurriculum(fcmSchool, 2024, ClassLevel.PRI_3, EducationLevel.Primary, 1, 301);
             int year = curriculum.Year;
             Console.WriteLine($"Curriculum for {year}:");
