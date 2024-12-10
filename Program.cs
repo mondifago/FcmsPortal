@@ -87,7 +87,7 @@ namespace FcmsPortal
             staff2.Person.EducationLevel = EducationLevel.SeniorCollege;
             staff2.Person.ClassLevel = ClassLevel.SC_3;
             staff2.JobRole = "Biology Teacher";
-            staff2.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[0];
+            staff2.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
             fcmSchool.Staff.Add(staff2);
 
             //create Geography teacher
@@ -100,7 +100,7 @@ namespace FcmsPortal
             staff3.Person.EducationLevel = EducationLevel.SeniorCollege;
             staff3.Person.ClassLevel = ClassLevel.SC_3;
             staff3.JobRole = "Geography Teacher";
-            staff3.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[0];
+            staff3.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
             fcmSchool.Staff.Add(staff3);
 
             //retrieving SC_3 students in Senior College based on Education Level and Class level selection
@@ -117,7 +117,7 @@ namespace FcmsPortal
             Console.WriteLine("Senior College Teachers:");
             foreach (var staff in sCStaff)
             {
-                Console.WriteLine($"ID: {staff.Id}, Name: {staff.Person.FirstName} {staff.Person.MiddleName} {staff.Person.LastName}");
+                Console.WriteLine($"ID: {staff.Id}, Name: {staff.Person.FirstName} {staff.Person.MiddleName} {staff.Person.LastName} Area of specialization: {staff.AreaOfSpecialization}");
             }
 
 
