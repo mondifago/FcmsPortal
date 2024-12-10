@@ -10,8 +10,9 @@ namespace FcmsPortal
         /// create admin staff
         /// retrieve SC_3 students from school list
         /// retrieve Senior college teachers from school list
-        /// put the multiplication class session for  primary 3 in a schedule
-        /// put the multiplication class schedule in a learning path
+        /// create two biology class sessions and assign it to a teacher
+        /// create two geography class sessions and assign it to a teacher
+        /// 
         /// create an admin staff
         /// </summary>
         /// <param name="args"></param>
@@ -136,6 +137,29 @@ namespace FcmsPortal
             classSession2.Description = "Function of Enzymes in Digestive System";
             classSession1.LessonNote = "Make the students understand the function of every Enzyme within the Digestive system";
             classSession1.Teacher = staff2;
+
+            //create a geography class session
+            var classSession3 = new ClassSession();
+            classSession3.Id = 3;
+            classSession3.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
+            classSession3.Topic = "The Solar System";
+            classSession3.Description = "Planets of the solar System";
+            classSession3.LessonNote = "Make the students know the name of the nine planets of the system";
+            classSession3.Teacher = staff3;
+
+            //craete another geography class session
+            var classSession4 = new ClassSession();
+            classSession4.Id = 4;
+            classSession4.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
+            classSession4.Topic = "Map of the earth";
+            classSession4.Description = "Introduction to Continents";
+            classSession4.LessonNote = "Make the students know the name and location of the all the continents";
+            classSession4.Teacher = staff3;
+
+
+
+
+
 
 
 
