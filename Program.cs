@@ -189,7 +189,9 @@ namespace FcmsPortal
             learningPath1.Semester = 1;
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
             learningPath1.Students = new List<Student>() { student1, student2, student3 };
-
+            
+            //LogicMethods.AddScheduleToLearningPath(learningPath1,scheduleEntry1);
+            Console.WriteLine($"Learning Path {learningPath1.Id} now contains {learningPath1.Schedule.Count} schedule(s).");
 
 
 
