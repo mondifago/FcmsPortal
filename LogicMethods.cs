@@ -54,6 +54,24 @@ namespace FcmsPortal
 
             return curriculum;
         }
+        
+        //Assign fees for all students in a specific learning path
+        public static void AssignSemesterFees(LearningPath learningPath)
+        {
+            if (learningPath == null) throw new ArgumentNullException(nameof(learningPath));
+
+            foreach (var student in learningPath.Students)
+            {
+                if (student.Person.SchoolFees == null)
+                {
+                    student.Person.SchoolFees = new Schoolfees();
+                }
+
+                // Assign the semester fee
+                student.Person.SchoolFees.TotalAmount = learningPath.FeePerSemester;
+            }
+        }
+
 
         //Check for any payment for a student
         public static bool IsStudentPaymentMade(Student student)
