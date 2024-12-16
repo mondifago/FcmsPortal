@@ -85,7 +85,7 @@ Please read our [Code of Conduct](CONDUCT.md) before contributing.
 Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information.
 
 ## Contact
-- Your Name - your.email@example.com
+- Ugochukwu Maduakor - umaduakor@hotmail.com
 - Project Link: [https://github.com/yourusername/your-project](https://github.com/yourusername/your-project)
 
 ## Acknowledgements
