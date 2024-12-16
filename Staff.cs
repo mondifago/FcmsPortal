@@ -1,3 +1,5 @@
+using FcmsPortal.Enums;
+
 namespace FcmsPortal;
 
 public class Staff
@@ -16,11 +18,18 @@ public class Staff
         set { _person = value; }
     }
 
-    private string _jobRole;
-    public string JobRole
+    private JobRole _jobRole;
+    public JobRole JobRole
     {
         get { return _jobRole; }
         set { _jobRole = value; }
+    }
+    
+    private string _jobDescription;
+    public string JobDescription
+    {
+        get { return _jobDescription; }
+        set { _jobDescription = value; }
     }
 
     private List<string> _qualifications;

@@ -75,7 +75,8 @@ namespace FcmsPortal
             staff1.Person.FirstName = "Mr. Fin";
             staff1.Person.MiddleName = "F";
             staff1.Person.LastName = "Fen";
-            staff1.JobRole = "Principal";
+            staff1.JobRole = JobRole.Admin;
+            staff1.JobDescription = "Principal";
             fcmSchool.Staff.Add(staff1);
 
             //create Biology teacher
@@ -87,7 +88,8 @@ namespace FcmsPortal
             staff2.Person.LastName = "Een";
             staff2.Person.EducationLevel = EducationLevel.SeniorCollege;
             staff2.Person.ClassLevel = ClassLevel.SC_3;
-            staff2.JobRole = "Biology Teacher";
+            staff2.JobRole = JobRole.Teacher;
+            staff2.JobDescription = "Biology Teacher";
             staff2.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
             fcmSchool.Staff.Add(staff2);
 
@@ -100,7 +102,8 @@ namespace FcmsPortal
             staff3.Person.LastName = "Que";
             staff3.Person.EducationLevel = EducationLevel.SeniorCollege;
             staff3.Person.ClassLevel = ClassLevel.SC_3;
-            staff3.JobRole = "Geography Teacher";
+            staff3.JobRole = JobRole.Teacher;
+            staff3.JobDescription = "Geography Teacher";
             staff3.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
             fcmSchool.Staff.Add(staff3);
 
