@@ -1,4 +1,4 @@
-# Project Name
+# Future Champions Model School Portal
 
 ## Table of Contents
 - [Overview](#overview)
