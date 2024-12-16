@@ -95,13 +95,7 @@ namespace FcmsPortal
             set { _phoneNumber = value; }
         }
 
-        private LearningPath _calendar;
-
-        public LearningPath Calendar
-        {
-            get { return _calendar; }
-            set { _calendar = value; }
-        }
+        public Calendar PersonalCalendar { get; set; } = new Calendar();
 
         private EducationLevel _educationLevel;
 
