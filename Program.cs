@@ -192,6 +192,26 @@ namespace FcmsPortal
             
             //LogicMethods.AddScheduleToLearningPath(learningPath1,scheduleEntry1);
             Console.WriteLine($"Learning Path {learningPath1.Id} now contains {learningPath1.Schedule.Count} schedule(s).");
+            
+            //add fee for learningpath 1
+            learningPath1.FeePerSemester = 100.0;
+            
+            //assign semester fee to each student in learningpath1
+            LogicMethods.AssignSemesterFeesToStudents(learningPath1);
+
+            foreach (var student in learningPath1.Students)
+            {
+                Console.WriteLine($"Student: {student.Person.FirstName} - {student.Person.SchoolFees.TotalAmount}");
+            }
+
+            Student student5 = new Student();
+            student5.ID = 304;
+            student5.Person = new Person();
+            student5.Person.FirstName = "Kevin";
+            
+            learningPath1.Students.Add(student5);
+            
+            Console.WriteLine($"Name: {student5.Person.FirstName} - Fees: {student5.Person.SchoolFees.TotalAmount}");
 
 
 
@@ -204,7 +224,7 @@ namespace FcmsPortal
             /*
 
 
-            
+
 
             //create corresponding schedule for them
             var scheduleEntry2 = new ScheduleEntry();

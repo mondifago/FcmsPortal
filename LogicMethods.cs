@@ -56,7 +56,7 @@ namespace FcmsPortal
         }
         
         //Assign fees for all students in a specific learning path
-        public static void AssignSemesterFees(LearningPath learningPath)
+        public static void AssignSemesterFeesToStudents(LearningPath learningPath)
         {
             if (learningPath == null) throw new ArgumentNullException(nameof(learningPath));
 
