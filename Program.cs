@@ -165,24 +165,32 @@ namespace FcmsPortal
             scheduleEntry1.DateTime = new DateTime(2026, 04, 15, 10, 00, 00);
             scheduleEntry1.Duration = TimeSpan.FromMinutes(30);
             scheduleEntry1.ClassSession = classSession1;
+            scheduleEntry1.Title = "Biology Class";
+            scheduleEntry1.Venue = "SSS3A Classroom";
 
             ScheduleEntry scheduleEntry2 = new ScheduleEntry();
             scheduleEntry2.Id = 22;
             scheduleEntry2.DateTime = new DateTime(2026, 04, 17, 10, 00, 00);
             scheduleEntry2.Duration = TimeSpan.FromMinutes(30);
             scheduleEntry2.ClassSession = classSession2;
+            scheduleEntry2.Title = "Biology Class";
+            scheduleEntry2.Venue = "SSS3A Classroom";
 
             ScheduleEntry scheduleEntry3 = new ScheduleEntry();
             scheduleEntry3.Id = 33;
             scheduleEntry3.DateTime = new DateTime(2026, 04, 15, 11, 00, 00);
             scheduleEntry3.Duration = TimeSpan.FromMinutes(30);
             scheduleEntry3.ClassSession = classSession3;
+            scheduleEntry3.Title = "Geography Class";
+            scheduleEntry3.Venue = "SSS3A Classroom";
 
             ScheduleEntry scheduleEntry4 = new ScheduleEntry();
             scheduleEntry4.Id = 44;
             scheduleEntry4.DateTime = new DateTime(2026, 04, 17, 09, 00, 00);
             scheduleEntry4.Duration = TimeSpan.FromMinutes(30);
             scheduleEntry4.ClassSession = classSession4;
+            scheduleEntry4.Title = "Geography Class";
+            scheduleEntry4.Venue = "SSS3A Classroom";
             
             //put all the schedule in a learning path
             LearningPath learningPath1 = new LearningPath();
@@ -214,7 +222,27 @@ namespace FcmsPortal
             
             learningPath1.Students.Add(student5);
             
-            Console.WriteLine($"Name: {student5.Person.FirstName} - Fees: {student5.Person.SchoolFees.TotalAmount}");
+            //Console.WriteLine($"Name: {student5.Person.FirstName} - Fees: {student5.Person.SchoolFees.TotalAmount}");
+            //above created new student Kevin does not have a set school fees Amount because event has to happen automatically
+            
+            //Create an Event, Annual Sports day
+            ScheduleEntry eventEntry = new ScheduleEntry();
+            eventEntry.Id = 20202;
+            eventEntry.DateTime = new DateTime(2026, 12, 20, 12, 00,00);
+            eventEntry.Duration = TimeSpan.FromHours(2);
+            eventEntry.Venue = "School Sports Field";
+            eventEntry.Event = "Annual Sport day";
+            eventEntry.Notes = "All students and staff to wear school sports attire";
+            
+            //Create a meeting for a Teachers with the Principal
+            ScheduleEntry meetingEntry = new ScheduleEntry();
+            meetingEntry.Id = 3098;
+            meetingEntry.DateTime = DateTime.Today;
+            meetingEntry.Duration = TimeSpan.FromMinutes(20);
+            meetingEntry.Venue = "Staff Room";
+            meetingEntry.Meeting = "Academic Staff Meeting";
+            meetingEntry.Notes = "Agenda: Weekly Academic Progress Evaluation";
+
 
 
 
