@@ -51,7 +51,6 @@ namespace FcmsPortal
                     curriculum.ClassSessions.Add(classSession);
                 }
             }
-
             return curriculum;
         }
         
@@ -66,11 +65,51 @@ namespace FcmsPortal
                 {
                     student.Person.SchoolFees = new Schoolfees();
                 }
-
                 // Assign the semester fee
                 student.Person.SchoolFees.TotalAmount = learningPath.FeePerSemester;
             }
         }
+        
+        //Assign fees to all students in all learning paths of a school assuming all students in the school has uniform school fees
+        public static void AssignFeesForAllLearningPaths(School school)
+        {
+            if (school == null) throw new ArgumentNullException(nameof(school));
+
+            foreach (var learningPath in school.LearningPath)
+            {
+                AssignSemesterFeesToStudents(learningPath);
+            }
+        }
+        
+        //Assign fees to list of selected learning paths 
+        public static void AssignFeesForSelectedLearningPaths(List<LearningPath> selectedLearningPaths)
+        {
+            if (selectedLearningPaths == null || selectedLearningPaths.Count == 0)
+            {
+                throw new ArgumentException("The list of selected learning paths cannot be null or empty.");
+            }
+
+            foreach (var learningPath in selectedLearningPaths)
+            {
+                if (learningPath == null)
+                {
+                    throw new ArgumentException("One of the learning paths in the list is null.");
+                }
+
+                foreach (var student in learningPath.Students)
+                {
+                    if (student.Person.SchoolFees == null)
+                    {
+                        student.Person.SchoolFees = new Schoolfees();
+                    }
+
+                    // Assign the semester fee
+                    student.Person.SchoolFees.TotalAmount = learningPath.FeePerSemester;
+                }
+            }
+        }
+
+
 
 
         //Check for any payment for a student
