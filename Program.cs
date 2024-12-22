@@ -26,6 +26,8 @@ namespace FcmsPortal
             fcmSchool.Name = "FCM School";
             fcmSchool.Staff = new List<Staff>();
             fcmSchool.Students = new List<Student>();
+            fcmSchool.LearningPath = new List<LearningPath>();
+            fcmSchool.SchoolCalendar = new List<SchoolCalendar>();
             fcmSchool.SchoolAddress = address;
             address.Street = "120 City Road";
             address.City = "Asaba";
@@ -43,6 +45,10 @@ namespace FcmsPortal
             student1.Person.LastName = "Jake";
             student1.Person.EducationLevel = EducationLevel.SeniorCollege;
             student1.Person.ClassLevel = ClassLevel.SC_3;
+            student1.Person.PersonalCalendar = new Calendar();
+            student1.Person.PersonalCalendar.Id = 177;
+            student1.Person.PersonalCalendar.Name = "Student1's Study Calendar";
+            student1.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
             // Add the student to the school's student list
             fcmSchool.Students.Add(student1);
 
@@ -55,6 +61,10 @@ namespace FcmsPortal
             student2.Person.LastName = "Deen";
             student2.Person.EducationLevel = EducationLevel.SeniorCollege;
             student2.Person.ClassLevel = ClassLevel.SC_3;
+            student2.Person.PersonalCalendar = new Calendar();
+            student2.Person.PersonalCalendar.Id = 277;
+            student2.Person.PersonalCalendar.Name = "Student2's Study Calendar";
+            student2.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
             fcmSchool.Students.Add(student2);
 
             //create student 3
@@ -66,6 +76,10 @@ namespace FcmsPortal
             student3.Person.LastName = "Zik";
             student3.Person.EducationLevel = EducationLevel.SeniorCollege;
             student3.Person.ClassLevel = ClassLevel.SC_3;
+            student3.Person.PersonalCalendar = new Calendar();
+            student3.Person.PersonalCalendar.Id = 377;
+            student3.Person.PersonalCalendar.Name = "Student3's Study Calendar";
+            student3.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
             fcmSchool.Students.Add(student3);
 
             //create admin staff
@@ -136,7 +150,7 @@ namespace FcmsPortal
             var classSession2 = new ClassSession();
             classSession2.Id = 2;
             classSession2.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
-            classSession2.Topic = "Digestive Sytem";
+            classSession2.Topic = "Digestive System";
             classSession2.Description = "Function of Enzymes in Digestive System";
             classSession1.LessonNote = "Make the students understand the function of every Enzyme within the Digestive system";
             classSession1.Teacher = staff2;
@@ -200,14 +214,14 @@ namespace FcmsPortal
             learningPath1.Semester = 1;
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
             learningPath1.Students = new List<Student>() { student1, student2, student3 };
-            
+            fcmSchool.LearningPath.Add(learningPath1);
             //LogicMethods.AddScheduleToLearningPath(learningPath1,scheduleEntry1);
             Console.WriteLine($"Learning Path {learningPath1.Id} now contains {learningPath1.Schedule.Count} schedule(s).");
             
-            //add fee for learningpath 1
+            //add fee for learning path 1
             learningPath1.FeePerSemester = 100.0;
             
-            //assign semester fee to each student in learningpath1
+            //assign semester fee to each student in learning path1
             LogicMethods.AssignSemesterFeesToStudents(learningPath1);
 
             foreach (var student in learningPath1.Students)
@@ -242,6 +256,30 @@ namespace FcmsPortal
             meetingEntry.Venue = "Staff Room";
             meetingEntry.Meeting = "Academic Staff Meeting";
             meetingEntry.Notes = "Agenda: Weekly Academic Progress Evaluation";
+
+            foreach (var scheduleEntry in learningPath1.Schedule)
+            {
+                Console.WriteLine($"{scheduleEntry.Id}: {scheduleEntry.DateTime} - {scheduleEntry.Title}, {scheduleEntry.Duration}");
+            }
+            
+            LogicMethods.DisplayStudentSchedules(learningPath1);
+            
+            // Synchronize schedules
+            LogicMethods.SynchronizeSchedulesWithStudents(learningPath1);
+            
+            LogicMethods.DisplayStudentSchedules(learningPath1);
+            var calendar = LogicMethods.GenerateStudentCalendar(fcmSchool, student1);
+
+            // Display the student's calendar
+            Console.WriteLine($"Calendar for {student1.Person.FirstName} {student1.Person.LastName}:");
+            foreach (var entry in calendar)
+            {
+                Console.WriteLine($"Date: {entry.DateTime}, Course: {entry.ClassSession.Course}, Topic: {entry.ClassSession.Topic}");
+            }
+            
+            
+
+
 
 
 

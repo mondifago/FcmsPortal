@@ -4,12 +4,7 @@ namespace FcmsPortal
 {
     public class Person
     {
-        private byte[] _profilePicture;
-        public byte[] ProfilePicture
-        {
-            get { return _profilePicture; }
-            set { _profilePicture = value; }
-        }
+        public string ProfilePictureUrl { get; set; }
 
         private string _firstName;
         public string FirstName

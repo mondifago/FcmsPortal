@@ -108,6 +108,82 @@ namespace FcmsPortal
                 }
             }
         }
+        
+        public static void DisplayStudentSchedules(LearningPath learningPath)
+        {
+            Console.WriteLine($"Schedules for Students in Learning Path: {learningPath.Id} - {learningPath.ClassLevel} {learningPath.EducationLevel}\n");
+
+            foreach (var student in learningPath.Students)
+            {
+                Console.WriteLine($"Student: {student.Person.FirstName} {student.Person.LastName}");
+
+                if (student.Person.PersonalCalendar != null && student.Person.PersonalCalendar.ScheduleEntries.Any())
+                {
+                    foreach (var entry in student.Person.PersonalCalendar.ScheduleEntries)
+                    {
+                        Console.WriteLine($" - Schedule Entry ID: {entry.Id}, Date: {entry.DateTime}, Duration: {entry.Duration}, Topic: {entry.ClassSession?.Topic ?? "N/A"}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(" - No schedules available.");
+                }
+                Console.WriteLine(); // Blank line for better readability
+            }
+        }
+        
+        
+        
+        
+        
+        public static void SynchronizeSchedulesWithStudents(LearningPath learningPath)
+        {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "LearningPath cannot be null.");
+            }
+
+            if (learningPath.Students == null || !learningPath.Students.Any())
+            {
+                throw new InvalidOperationException("No students are enrolled in the learning path.");
+            }
+
+            foreach (var student in learningPath.Students)
+            {
+                // Ensure the student's calendar is initialized
+                if (student.Person.PersonalCalendar == null)
+                {
+                    student.Person.PersonalCalendar = new Calendar
+                    {
+                        Id = student.ID,
+                        Name = $"{student.Person.FirstName} {student.Person.LastName}'s Calendar"
+                    };
+                }
+
+                // Synchronize the schedule entries from the learning path to the student's calendar
+                foreach (var entry in learningPath.Schedule)
+                {
+                    // Avoid duplicate entries by checking if the entry already exists
+                    if (!student.Person.PersonalCalendar.ScheduleEntries.Contains(entry))
+                    {
+                        student.Person.PersonalCalendar.ScheduleEntries.Add(entry);
+                    }
+                }
+            }
+        }
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
 
 
 
@@ -210,6 +286,7 @@ namespace FcmsPortal
             studentCalendar.Sort((entry1, entry2) => entry1.DateTime.CompareTo(entry2.DateTime));
 
             return studentCalendar;
+            
         }
 
         //generate teacher's calendar
