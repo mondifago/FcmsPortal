@@ -28,7 +28,7 @@ namespace FcmsPortal
             fcmSchool.Students = new List<Student>();
             fcmSchool.LearningPath = new List<LearningPath>();
             fcmSchool.SchoolCalendar = new List<SchoolCalendar>();
-            fcmSchool.SchoolAddress = address;
+            fcmSchool.Address = address;
             address.Street = "120 City Road";
             address.City = "Asaba";
             address.State = "Delta State";

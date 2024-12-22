@@ -3,7 +3,11 @@
     public class School
     {
         public string Name { get; set; }
-        public Address SchoolAddress { get; set; }
+        public string LogoUrl { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string WebsiteUrl { get; set; }
+        public Address Address { get; set; }
         public List<Staff> Staff { get; set; } = new();
         public List<Student> Students { get; set; } = new();
         public List<LearningPath> LearningPath { get; set; } = new();
