@@ -11,7 +11,7 @@
         public List<Staff> Staff { get; set; } = new();
         public List<Student> Students { get; set; } = new();
         public List<LearningPath> LearningPath { get; set; } = new();
-        public List<SchoolCalendar> SchoolCalendar { get; set; }
+        public List<Calendar> SchoolCalendar { get; set; }
         public List<CourseGrade> Grades { get; set; } = new();
     }
 }

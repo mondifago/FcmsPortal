@@ -5,6 +5,9 @@ namespace FcmsPortal
 {
     internal static class LogicMethods
     {
+        /// <summary>
+        /// Methods involved in Initial Setup
+        /// </summary>
         // Filter students based on specified education level and class level
         public static List<Student> GetStudentsByLevel(School school, EducationLevel educationLevel, ClassLevel classLevel)
         {
@@ -25,6 +28,46 @@ namespace FcmsPortal
             return school.Staff
                 .Where(staff => staff.Person.EducationLevel == educationLevel).ToList();
         }
+        
+        /// <summary>
+        /// Methods involved in Scheduling
+        /// </summary>
+        //add a schedule to a learning path
+        public static void AddScheduleToLearningPath(LearningPath learningPath, ScheduleEntry scheduleEntry)
+        {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+
+            if (scheduleEntry == null)
+            {
+                throw new ArgumentNullException(nameof(scheduleEntry), "Schedule entry cannot be null.");
+            }
+
+            if (learningPath.Schedule.Any(s => s.Id == scheduleEntry.Id))
+            {
+                throw new ArgumentException($"A schedule with ID {scheduleEntry.Id} already exists in the learning path.");
+            }
+            learningPath.Schedule.Add(scheduleEntry);
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         public static Curriculum GenerateCurriculum(School school, int year, ClassLevel classLevel, EducationLevel educationLevel, int semester, int id)
         {
@@ -159,7 +202,6 @@ namespace FcmsPortal
                         Name = $"{student.Person.FirstName} {student.Person.LastName}'s Calendar"
                     };
                 }
-
                 // Synchronize the schedule entries from the learning path to the student's calendar
                 foreach (var entry in learningPath.Schedule)
                 {
@@ -243,25 +285,7 @@ namespace FcmsPortal
             student.Person.SchoolFees.Payments.Add(payment);
         }
         
-        //add a schedule to a learning path
-        public static void AddScheduleToLearningPath(LearningPath learningPath, ScheduleEntry scheduleEntry)
-        {
-            if (learningPath == null)
-            {
-                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-            }
-
-            if (scheduleEntry == null)
-            {
-                throw new ArgumentNullException(nameof(scheduleEntry), "Schedule entry cannot be null.");
-            }
-
-            if (learningPath.Schedule.Any(s => s.Id == scheduleEntry.Id))
-            {
-                throw new ArgumentException($"A schedule with ID {scheduleEntry.Id} already exists in the learning path.");
-            }
-            learningPath.Schedule.Add(scheduleEntry);
-        }
+       
 
         //generate a student's calendar
         public static List<ScheduleEntry> GenerateStudentCalendar(School school, Student student)
