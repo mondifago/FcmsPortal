@@ -34,6 +34,12 @@ namespace FcmsPortal
             address.State = "Delta State";
             address.PostalCode = "P.O.Box 150";
             address.Country = "Nigeria";
+            Calendar allCalendar = new Calendar();
+            allCalendar.Id = 2024;
+            allCalendar.Name = "2024 Calendar";
+            allCalendar.ScheduleEntries = new List<ScheduleEntry>();
+            fcmSchool.SchoolCalendar.Add(allCalendar);
+            
 
             //create student 1
             Student student1 = new Student();
@@ -247,6 +253,7 @@ namespace FcmsPortal
             eventEntry.Venue = "School Sports Field";
             eventEntry.Event = "Annual Sport day";
             eventEntry.Notes = "All students and staff to wear school sports attire";
+            allCalendar.ScheduleEntries.Add(eventEntry);
             
             //Create a meeting for a Teachers with the Principal
             ScheduleEntry meetingEntry = new ScheduleEntry();
@@ -256,6 +263,8 @@ namespace FcmsPortal
             meetingEntry.Venue = "Staff Room";
             meetingEntry.Meeting = "Academic Staff Meeting";
             meetingEntry.Notes = "Agenda: Weekly Academic Progress Evaluation";
+            allCalendar.ScheduleEntries.Add(meetingEntry);
+           
 
             foreach (var scheduleEntry in learningPath1.Schedule)
             {
