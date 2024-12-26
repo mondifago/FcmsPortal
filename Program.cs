@@ -143,6 +143,12 @@ namespace FcmsPortal
                 Console.WriteLine($"ID: {staff.Id}, Name: {staff.Person.FirstName} {staff.Person.MiddleName} {staff.Person.LastName} Area of specialization: {staff.AreaOfSpecialization}");
             }
 
+            var allTeachers = LogicMethods.GetAllTeachers(fcmSchool);
+            foreach (var teacher in allTeachers)
+            {
+                Console.WriteLine($"ID: {teacher.Id}, Name: {teacher.Person.FirstName} {teacher.Person.LastName} ........ {teacher.AreaOfSpecialization}");
+            }
+
             //create a biology class session and assign a teacher to it
             var classSession1 = new ClassSession();
             classSession1.Id = 1;
@@ -285,7 +291,7 @@ namespace FcmsPortal
             {
                 Console.WriteLine($"Date: {entry.DateTime}, Course: {entry.ClassSession.Course}, Topic: {entry.ClassSession.Topic}");
             }
-            
+
             
 
 

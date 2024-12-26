@@ -29,6 +29,32 @@ namespace FcmsPortal
                 .Where(staff => staff.Person.EducationLevel == educationLevel).ToList();
         }
         
+        //Get all teachers from school list of staff
+        public static List<Staff> GetAllTeachers(School school)
+        {
+            if (school == null)
+            {
+                throw new ArgumentNullException(nameof(school), "School cannot be null");
+            }
+
+            if (school.Staff == null)
+            {
+                throw new ArgumentException("School staff list is not initialized", nameof(school));
+            }
+
+            try
+            {
+                return school.Staff
+                    .Where(staff => staff != null && staff.JobRole == JobRole.Teacher)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving teachers: {ex.Message}");
+                throw;
+            }
+        }
+        
         /// <summary>
         /// Methods involved in Scheduling
         /// </summary>
@@ -52,23 +78,10 @@ namespace FcmsPortal
             learningPath.Schedule.Add(scheduleEntry);
         }
         
+        /// <summary>
+        /// Methods for Curriculum
+        /// </summary>
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-
         public static Curriculum GenerateCurriculum(School school, int year, ClassLevel classLevel, EducationLevel educationLevel, int semester, int id)
         {
             var curriculum = new Curriculum
