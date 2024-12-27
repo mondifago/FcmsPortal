@@ -256,6 +256,31 @@ namespace FcmsPortal
                 Console.WriteLine($"ID: {schedule.Id}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
             }
             
+            var learningPath2 = new LearningPath
+            {
+                Id = 4401,
+                EducationLevel = EducationLevel.Primary,
+                ClassLevel = ClassLevel.PRI_1,
+                Semester = 1,
+                Schedule = new List<ScheduleEntry>()
+            };
+            // Add multiple schedules
+            try
+            {
+                var schedulesToAdd = new List<ScheduleEntry> { schedule1, schedule2, schedule3 };
+                LogicMethods.AddMultipleSchedulesToLearningPath(learningPath2, schedulesToAdd); // Error due to overlap with schedule1
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            // Display updated schedules
+            Console.WriteLine("Updated Schedules:");
+            foreach (var schedule in learningPath2.Schedule)
+            {
+                Console.WriteLine($"ID: {schedule.Id}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
+            }
             
             
             

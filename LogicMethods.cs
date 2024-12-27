@@ -95,6 +95,61 @@ namespace FcmsPortal
             learningPath.Schedule.Add(scheduleEntry);
             Console.WriteLine($"Schedule with ID {scheduleEntry.Id} has been successfully added to Learning Path ID {learningPath.Id}.");
         }
+        
+        //Adding multiple schedules to a learning path
+        public static void AddMultipleSchedulesToLearningPath(LearningPath learningPath, List<ScheduleEntry> scheduleEntries)
+        {
+    
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+
+            if (scheduleEntries == null || !scheduleEntries.Any())
+            {
+                throw new ArgumentNullException(nameof(scheduleEntries), "Schedule entries cannot be null or empty.");
+            }
+
+            foreach (var scheduleEntry in scheduleEntries)
+            {
+                if (scheduleEntry == null)
+                {
+                    throw new ArgumentNullException(nameof(scheduleEntry), "One or more schedule entries are null.");
+                }
+
+                if (scheduleEntry.ClassSession == null)
+                {
+                    throw new ArgumentNullException(nameof(scheduleEntry.ClassSession), "Class session cannot be null.");
+                }
+                
+                if (learningPath.Schedule.Any(s => s.Id == scheduleEntry.Id))
+                {
+                    throw new ArgumentException($"A schedule with ID {scheduleEntry.Id} already exists in the learning path.");
+                }
+                
+                bool hasOverlap = learningPath.Schedule.Any(existing =>
+                    existing.DateTime < scheduleEntry.DateTime.Add(scheduleEntry.Duration) &&
+                    scheduleEntry.DateTime < existing.DateTime.Add(existing.Duration));
+
+                if (hasOverlap)
+                {
+                    throw new InvalidOperationException($"Schedule ID {scheduleEntry.Id} overlaps with an existing class session.");
+                }
+                
+                bool sameTimePeriod = learningPath.Schedule.Any(existing =>
+                    existing.DateTime == scheduleEntry.DateTime &&
+                    existing.Duration == scheduleEntry.Duration);
+
+                if (sameTimePeriod)
+                {
+                    throw new InvalidOperationException($"A schedule with the same time period as ID {scheduleEntry.Id} already exists.");
+                }
+            }
+            
+            learningPath.Schedule.AddRange(scheduleEntries);
+            Console.WriteLine($"{scheduleEntries.Count} schedules have been successfully added to Learning Path ID {learningPath.Id}.");
+        }
+
 
         
         /// <summary>
