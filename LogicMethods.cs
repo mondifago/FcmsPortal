@@ -55,11 +55,8 @@ namespace FcmsPortal
             }
         }
         
-        /// <summary>
-        /// Methods involved in Scheduling
-        /// </summary>
-        //add a schedule to a learning path
-        public static void AddScheduleToLearningPath(LearningPath learningPath, ScheduleEntry scheduleEntry)
+        //Adding a schedule entry to learning path
+        public static void AddAScheduleToLearningPath(LearningPath learningPath, ScheduleEntry scheduleEntry)
         {
             if (learningPath == null)
             {
@@ -71,12 +68,45 @@ namespace FcmsPortal
                 throw new ArgumentNullException(nameof(scheduleEntry), "Schedule entry cannot be null.");
             }
 
+            if (scheduleEntry.ClassSession == null)
+            {
+                throw new ArgumentNullException(nameof(scheduleEntry.ClassSession), "Class session cannot be null.");
+            }
             if (learningPath.Schedule.Any(s => s.Id == scheduleEntry.Id))
             {
                 throw new ArgumentException($"A schedule with ID {scheduleEntry.Id} already exists in the learning path.");
             }
+            bool hasOverlap = learningPath.Schedule.Any(existing =>
+                existing.DateTime < scheduleEntry.DateTime.Add(scheduleEntry.Duration) &&
+                scheduleEntry.DateTime < existing.DateTime.Add(existing.Duration));
+
+            if (hasOverlap)
+            {
+                throw new InvalidOperationException("This schedule overlaps with an existing class session.");
+            }
+            bool sameTimePeriod = learningPath.Schedule.Any(existing =>
+                existing.DateTime == scheduleEntry.DateTime &&
+                existing.Duration == scheduleEntry.Duration);
+
+            if (sameTimePeriod)
+            {
+                throw new InvalidOperationException("A schedule with the same time period already exists.");
+            }
             learningPath.Schedule.Add(scheduleEntry);
+            Console.WriteLine($"Schedule with ID {scheduleEntry.Id} has been successfully added to Learning Path ID {learningPath.Id}.");
         }
+
+        
+        /// <summary>
+        /// Methods involved in Scheduling
+        /// </summary>
+        
+      
+        
+        
+        
+        
+        
         
         /// <summary>
         /// Methods for Curriculum

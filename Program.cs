@@ -142,7 +142,8 @@ namespace FcmsPortal
             {
                 Console.WriteLine($"ID: {staff.Id}, Name: {staff.Person.FirstName} {staff.Person.MiddleName} {staff.Person.LastName} Area of specialization: {staff.AreaOfSpecialization}");
             }
-
+            
+            //retrieving All the teachers in the school
             var allTeachers = LogicMethods.GetAllTeachers(fcmSchool);
             foreach (var teacher in allTeachers)
             {
@@ -227,8 +228,43 @@ namespace FcmsPortal
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
             learningPath1.Students = new List<Student>() { student1, student2, student3 };
             fcmSchool.LearningPath.Add(learningPath1);
-            //LogicMethods.AddScheduleToLearningPath(learningPath1,scheduleEntry1);
+            
+            //learningpath1 is added again for test and detected to have been added before
+            //LogicMethods.AddAScheduleToLearningPath(learningPath1,scheduleEntry1);
+            
             Console.WriteLine($"Learning Path {learningPath1.Id} now contains {learningPath1.Schedule.Count} schedule(s).");
+            
+            //testing time overlap
+            var schedule1 = new ScheduleEntry { Id = 101, DateTime = DateTime.Now, Duration = TimeSpan.FromHours(1), ClassSession = new ClassSession() };
+            var schedule2 = new ScheduleEntry { Id = 102, DateTime = DateTime.Now.AddHours(2), Duration = TimeSpan.FromHours(1), ClassSession = new ClassSession() };
+            var schedule3 = new ScheduleEntry { Id = 103, DateTime = DateTime.Now, Duration = TimeSpan.FromHours(1), ClassSession = new ClassSession() };
+            
+            try
+            {
+                LogicMethods.AddAScheduleToLearningPath(learningPath1, schedule1); // Success
+                LogicMethods.AddAScheduleToLearningPath(learningPath1, schedule2); // Success
+                LogicMethods.AddAScheduleToLearningPath(learningPath1, schedule3); // Error - overlaps with schedule1
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            
+            Console.WriteLine("Updated Schedules:");
+            foreach (var schedule in learningPath1.Schedule)
+            {
+                Console.WriteLine($"ID: {schedule.Id}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             
             //add fee for learning path 1
             learningPath1.FeePerSemester = 100.0;
