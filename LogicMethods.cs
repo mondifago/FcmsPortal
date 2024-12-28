@@ -214,6 +214,29 @@ namespace FcmsPortal
             }
             school.Students.Add(student);
         }
+        
+        //Add Staff newly created staff to school
+        public static void AddStaffToSchool(School school, Staff staff)
+        {
+            if (school == null)
+            {
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            }
+
+            if (staff == null)
+            {
+                throw new ArgumentNullException(nameof(staff), "Staff cannot be null.");
+            }
+            
+            if (school.Staff.Any(s => s.Person.Email == staff.Person.Email))
+            {
+                throw new InvalidOperationException($"Staff with email {staff.Person.Email} is already registered in the school.");
+            }
+            
+            school.Staff.Add(staff);
+            
+        }
+
 
 
 
