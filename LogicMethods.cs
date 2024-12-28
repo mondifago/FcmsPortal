@@ -183,10 +183,36 @@ namespace FcmsPortal
                     throw new InvalidOperationException($"Student ID {student.ID} already belongs to another learning path.");
                 }
             }
-            
             school.LearningPath.Add(learningPath);
+            
+        }
+        
+        //Add a newly created student to school
+        public static void AddStudentToSchool(School school, Student student)
+        {
+            if (school == null)
+            {
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            }
+            if (student == null)
+            {
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+            }
+            
+            bool existsInSchool = school.Students.Any(s => s.ID == student.ID);
+            if (existsInSchool)
+            {
+                throw new InvalidOperationException($"Student with ID {student.ID} is already registered in the school.");
+            }
+            
+            bool existsInLearningPaths = school.LearningPath
+                .Any(lp => lp.Students.Any(s => s.ID == student.ID));
 
-            Console.WriteLine($"Learning path with ID {learningPath.Id} has been added to the school.");
+            if (existsInLearningPaths)
+            {
+                throw new InvalidOperationException($"Student with ID {student.ID} already exists in a learning path.");
+            }
+            school.Students.Add(student);
         }
 
 
