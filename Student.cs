@@ -16,11 +16,11 @@ public class Student
         set { _id = value; }
     }
 
-    private string _positionAmoungSiblings;
-    public string PositionAmoungSiblings
+    private string _positionAmongSiblings;
+    public string PositionAmongSiblings
     {
-        get { return _positionAmoungSiblings; }
-        set { _positionAmoungSiblings = value; }
+        get { return _positionAmongSiblings; }
+        set { _positionAmongSiblings = value; }
     }
 
     private string _lastSchoolAttended;
@@ -36,14 +36,15 @@ public class Student
         get { return _dateOfEnrollment; }
         set { _dateOfEnrollment = value; }
     }
+    
+    public int? GuardianId { get; set; }
 
-    private Guardian _guardianInfo;
-    public Guardian GuardianInfo
+    private Guardian _guardian;
+    public Guardian? Guardian
     {
-        get { return _guardianInfo; }
-        set { _guardianInfo = value; }
+        get { return _guardian; }
+        set { _guardian = value; }
     }
 
     public CourseGrade CourseGrade { get; set; }
-
 }

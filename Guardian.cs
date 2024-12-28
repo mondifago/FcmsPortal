@@ -4,6 +4,8 @@ namespace FcmsPortal
 {
     public class Guardian
     {
+        public int Id { get; set; } 
+        
         private Person _person;
         public Person Person
         {
@@ -24,6 +26,5 @@ namespace FcmsPortal
             get { return _occupation; }
             set { _occupation = value; }
         }
-
     }
 }
