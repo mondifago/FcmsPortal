@@ -149,6 +149,46 @@ namespace FcmsPortal
             learningPath.Schedule.AddRange(scheduleEntries);
             Console.WriteLine($"{scheduleEntries.Count} schedules have been successfully added to Learning Path ID {learningPath.Id}.");
         }
+        
+        //Add learning path to school
+        public static void AddLearningPathToSchool(School school, LearningPath learningPath)
+        {
+            if (school == null)
+            {
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            }
+
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+            
+            bool isDuplicatePath = school.LearningPath.Any(existingPath =>
+                existingPath.EducationLevel == learningPath.EducationLevel &&
+                existingPath.ClassLevel == learningPath.ClassLevel &&
+                existingPath.Semester == learningPath.Semester);
+
+            if (isDuplicatePath)
+            {
+                throw new InvalidOperationException("A learning path with the same Education Level, Class Level, and Semester already exists in the school.");
+            }
+            
+            foreach (var student in learningPath.Students)
+            {
+                bool isStudentInAnotherPath = school.LearningPath.Any(existingPath =>
+                    existingPath.Students.Any(s => s.ID == student.ID));
+
+                if (isStudentInAnotherPath)
+                {
+                    throw new InvalidOperationException($"Student ID {student.ID} already belongs to another learning path.");
+                }
+            }
+            
+            school.LearningPath.Add(learningPath);
+
+            Console.WriteLine($"Learning path with ID {learningPath.Id} has been added to the school.");
+        }
+
 
 
         

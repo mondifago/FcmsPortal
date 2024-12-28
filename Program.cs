@@ -282,6 +282,25 @@ namespace FcmsPortal
                 Console.WriteLine($"ID: {schedule.Id}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
             }
             
+            //testing add learning path to school: adding learningpath2 which has not been added - success
+            try
+            {
+                LogicMethods.AddLearningPathToSchool(fcmSchool, learningPath2);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            
+            //add learningpath1 which has been added - fail
+            try
+            {
+                LogicMethods.AddLearningPathToSchool(fcmSchool, learningPath1);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
             
             
             
