@@ -327,8 +327,17 @@ namespace FcmsPortal
             meetingEntry.Meeting = "Academic Staff Meeting";
             meetingEntry.Notes = "Agenda: Weekly Academic Progress Evaluation";
             allCalendar.ScheduleEntries.Add(meetingEntry);
+            //make staff meeting a recurring feature
+            meetingEntry.IsRecurring = true;
+            meetingEntry.RecurrencePattern = RecurrenceType.Weekly;
+            meetingEntry.RecurrenceInterval = 1;
+            meetingEntry.DateTime = DateTime.Now.AddMonths(2);
             
-            
+            List<ScheduleEntry> recurringSchedules = LogicMethods.GenerateRecurringSchedules(meetingEntry);
+            foreach (var schedule in recurringSchedules)
+            {
+                Console.WriteLine($"{schedule.DateTime}: {schedule.Title} at {schedule.Venue}");
+            }
             
             
             
