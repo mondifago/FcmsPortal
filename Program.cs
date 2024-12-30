@@ -44,6 +44,7 @@ namespace FcmsPortal
             //create student 1
             Student student1 = new Student();
             student1.ID = 301;
+            student1.GuardianId = 3011;
             // Initialize Person
             student1.Person = new Person();
             student1.Person.FirstName = "Joe";
@@ -55,6 +56,11 @@ namespace FcmsPortal
             student1.Person.PersonalCalendar.Id = 177;
             student1.Person.PersonalCalendar.Name = "Student1's Study Calendar";
             student1.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
+            student1.Guardian = new Guardian();
+            student1.Guardian.Id = 3011;
+            student1.Guardian.RelationshipToStudent = Relationship.Father;
+            student1.Guardian.Occupation = "Engineer";
+            student1.Guardian.Person.LastName = "Mr. Jake";
             // Add the student to the school's student list
             fcmSchool.Students.Add(student1);
 
@@ -302,6 +308,25 @@ namespace FcmsPortal
                 Console.WriteLine($"Error: {ex.Message}");
             }
             
+            //Create an Event, Annual Sports day
+            ScheduleEntry eventEntry = new ScheduleEntry();
+            eventEntry.Id = 20202;
+            eventEntry.DateTime = new DateTime(2026, 12, 20, 12, 00,00);
+            eventEntry.Duration = TimeSpan.FromHours(2);
+            eventEntry.Venue = "School Sports Field";
+            eventEntry.Event = "Annual Sport day";
+            eventEntry.Notes = "All students and staff to wear school sports attire";
+            allCalendar.ScheduleEntries.Add(eventEntry);
+            
+            //Create a meeting for a Teachers with the Principal
+            ScheduleEntry meetingEntry = new ScheduleEntry();
+            meetingEntry.Id = 3098;
+            meetingEntry.DateTime = DateTime.Today;
+            meetingEntry.Duration = TimeSpan.FromMinutes(20);
+            meetingEntry.Venue = "Staff Room";
+            meetingEntry.Meeting = "Academic Staff Meeting";
+            meetingEntry.Notes = "Agenda: Weekly Academic Progress Evaluation";
+            allCalendar.ScheduleEntries.Add(meetingEntry);
             
             
             
@@ -331,25 +356,9 @@ namespace FcmsPortal
             //Console.WriteLine($"Name: {student5.Person.FirstName} - Fees: {student5.Person.SchoolFees.TotalAmount}");
             //above created new student Kevin does not have a set school fees Amount because event has to happen automatically
             
-            //Create an Event, Annual Sports day
-            ScheduleEntry eventEntry = new ScheduleEntry();
-            eventEntry.Id = 20202;
-            eventEntry.DateTime = new DateTime(2026, 12, 20, 12, 00,00);
-            eventEntry.Duration = TimeSpan.FromHours(2);
-            eventEntry.Venue = "School Sports Field";
-            eventEntry.Event = "Annual Sport day";
-            eventEntry.Notes = "All students and staff to wear school sports attire";
-            allCalendar.ScheduleEntries.Add(eventEntry);
             
-            //Create a meeting for a Teachers with the Principal
-            ScheduleEntry meetingEntry = new ScheduleEntry();
-            meetingEntry.Id = 3098;
-            meetingEntry.DateTime = DateTime.Today;
-            meetingEntry.Duration = TimeSpan.FromMinutes(20);
-            meetingEntry.Venue = "Staff Room";
-            meetingEntry.Meeting = "Academic Staff Meeting";
-            meetingEntry.Notes = "Agenda: Weekly Academic Progress Evaluation";
-            allCalendar.ScheduleEntries.Add(meetingEntry);
+            
+            
            
 
             foreach (var scheduleEntry in learningPath1.Schedule)

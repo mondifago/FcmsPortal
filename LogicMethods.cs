@@ -41,7 +41,6 @@ namespace FcmsPortal
             {
                 throw new ArgumentException("School staff list is not initialized", nameof(school));
             }
-
             try
             {
                 return school.Staff
@@ -99,7 +98,6 @@ namespace FcmsPortal
         //Adding multiple schedules to a learning path
         public static void AddMultipleSchedulesToLearningPath(LearningPath learningPath, List<ScheduleEntry> scheduleEntries)
         {
-    
             if (learningPath == null)
             {
                 throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
@@ -109,7 +107,6 @@ namespace FcmsPortal
             {
                 throw new ArgumentNullException(nameof(scheduleEntries), "Schedule entries cannot be null or empty.");
             }
-
             foreach (var scheduleEntry in scheduleEntries)
             {
                 if (scheduleEntry == null)
@@ -236,15 +233,49 @@ namespace FcmsPortal
             school.Staff.Add(staff);
             
         }
-
-
-
-
         
         /// <summary>
         /// Methods involved in Scheduling
         /// </summary>
-        
+        // Method to Generate Recurring Schedule Entries
+        public static List<ScheduleEntry> GenerateRecurringSchedules(ScheduleEntry baseEntry)
+        {
+            var schedules = new List<ScheduleEntry>();
+            if (!baseEntry.IsRecurring)
+            {
+                schedules.Add(baseEntry);
+                return schedules;
+            }
+            DateTime currentDate = baseEntry.DateTime;
+            while (currentDate <= baseEntry.EndDate)
+            {
+                var newEntry = new ScheduleEntry
+                {
+                    Id = baseEntry.Id, 
+                    DateTime = currentDate,
+                    Duration = baseEntry.Duration,
+                    Venue = baseEntry.Venue,
+                    ClassSession = baseEntry.ClassSession,
+                    Title = baseEntry.Title,
+                    Event = baseEntry.Event,
+                    Meeting = baseEntry.Meeting,
+                    Notes = baseEntry.Notes,
+                    IsRecurring = false, 
+                };
+                schedules.Add(newEntry);
+                
+                // Update date based on recurrence pattern
+                currentDate = baseEntry.RecurrencePattern switch
+                {
+                    RecurrenceType.Daily => currentDate.AddDays(baseEntry.RecurrenceInterval),
+                    RecurrenceType.Weekly => currentDate.AddDays(7 * baseEntry.RecurrenceInterval),
+                    RecurrenceType.Monthly => currentDate.AddMonths(baseEntry.RecurrenceInterval),
+                    _ => currentDate
+                };
+            }
+            return schedules;
+        }
+
       
         
         
