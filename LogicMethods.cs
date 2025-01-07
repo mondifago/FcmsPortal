@@ -238,43 +238,114 @@ namespace FcmsPortal
         /// Methods involved in Scheduling
         /// </summary>
         // Method to Generate Recurring Schedule Entries
-        public static List<ScheduleEntry> GenerateRecurringSchedules(ScheduleEntry baseEntry)
+        public static List<ScheduleEntry> GenerateRecurringInstances(ScheduleEntry template, RecurrenceRule rule)
         {
-            var schedules = new List<ScheduleEntry>();
-            if (!baseEntry.IsRecurring)
+            var instances = new List<ScheduleEntry>();
+            var currentDate = rule.StartDate;
+
+            while (currentDate <= rule.EndDate)
             {
-                schedules.Add(baseEntry);
-                return schedules;
-            }
-            DateTime currentDate = baseEntry.DateTime;
-            while (currentDate <= baseEntry.EndDate)
-            {
-                var newEntry = new ScheduleEntry
+                switch (rule.Pattern)
                 {
-                    Id = baseEntry.Id, 
-                    DateTime = currentDate,
-                    Duration = baseEntry.Duration,
-                    Venue = baseEntry.Venue,
-                    ClassSession = baseEntry.ClassSession,
-                    Title = baseEntry.Title,
-                    Event = baseEntry.Event,
-                    Meeting = baseEntry.Meeting,
-                    Notes = baseEntry.Notes,
-                    IsRecurring = false, 
-                };
-                schedules.Add(newEntry);
-                
-                // Update date based on recurrence pattern
-                currentDate = baseEntry.RecurrencePattern switch
+                    case RecurrencePattern.Daily:
+                        currentDate = currentDate.AddDays(1);
+                        break;
+
+                    case RecurrencePattern.Weekly:
+                        if (rule.DaysOfWeek != null)
+                        {
+                            foreach (var day in rule.DaysOfWeek)
+                            {
+                                if (currentDate.DayOfWeek == day)
+                                {
+                                    instances.Add(CreateInstance(template, currentDate));
+                                }
+                            }
+                        }
+                        currentDate = currentDate.AddDays(1);
+                        break;
+
+                    case RecurrencePattern.BiWeekly:
+                        currentDate = currentDate.AddDays(14);
+                        break;
+
+                    case RecurrencePattern.Monthly:
+                        if (rule.DayOfMonth.HasValue)
+                        {
+                            var monthlyDate = new DateTime(currentDate.Year, currentDate.Month, rule.DayOfMonth.Value);
+                            if (monthlyDate >= rule.StartDate && monthlyDate <= rule.EndDate)
+                            {
+                                instances.Add(CreateInstance(template, monthlyDate));
+                            }
+                        }
+                        currentDate = currentDate.AddMonths(1);
+                        break;
+
+                    case RecurrencePattern.Yearly:
+                        currentDate = currentDate.AddYears(1);
+                        break;
+                }
+
+                if (currentDate <= rule.EndDate && rule.Pattern != RecurrencePattern.Weekly)
                 {
-                    RecurrenceType.Daily => currentDate.AddDays(baseEntry.RecurrenceInterval),
-                    RecurrenceType.Weekly => currentDate.AddDays(7 * baseEntry.RecurrenceInterval),
-                    RecurrenceType.Monthly => currentDate.AddMonths(baseEntry.RecurrenceInterval),
-                    _ => currentDate
-                };
+                    instances.Add(CreateInstance(template, currentDate));
+                }
             }
-            return schedules;
+            return instances;
         }
+
+        private static ScheduleEntry CreateInstance(ScheduleEntry template, DateTime dateTime)
+        {
+            return new ScheduleEntry
+            {
+                DateTime = dateTime,
+                Duration = template.Duration,
+                Venue = template.Venue,
+                ClassSession = template.ClassSession,
+                Title = template.Title,
+                Event = template.Event,
+                Meeting = template.Meeting,
+                Notes = template.Notes,
+                RecurrenceRuleId = template.RecurrenceRuleId
+            };
+        }
+        
+        public static void DisplayAllCalendarEntries(School fcmSchool)
+        {
+            // Check if the school or its calendar is null
+            if (fcmSchool == null || fcmSchool.SchoolCalendar == null || !fcmSchool.SchoolCalendar.Any())
+            {
+                Console.WriteLine("No calendar entries available.");
+                return;
+            }
+
+            Console.WriteLine("Calendar Entries:");
+
+            // Iterate through each calendar in the school calendar
+            foreach (var calendar in fcmSchool.SchoolCalendar)
+            {
+                Console.WriteLine($"\nCalendar: {calendar.Name} (ID: {calendar.Id})");
+
+                // Check if the calendar has schedule entries
+                if (calendar.ScheduleEntries == null || !calendar.ScheduleEntries.Any())
+                {
+                    Console.WriteLine("  No schedule entries in this calendar.");
+                    continue;
+                }
+
+                // Display each schedule entry
+                foreach (var entry in calendar.ScheduleEntries)
+                {
+                    string entryType = entry.GetScheduleType().ToString();
+                    DateTime endTime = entry.DateTime.Add(entry.Duration);
+
+                    Console.WriteLine($"  ID: {entry.Id}, Date: {entry.DateTime.ToShortDateString()}, " +
+                                      $"Type: {entryType}, Start: {entry.DateTime.ToShortTimeString()}, " +
+                                      $"End: {endTime.ToShortTimeString()}, Duration: {entry.Duration}, Recurrence: {entry.RecurrenceRule}, ParentSchedule ID: {entry.ParentScheduleId}, Recurrence ID: {entry.RecurrenceRuleId}");
+                }
+            }
+        }
+
 
       
         

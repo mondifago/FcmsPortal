@@ -44,7 +44,7 @@ namespace FcmsPortal
             //create student 1
             Student student1 = new Student();
             student1.ID = 301;
-            student1.GuardianId = 3011;
+            
             // Initialize Person
             student1.Person = new Person();
             student1.Person.FirstName = "Joe";
@@ -56,11 +56,7 @@ namespace FcmsPortal
             student1.Person.PersonalCalendar.Id = 177;
             student1.Person.PersonalCalendar.Name = "Student1's Study Calendar";
             student1.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
-            student1.Guardian = new Guardian();
-            student1.Guardian.Id = 3011;
-            student1.Guardian.RelationshipToStudent = Relationship.Father;
-            student1.Guardian.Occupation = "Engineer";
-            student1.Guardian.Person.LastName = "Mr. Jake";
+            
             // Add the student to the school's student list
             fcmSchool.Students.Add(student1);
 
@@ -324,26 +320,30 @@ namespace FcmsPortal
             meetingEntry.DateTime = DateTime.Today;
             meetingEntry.Duration = TimeSpan.FromMinutes(20);
             meetingEntry.Venue = "Staff Room";
+            meetingEntry.Event = null;
+            meetingEntry.ClassSession = null;
             meetingEntry.Meeting = "Academic Staff Meeting";
             meetingEntry.Notes = "Agenda: Weekly Academic Progress Evaluation";
-            allCalendar.ScheduleEntries.Add(meetingEntry);
+            meetingEntry.RecurrenceRuleId = 309801;
             //make staff meeting a recurring feature
-            meetingEntry.IsRecurring = true;
-            meetingEntry.RecurrencePattern = RecurrenceType.Weekly;
-            meetingEntry.RecurrenceInterval = 1;
-            meetingEntry.DateTime = DateTime.Now.AddMonths(2);
+            RecurrenceRule meetingRecurrenceRule = new RecurrenceRule();
+            meetingEntry.RecurrenceRule = meetingRecurrenceRule;
+            meetingRecurrenceRule.Id = 309801;
+            meetingRecurrenceRule.StartDate = new DateTime(2025, 1, 1, 15, 00, 00);
+            meetingRecurrenceRule.EndDate = new DateTime(2025, 12, 31, 15, 00,00);
+            meetingRecurrenceRule.Pattern = RecurrencePattern.Weekly;
+            meetingEntry.ParentScheduleId = 3098;
+            List<ScheduleEntry> recurringSchedules = LogicMethods.GenerateRecurringInstances(meetingEntry,meetingRecurrenceRule );
+            allCalendar.ScheduleEntries.Add(meetingEntry);
             
-            List<ScheduleEntry> recurringSchedules = LogicMethods.GenerateRecurringSchedules(meetingEntry);
-            foreach (var schedule in recurringSchedules)
-            {
-                Console.WriteLine($"{schedule.DateTime}: {schedule.Title} at {schedule.Venue}");
-            }
-            
-            
-            
-            
+            LogicMethods.DisplayAllCalendarEntries(fcmSchool);
+           
             
             
+            
+            
+            
+            /*
             //add fee for learning path 1
             learningPath1.FeePerSemester = 100.0;
             
@@ -403,7 +403,7 @@ namespace FcmsPortal
 
 
 
-            /*
+            
 
 
 
