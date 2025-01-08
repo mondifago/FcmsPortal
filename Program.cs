@@ -60,6 +60,7 @@ namespace FcmsPortal
             student1.Guardian.Id = 3011;
             student1.Guardian.RelationshipToStudent = Relationship.Father;
             student1.Guardian.Occupation = "Engineer";
+            student1.Guardian.Person = new Person();
             student1.Guardian.Person.LastName = "Mr. Jake";
             // Add the student to the school's student list
             fcmSchool.Students.Add(student1);
@@ -321,29 +322,57 @@ namespace FcmsPortal
             //Create a meeting for a Teachers with the Principal
             ScheduleEntry meetingEntry = new ScheduleEntry();
             meetingEntry.Id = 3098;
+            meetingEntry.Title = "weekly review";
             meetingEntry.DateTime = DateTime.Today;
             meetingEntry.Duration = TimeSpan.FromMinutes(20);
             meetingEntry.Venue = "Staff Room";
             meetingEntry.Meeting = "Academic Staff Meeting";
+            meetingEntry.Event = null;
+            meetingEntry.ClassSession = null;
             meetingEntry.Notes = "Agenda: Weekly Academic Progress Evaluation";
-            allCalendar.ScheduleEntries.Add(meetingEntry);
+            //allCalendar.ScheduleEntries.Add(meetingEntry);
             //make staff meeting a recurring feature
             meetingEntry.IsRecurring = true;
             meetingEntry.RecurrencePattern = RecurrenceType.Weekly;
             meetingEntry.RecurrenceInterval = 1;
-            meetingEntry.DateTime = DateTime.Now.AddMonths(2);
+            meetingEntry.DateTime = DateTime.Now.AddMonths(6);
             
             List<ScheduleEntry> recurringSchedules = LogicMethods.GenerateRecurringSchedules(meetingEntry);
             foreach (var schedule in recurringSchedules)
             {
                 Console.WriteLine($"{schedule.DateTime}: {schedule.Title} at {schedule.Venue}");
             }
+            //LogicMethods.DisplayAllCalendarEntries(fcmSchool);
+            
+            // Create a base schedule entry
+            ScheduleEntry scheduleEntry = new ScheduleEntry
+            {
+                Id = 1,
+                DateTime = DateTime.Now,
+                Duration = TimeSpan.FromHours(1),
+                Venue = "Room 101",
+                Title = "Mathematics Class",
+                Event = null,
+                Meeting = null,
+                Notes = "Recurrence Example",
+                IsRecurring = true, // Enable recurrence
+                RecurrencePattern = RecurrenceType.Weekly, // Repeat Weekly
+                RecurrenceInterval = 1, // Every 1 week
+                EndDate = DateTime.Now.AddMonths(2) // Recurrence ends in 2 months
+            };
+
+            // Generate recurring schedules
+            List<ScheduleEntry> recurringSchedules2 = LogicMethods.GenerateRecurringSchedules(scheduleEntry);
+
+            // Display the schedules
+            foreach (var schedule in recurringSchedules2)
+            {
+                Console.WriteLine($"{schedule.DateTime}: {schedule.Title} at {schedule.Venue}");
+            }
+
             
             
-            
-            
-            
-            
+            /*
             //add fee for learning path 1
             learningPath1.FeePerSemester = 100.0;
             

@@ -238,78 +238,52 @@ namespace FcmsPortal
         /// Methods involved in Scheduling
         /// </summary>
         // Method to Generate Recurring Schedule Entries
-        public static List<ScheduleEntry> GenerateRecurringInstances(ScheduleEntry template, RecurrenceRule rule)
+        public static List<ScheduleEntry> GenerateRecurringSchedules(ScheduleEntry baseEntry)
         {
-            var instances = new List<ScheduleEntry>();
-            var currentDate = rule.StartDate;
+            var schedules = new List<ScheduleEntry>();
 
-            while (currentDate <= rule.EndDate)
+            // Return the base entry if it's not recurring
+            if (!baseEntry.IsRecurring)
             {
-                switch (rule.Pattern)
-                {
-                    case RecurrencePattern.Daily:
-                        currentDate = currentDate.AddDays(1);
-                        break;
-
-                    case RecurrencePattern.Weekly:
-                        if (rule.DaysOfWeek != null)
-                        {
-                            foreach (var day in rule.DaysOfWeek)
-                            {
-                                if (currentDate.DayOfWeek == day)
-                                {
-                                    instances.Add(CreateInstance(template, currentDate));
-                                }
-                            }
-                        }
-                        currentDate = currentDate.AddDays(1);
-                        break;
-
-                    case RecurrencePattern.BiWeekly:
-                        currentDate = currentDate.AddDays(14);
-                        break;
-
-                    case RecurrencePattern.Monthly:
-                        if (rule.DayOfMonth.HasValue)
-                        {
-                            var monthlyDate = new DateTime(currentDate.Year, currentDate.Month, rule.DayOfMonth.Value);
-                            if (monthlyDate >= rule.StartDate && monthlyDate <= rule.EndDate)
-                            {
-                                instances.Add(CreateInstance(template, monthlyDate));
-                            }
-                        }
-                        currentDate = currentDate.AddMonths(1);
-                        break;
-
-                    case RecurrencePattern.Yearly:
-                        currentDate = currentDate.AddYears(1);
-                        break;
-                }
-
-                if (currentDate <= rule.EndDate && rule.Pattern != RecurrencePattern.Weekly)
-                {
-                    instances.Add(CreateInstance(template, currentDate));
-                }
+                schedules.Add(baseEntry);
+                return schedules;
             }
-            return instances;
+
+            // Calculate recurring dates
+            DateTime currentDate = baseEntry.DateTime;
+            while (currentDate <= baseEntry.EndDate)
+            {
+                // Create a new schedule entry for each recurrence
+                var newEntry = new ScheduleEntry
+                {
+                    Id = baseEntry.Id, // Assign new ID if necessary
+                    DateTime = currentDate,
+                    Duration = baseEntry.Duration,
+                    Venue = baseEntry.Venue,
+                    ClassSession = baseEntry.ClassSession,
+                    Title = baseEntry.Title,
+                    Event = baseEntry.Event,
+                    Meeting = baseEntry.Meeting,
+                    Notes = baseEntry.Notes,
+                    IsRecurring = false, // Set to false for generated instances
+                };
+
+                schedules.Add(newEntry);
+
+                // Update date based on recurrence pattern
+                currentDate = baseEntry.RecurrencePattern switch
+                {
+                    RecurrenceType.Daily => currentDate.AddDays(baseEntry.RecurrenceInterval),
+                    RecurrenceType.Weekly => currentDate.AddDays(7 * baseEntry.RecurrenceInterval),
+                    RecurrenceType.Monthly => currentDate.AddMonths(baseEntry.RecurrenceInterval),
+                    _ => currentDate
+                };
+            }
+
+            return schedules;
         }
 
-        private static ScheduleEntry CreateInstance(ScheduleEntry template, DateTime dateTime)
-        {
-            return new ScheduleEntry
-            {
-                DateTime = dateTime,
-                Duration = template.Duration,
-                Venue = template.Venue,
-                ClassSession = template.ClassSession,
-                Title = template.Title,
-                Event = template.Event,
-                Meeting = template.Meeting,
-                Notes = template.Notes,
-                RecurrenceRuleId = template.RecurrenceRuleId
-            };
-        }
-        
+        //Method to display school calendar entries
         public static void DisplayAllCalendarEntries(School fcmSchool)
         {
             // Check if the school or its calendar is null
@@ -341,7 +315,7 @@ namespace FcmsPortal
 
                     Console.WriteLine($"  ID: {entry.Id}, Date: {entry.DateTime.ToShortDateString()}, " +
                                       $"Type: {entryType}, Start: {entry.DateTime.ToShortTimeString()}, " +
-                                      $"End: {endTime.ToShortTimeString()}, Duration: {entry.Duration}, Recurrence: {entry.RecurrenceRule}, ParentSchedule ID: {entry.ParentScheduleId}, Recurrence ID: {entry.RecurrenceRuleId}");
+                                      $"End: {endTime.ToShortTimeString()}, Duration: {entry.Duration}, Recurrence: {entry.IsRecurring}, Recurring Type: {entry.RecurrencePattern}, Recurrence interval: {entry.RecurrenceInterval}");
                 }
             }
         }
