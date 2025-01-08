@@ -56,10 +56,12 @@ namespace FcmsPortal
             student1.Person.PersonalCalendar.Id = 177;
             student1.Person.PersonalCalendar.Name = "Student1's Study Calendar";
             student1.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
-            student1.Guardian = new Guardian();
+            Guardian guardian1 = new Guardian();
+            student1.Guardian = guardian1;
             student1.Guardian.Id = 3011;
             student1.Guardian.RelationshipToStudent = Relationship.Father;
             student1.Guardian.Occupation = "Engineer";
+            guardian1.Person = new Person();
             student1.Guardian.Person.LastName = "Mr. Jake";
             // Add the student to the school's student list
             fcmSchool.Students.Add(student1);
