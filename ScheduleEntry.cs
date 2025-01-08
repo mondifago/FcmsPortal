@@ -13,10 +13,10 @@ namespace FcmsPortal
         public string? Event { get; set; }
         public string? Meeting { get; set; }
         public string? Notes { get; set; }
-        public bool IsRecurring { get; set; } = false; 
-        public RecurrenceType? RecurrencePattern { get; set; } 
-        public int RecurrenceInterval { get; set; } = 1; 
-        public DateTime? EndDate { get; set; } 
+        public int? RecurrenceRuleId { get; set; }
+        public RecurrenceRule? RecurrenceRule { get; set; }
+        public int? ParentScheduleId { get; set; }  // For recurring instances
+
         public ScheduleType GetScheduleType()
         {
             if (ClassSession != null) return ScheduleType.ClassSession;

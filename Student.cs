@@ -40,7 +40,7 @@ public class Student
     public int? GuardianId { get; set; }
 
     private Guardian _guardian;
-    public Guardian? Guardian
+    public Guardian Guardian
     {
         get { return _guardian; }
         set { _guardian = value; }
