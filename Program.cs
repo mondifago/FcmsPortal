@@ -335,7 +335,7 @@ namespace FcmsPortal
             meetingEntry.IsRecurring = true;
             meetingEntry.RecurrencePattern = RecurrenceType.Weekly;
             meetingEntry.RecurrenceInterval = 1;
-            meetingEntry.DateTime = DateTime.Now.AddMonths(6);
+            meetingEntry.EndDate = DateTime.Now.AddMonths(6);
             
             List<ScheduleEntry> recurringSchedules = LogicMethods.GenerateRecurringSchedules(meetingEntry);
             foreach (var schedule in recurringSchedules)
