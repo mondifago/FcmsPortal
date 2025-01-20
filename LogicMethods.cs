@@ -388,6 +388,23 @@ namespace FcmsPortal
 
             return meetings;
         }
+        
+        //Get all events on a particular date from any calendar
+        public static List<ScheduleEntry> GetAllEventsByDate(Calendar calendar, DateTime date)
+        {
+            if (calendar == null || calendar.ScheduleEntries == null || !calendar.ScheduleEntries.Any())
+            {
+                Console.WriteLine("The calendar is empty or null.");
+                return new List<ScheduleEntry>();
+            }
+            
+            var events = calendar.ScheduleEntries
+                .Where(entry => !string.IsNullOrEmpty(entry.Event) && entry.DateTime.Date == date.Date)
+                .ToList();
+
+            return events;
+        }
+
 
 
 
