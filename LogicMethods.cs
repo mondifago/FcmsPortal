@@ -353,6 +353,26 @@ namespace FcmsPortal
                 .Where(schedule => schedule.DateTime.Date == date.Date) 
                 .ToList();
         }
+        
+        //Get all class sessions in a learning path
+        public static List<ClassSession> GetClassSessionsInLearningPath(LearningPath learningPath)
+        {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+            
+            if (learningPath.Schedule == null || !learningPath.Schedule.Any())
+            {
+                return new List<ClassSession>(); // Return an empty list if no schedules exist
+            }
+            
+            return learningPath.Schedule
+                .Where(schedule => schedule.ClassSession != null) 
+                .Select(schedule => schedule.ClassSession)       
+                .ToList();
+        }
+
 
 
         

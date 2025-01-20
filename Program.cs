@@ -385,6 +385,12 @@ namespace FcmsPortal
                 Console.WriteLine($"ID: {schedule.Id}, Title: {schedule.Title}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
             }
 
+            //Get all class sessions in a learning path
+            var classSessionInLp1 = LogicMethods.GetClassSessionsInLearningPath(learningPath1);
+            foreach (var session in classSessionInLp1)
+            {
+                Console.WriteLine($"ID: {session.Id}, Topic: {session.Topic}, Description: {session.Description}");
+            }
 
             /*
             //add fee for learning path 1
