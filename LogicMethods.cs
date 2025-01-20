@@ -335,6 +335,25 @@ namespace FcmsPortal
             
             return learningPath.Schedule;
         }
+        
+        //Get all schedules of a learning path for a particular date
+        public static List<ScheduleEntry> GetSchedulesByDateInLearningPath(LearningPath learningPath, DateTime date)
+        {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+            
+            if (learningPath.Schedule == null || !learningPath.Schedule.Any())
+            {
+                return new List<ScheduleEntry>(); 
+            }
+            
+            return learningPath.Schedule
+                .Where(schedule => schedule.DateTime.Date == date.Date) 
+                .ToList();
+        }
+
 
         
         //display all students in a learning path along with their schedules

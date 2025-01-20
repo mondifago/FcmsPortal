@@ -378,6 +378,13 @@ namespace FcmsPortal
                 Console.WriteLine($"ID: {schedule.Id}, Title: {schedule.Title}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
             }
             
+            //Get all the schedules in a learning path for a particular day (today)
+            var schedulesForToday = LogicMethods.GetSchedulesByDateInLearningPath(learningPath1, DateTime.Today);
+            foreach (var schedule in schedulesForToday)
+            {
+                Console.WriteLine($"ID: {schedule.Id}, Title: {schedule.Title}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
+            }
+
 
             /*
             //add fee for learning path 1
