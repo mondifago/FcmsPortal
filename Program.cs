@@ -392,6 +392,15 @@ namespace FcmsPortal
                 Console.WriteLine($"ID: {session.Id}, Topic: {session.Topic}, Description: {session.Description}");
             }
 
+            //Get meetings for a particular day from any calendar
+            var myMeetings = LogicMethods.GetAllMeetingsByDate(allCalendar, DateTime.Today);
+            Console.WriteLine($"Meetings on {DateTime.Today.ToShortDateString()} in {allCalendar.Name}:");
+            foreach (var meeting in myMeetings)
+            {
+                Console.WriteLine($"  ID: {meeting.Id}, Title: {meeting.Meeting}, " +
+                                  $"Start: {meeting.DateTime.ToShortTimeString()}, " +
+                                  $"Duration: {meeting.Duration}");
+            }
             /*
             //add fee for learning path 1
             learningPath1.FeePerSemester = 100.0;

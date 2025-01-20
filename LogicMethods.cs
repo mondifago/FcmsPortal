@@ -364,7 +364,7 @@ namespace FcmsPortal
             
             if (learningPath.Schedule == null || !learningPath.Schedule.Any())
             {
-                return new List<ClassSession>(); // Return an empty list if no schedules exist
+                return new List<ClassSession>(); 
             }
             
             return learningPath.Schedule
@@ -372,6 +372,23 @@ namespace FcmsPortal
                 .Select(schedule => schedule.ClassSession)       
                 .ToList();
         }
+        
+        //Get all meetings on a particular date from any calendar
+        public static List<ScheduleEntry> GetAllMeetingsByDate(Calendar calendar, DateTime date)
+        {
+            if (calendar == null || calendar.ScheduleEntries == null || !calendar.ScheduleEntries.Any())
+            {
+                Console.WriteLine("The calendar is empty or null.");
+                return new List<ScheduleEntry>();
+            }
+            
+            var meetings = calendar.ScheduleEntries
+                .Where(entry => !string.IsNullOrEmpty(entry.Meeting) && entry.DateTime.Date == date.Date)
+                .ToList();
+
+            return meetings;
+        }
+
 
 
 
