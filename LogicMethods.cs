@@ -319,6 +319,47 @@ namespace FcmsPortal
                 }
             }
         }
+        
+        //To get all schedules in a learning path
+        public static List<ScheduleEntry> GetAllSchedulesInLearningPath(LearningPath learningPath)
+        {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+            
+            if (learningPath.Schedule == null || !learningPath.Schedule.Any())
+            {
+                return new List<ScheduleEntry>(); 
+            }
+            
+            return learningPath.Schedule;
+        }
+
+        
+        //display all students in a learning path along with their schedules
+        public static void DisplayStudentSchedules(LearningPath learningPath)
+        {
+            Console.WriteLine($"Schedules for Students in Learning Path: {learningPath.Id} - {learningPath.ClassLevel} {learningPath.EducationLevel}\n");
+
+            foreach (var student in learningPath.Students)
+            {
+                Console.WriteLine($"Student: {student.Person.FirstName} {student.Person.LastName}");
+
+                if (student.Person.PersonalCalendar != null && student.Person.PersonalCalendar.ScheduleEntries.Any())
+                {
+                    foreach (var entry in student.Person.PersonalCalendar.ScheduleEntries)
+                    {
+                        Console.WriteLine($" - Schedule Entry ID: {entry.Id}, Date: {entry.DateTime}, Duration: {entry.Duration}, Topic: {entry.ClassSession?.Topic ?? "N/A"}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(" - No schedules available.");
+                }
+                Console.WriteLine(); // Blank line for better readability
+            }
+        }
 
 
       
@@ -415,28 +456,7 @@ namespace FcmsPortal
             }
         }
         
-        public static void DisplayStudentSchedules(LearningPath learningPath)
-        {
-            Console.WriteLine($"Schedules for Students in Learning Path: {learningPath.Id} - {learningPath.ClassLevel} {learningPath.EducationLevel}\n");
-
-            foreach (var student in learningPath.Students)
-            {
-                Console.WriteLine($"Student: {student.Person.FirstName} {student.Person.LastName}");
-
-                if (student.Person.PersonalCalendar != null && student.Person.PersonalCalendar.ScheduleEntries.Any())
-                {
-                    foreach (var entry in student.Person.PersonalCalendar.ScheduleEntries)
-                    {
-                        Console.WriteLine($" - Schedule Entry ID: {entry.Id}, Date: {entry.DateTime}, Duration: {entry.Duration}, Topic: {entry.ClassSession?.Topic ?? "N/A"}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine(" - No schedules available.");
-                }
-                Console.WriteLine(); // Blank line for better readability
-            }
-        }
+        
         
         
         

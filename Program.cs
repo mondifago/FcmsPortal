@@ -330,7 +330,7 @@ namespace FcmsPortal
             meetingEntry.Event = null;
             meetingEntry.ClassSession = null;
             meetingEntry.Notes = "Agenda: Weekly Academic Progress Evaluation";
-            //allCalendar.ScheduleEntries.Add(meetingEntry);
+            
             //make staff meeting a recurring feature
             meetingEntry.IsRecurring = true;
             meetingEntry.RecurrencePattern = RecurrenceType.Weekly;
@@ -342,7 +342,8 @@ namespace FcmsPortal
             {
                 Console.WriteLine($"{schedule.DateTime}: {schedule.Title} at {schedule.Venue}");
             }
-            //LogicMethods.DisplayAllCalendarEntries(fcmSchool);
+            allCalendar.ScheduleEntries.Add(meetingEntry);
+            LogicMethods.DisplayAllCalendarEntries(fcmSchool);
             
             // Create a base schedule entry
             ScheduleEntry scheduleEntry = new ScheduleEntry
@@ -369,13 +370,19 @@ namespace FcmsPortal
             {
                 Console.WriteLine($"{schedule.DateTime}: {schedule.Title} at {schedule.Venue}");
             }
+            
+            //Get all schedules in a learning path
+            var schedulesInLearning1 = LogicMethods.GetAllSchedulesInLearningPath(learningPath1);
+            foreach (var schedule in schedulesInLearning1)
+            {
+                Console.WriteLine($"ID: {schedule.Id}, Title: {schedule.Title}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
+            }
+            
 
-            
-            
             /*
             //add fee for learning path 1
             learningPath1.FeePerSemester = 100.0;
-            
+
             //assign semester fee to each student in learning path1
             LogicMethods.AssignSemesterFeesToStudents(learningPath1);
 
@@ -388,27 +395,27 @@ namespace FcmsPortal
             student5.ID = 304;
             student5.Person = new Person();
             student5.Person.FirstName = "Kevin";
-            
+
             learningPath1.Students.Add(student5);
-            
+
             //Console.WriteLine($"Name: {student5.Person.FirstName} - Fees: {student5.Person.SchoolFees.TotalAmount}");
             //above created new student Kevin does not have a set school fees Amount because event has to happen automatically
-            
-            
-            
-            
-           
+
+
+
+
+
 
             foreach (var scheduleEntry in learningPath1.Schedule)
             {
                 Console.WriteLine($"{scheduleEntry.Id}: {scheduleEntry.DateTime} - {scheduleEntry.Title}, {scheduleEntry.Duration}");
             }
-            
+
             LogicMethods.DisplayStudentSchedules(learningPath1);
-            
+
             // Synchronize schedules
             LogicMethods.SynchronizeSchedulesWithStudents(learningPath1);
-            
+
             LogicMethods.DisplayStudentSchedules(learningPath1);
             var calendar = LogicMethods.GenerateStudentCalendar(fcmSchool, student1);
 
@@ -419,7 +426,7 @@ namespace FcmsPortal
                 Console.WriteLine($"Date: {entry.DateTime}, Course: {entry.ClassSession.Course}, Topic: {entry.ClassSession.Topic}");
             }
 
-            
+
 
 
 
