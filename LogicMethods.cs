@@ -465,6 +465,48 @@ namespace FcmsPortal
             }
             Console.WriteLine($"Meeting '{meeting.Meeting}' has been posted to all staff calendars.");
         }
+        
+        //post meeting to guardians
+        public static void PostMeetingToGuardian(School school, ScheduleEntry meeting)
+        {
+            if (school == null)
+            {
+                    throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            }
+
+            if (meeting == null)
+            {
+                    throw new ArgumentNullException(nameof(meeting), "Meeting cannot be null.");
+            }
+
+            if (string.IsNullOrWhiteSpace(meeting.Title) || meeting.DateTime == default || meeting.Duration == default)
+            {
+                    throw new ArgumentException("Meeting must have a valid title, date, and duration.");
+            }
+
+            if (school.Guardians == null || school.Guardians.Count == 0)
+            {
+                Console.WriteLine("No guardians found in the school to post the meeting to.");
+                return;
+            }
+
+            foreach (var guardian in school.Guardians)
+            {
+                if (guardian.Person.PersonalCalendar == null)
+                {
+                    guardian.Person.PersonalCalendar = new Calendar
+                    {
+                        Id = guardian.Id,
+                        Name = $"{guardian.Person.LastName}'s Calendar"
+                    };
+                } 
+                guardian.Person.PersonalCalendar.ScheduleEntries.Add(meeting);
+            }
+
+            Console.WriteLine($"Meeting '{meeting.Title}' has been successfully posted to all guardians.");
+        }
+        
+
 
 
 

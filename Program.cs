@@ -455,6 +455,21 @@ namespace FcmsPortal
                     Console.WriteLine($"  Meeting: {entry.Meeting}, Date: {entry.DateTime}, Venue: {entry.Venue}");
                 }
             }
+            
+            //testing post meeting to all guardians
+            LogicMethods.PostMeetingToGuardian(fcmSchool, meetingEntry);
+            foreach (var guardian in fcmSchool.Guardians)
+            {
+                Console.WriteLine($"{guardian.Person.FirstName} {guardian.Person.LastName}'s Calendar:");
+                foreach (var entry in guardian.Person.PersonalCalendar.ScheduleEntries)
+                {
+                    Console.WriteLine($"  Meeting: {entry.Meeting}, Date: {entry.DateTime}, Venue: {entry.Venue}");
+                }
+            }
+            
+            
+            
+            
             /*
             //add fee for learning path 1
             learningPath1.FeePerSemester = 100.0;
