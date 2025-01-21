@@ -196,18 +196,19 @@ namespace FcmsPortal
                 throw new ArgumentNullException(nameof(student), "Student cannot be null.");
             }
             
-            bool existsInSchool = school.Students.Any(s => s.ID == student.ID);
-            if (existsInSchool)
+            if (school.Students.Any(s => s.ID == student.ID))
             {
-                throw new InvalidOperationException($"Student with ID {student.ID} is already registered in the school.");
+                throw new ArgumentException($"Student with ID {student.ID} is already registered in the school.");
             }
             
-            bool existsInLearningPaths = school.LearningPath
-                .Any(lp => lp.Students.Any(s => s.ID == student.ID));
-
-            if (existsInLearningPaths)
+            if (school.LearningPath.Any(lp => lp.Students.Any(s => s.ID == student.ID)))
             {
-                throw new InvalidOperationException($"Student with ID {student.ID} already exists in a learning path.");
+                throw new ArgumentException($"Student with ID {student.ID} is already enrolled in a learning path.");
+            }
+            
+            if (student.Guardian != null && !school.Guardians.Any(g => g.Id == student.Guardian.Id))
+            {
+                school.Guardians.Add(student.Guardian);
             }
             school.Students.Add(student);
         }
@@ -229,10 +230,10 @@ namespace FcmsPortal
             {
                 throw new InvalidOperationException($"Staff with email {staff.Person.Email} is already registered in the school.");
             }
-            
             school.Staff.Add(staff);
-            
         }
+        
+        //Add student to school, which automatically adds guardian as well if the guardian is not previously added
         
         /// <summary>
         /// Methods involved in Scheduling

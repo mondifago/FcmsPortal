@@ -28,6 +28,7 @@ namespace FcmsPortal
             fcmSchool.Students = new List<Student>();
             fcmSchool.LearningPath = new List<LearningPath>();
             fcmSchool.SchoolCalendar = new List<Calendar>();
+            fcmSchool.Guardians = new List<Guardian>();
             fcmSchool.Address = address;
             address.Street = "120 City Road";
             address.City = "Asaba";
@@ -63,11 +64,12 @@ namespace FcmsPortal
             student1.Guardian.Person = new Person();
             student1.Guardian.Person.LastName = "Mr. Jake";
             // Add the student to the school's student list
-            fcmSchool.Students.Add(student1);
+            LogicMethods.AddStudentToSchool(fcmSchool, student1);
 
             //create student 2
             Student student2 = new Student();
             student2.ID = 302;
+            student2.GuardianId = 3021;
             student2.Person = new Person();
             student2.Person.FirstName = "Dan";
             student2.Person.MiddleName = "D";
@@ -78,11 +80,22 @@ namespace FcmsPortal
             student2.Person.PersonalCalendar.Id = 277;
             student2.Person.PersonalCalendar.Name = "Student2's Study Calendar";
             student2.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
-            fcmSchool.Students.Add(student2);
+            student2.Guardian = new Guardian();
+            var guardian2 = student2.Guardian;
+            guardian2.Id = 3021;
+            guardian2.Occupation = "Doctor";
+            guardian2.RelationshipToStudent = Relationship.Mother;
+            guardian2.Person = new Person();
+            guardian2.Person.FirstName = "Diana";
+            guardian2.Person.MiddleName = "D";
+            guardian2.Person.LastName = "Mrs Deen";
+            LogicMethods.AddStudentToSchool(fcmSchool, student2);
+           
 
             //create student 3
             Student student3 = new Student();
             student3.ID = 303;
+            student3.GuardianId = 3031;
             student3.Person = new Person();
             student3.Person.FirstName = "Zac";
             student3.Person.MiddleName = "Z";
@@ -93,7 +106,16 @@ namespace FcmsPortal
             student3.Person.PersonalCalendar.Id = 377;
             student3.Person.PersonalCalendar.Name = "Student3's Study Calendar";
             student3.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
-            fcmSchool.Students.Add(student3);
+            student3.Guardian = new Guardian();
+            var guardian3 = student3.Guardian;
+            guardian3.Id = 3031;
+            guardian3.Occupation = "professor";
+            guardian3.RelationshipToStudent = Relationship.Father;
+            guardian3.Person = new Person();
+            guardian3.Person.FirstName = "Zok";
+            guardian3.Person.MiddleName = "Z";
+            guardian3.Person.LastName = "Mr Zik";
+            LogicMethods.AddStudentToSchool(fcmSchool, student3);
 
             //create admin staff
             Staff staff1 = new Staff();
@@ -411,6 +433,17 @@ namespace FcmsPortal
                                   $"Start: {evt.DateTime.ToShortTimeString()}, " +
                                   $"Duration: {evt.Duration}");
             }
+            
+            foreach (var guardian in fcmSchool.Guardians)
+            {
+                Console.WriteLine($"ID: {guardian.Id}, Name: {guardian.Person.LastName}, Occupation: {guardian.Occupation}, Relationship to student: {guardian.RelationshipToStudent}");
+            }
+
+            foreach (var student in fcmSchool.Students)
+            {
+                Console.WriteLine($"ID: {student.ID}, Name: {student.Person.FirstName}, guardian: {student.GuardianId}, Nane of Guardian: {student.Guardian.Person.LastName}"); 
+            }
+            
             /*
             //add fee for learning path 1
             learningPath1.FeePerSemester = 100.0;
