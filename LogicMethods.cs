@@ -184,7 +184,7 @@ namespace FcmsPortal
             
         }
         
-        //Add a newly created student to school
+        //Add student to school, which automatically adds guardian as well if the guardian is not previously added
         public static void AddStudentToSchool(School school, Student student)
         {
             if (school == null)
@@ -213,6 +213,23 @@ namespace FcmsPortal
             school.Students.Add(student);
         }
         
+        //retrieve all guardians registered to school
+        public static List<Guardian> GetAllGuardians(School school)
+        {
+            if (school == null)
+            {
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            }
+
+            if (school.Guardians == null || !school.Guardians.Any())
+            {
+                Console.WriteLine("No guardians found in the school.");
+                return new List<Guardian>(); 
+            }
+            return school.Guardians;
+        }
+
+        
         //Add Staff newly created staff to school
         public static void AddStaffToSchool(School school, Staff staff)
         {
@@ -232,8 +249,6 @@ namespace FcmsPortal
             }
             school.Staff.Add(staff);
         }
-        
-        //Add student to school, which automatically adds guardian as well if the guardian is not previously added
         
         /// <summary>
         /// Methods involved in Scheduling
