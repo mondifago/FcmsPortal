@@ -420,6 +420,52 @@ namespace FcmsPortal
 
             return events;
         }
+        
+        //Post meeting to all staff
+        public static void PostMeetingToStaff(School school, ScheduleEntry meeting)
+        {
+            if (school == null)
+            {
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            }
+
+            if (meeting == null)
+            {
+                throw new ArgumentNullException(nameof(meeting), "Meeting cannot be null.");
+            }
+
+            if (string.IsNullOrEmpty(meeting.Meeting))
+            {
+                throw new ArgumentException("The provided ScheduleEntry is not a meeting.");
+            }
+
+            if (school.Staff == null || !school.Staff.Any())
+            {
+                Console.WriteLine("No staff available to post the meeting.");
+                return;
+            }
+            
+            foreach (var staff in school.Staff)
+            {
+                if (staff.Person.PersonalCalendar == null)
+                {
+                    staff.Person.PersonalCalendar = new Calendar
+                    {
+                        Id = staff.Id,
+                        Name = $"{staff.Person.FirstName} {staff.Person.LastName}'s Calendar",
+                        ScheduleEntries = new List<ScheduleEntry>()
+                    };
+                }
+
+                // Check if the meeting already exists in the staff's calendar
+                if (!staff.Person.PersonalCalendar.ScheduleEntries.Any(se => se.Id == meeting.Id))
+                {
+                    staff.Person.PersonalCalendar.ScheduleEntries.Add(meeting);
+                }
+            }
+            Console.WriteLine($"Meeting '{meeting.Meeting}' has been posted to all staff calendars.");
+        }
+
 
 
 

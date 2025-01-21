@@ -444,6 +444,17 @@ namespace FcmsPortal
                 Console.WriteLine($"ID: {student.ID}, Name: {student.Person.FirstName}, guardian: {student.GuardianId}, Nane of Guardian: {student.Guardian.Person.LastName}"); 
             }
             
+            //Testing post meeting to all staff
+            LogicMethods.PostMeetingToStaff(fcmSchool, meetingEntry);
+            
+            foreach (var staff in fcmSchool.Staff)
+            {
+                Console.WriteLine($"{staff.Person.FirstName} {staff.Person.LastName}'s Calendar:");
+                foreach (var entry in staff.Person.PersonalCalendar.ScheduleEntries)
+                {
+                    Console.WriteLine($"  Meeting: {entry.Meeting}, Date: {entry.DateTime}, Venue: {entry.Venue}");
+                }
+            }
             /*
             //add fee for learning path 1
             learningPath1.FeePerSemester = 100.0;
