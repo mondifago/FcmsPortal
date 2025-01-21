@@ -506,6 +506,74 @@ namespace FcmsPortal
             Console.WriteLine($"Meeting '{meeting.Title}' has been successfully posted to all guardians.");
         }
         
+        //Post event to all
+        public static void PostEventToAll(School school, ScheduleEntry eventEntry)
+        {
+        if (school == null)
+        {
+            throw new ArgumentNullException(nameof(school), "School cannot be null.");
+        }
+
+        if (eventEntry == null)
+        {
+            throw new ArgumentNullException(nameof(eventEntry), "Event entry cannot be null.");
+        }
+
+        if (string.IsNullOrWhiteSpace(eventEntry.Title) || eventEntry.DateTime == default || eventEntry.Duration == default)
+        {
+            throw new ArgumentException("Event must have a valid title, date, and duration.");
+        }
+        
+        if (school.Students != null && school.Students.Any())
+        {
+            foreach (var student in school.Students)
+            {
+                if (student.Person.PersonalCalendar == null)
+                {
+                    student.Person.PersonalCalendar = new Calendar
+                    {
+                        Id = student.ID,
+                        Name = $"{student.Person.FirstName} {student.Person.LastName}'s Calendar"
+                    };
+                }
+                student.Person.PersonalCalendar.ScheduleEntries.Add(eventEntry);
+            }
+        }
+        
+        if (school.Staff != null && school.Staff.Any())
+        {
+            foreach (var staff in school.Staff)
+            {
+                if (staff.Person.PersonalCalendar == null)
+                {
+                    staff.Person.PersonalCalendar = new Calendar
+                    {
+                        Id = staff.Id,
+                        Name = $"{staff.Person.LastName}'s Calendar"
+                    };
+                }
+                staff.Person.PersonalCalendar.ScheduleEntries.Add(eventEntry);
+            }
+        }
+        
+        if (school.Guardians != null && school.Guardians.Any())
+        {
+            foreach (var guardian in school.Guardians)
+            {
+                if (guardian.Person.PersonalCalendar == null)
+                {
+                    guardian.Person.PersonalCalendar = new Calendar
+                    {
+                        Id = guardian.Id,
+                        Name = $"{guardian.Person.LastName}'s Calendar"
+                    };
+                }
+                guardian.Person.PersonalCalendar.ScheduleEntries.Add(eventEntry);
+            }
+        }
+
+        Console.WriteLine($"Event '{eventEntry.Title}' has been successfully posted to all students, staff, and guardians.");
+    }
 
 
 
