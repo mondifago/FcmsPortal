@@ -9,5 +9,9 @@ namespace FcmsPortal.ViewModel
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
         public List<SemesterCurriculum> Semesters { get; set; } = new();
+        public string Course { get; set; }
+        public string Topic { get; set; }
+        public string Description { get; set; }
+        public string LessonNote { get; set; }
     }
 }

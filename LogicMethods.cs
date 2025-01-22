@@ -602,34 +602,50 @@ namespace FcmsPortal
         /// <summary>
         /// Methods for Curriculum
         /// </summary>
-        
-        public static Curriculum GenerateCurriculum(School school, int year, ClassLevel classLevel, EducationLevel educationLevel, int semester, int id)
+        public static void GenerateCurriculumForLearningPath(School school, LearningPath learningPath)
         {
-            var curriculum = new Curriculum
-            {
-                Id = id,
-                Year = year,
-                Semester = semester,
-                EducationLevel = educationLevel,
-                ClassLevel = classLevel,
-                ClassSessions = new List<ClassSession>()
-            };
-            var learningPaths = school.LearningPath
-                .Where(lp => lp.ClassLevel == classLevel && lp.EducationLevel == educationLevel)
-                .ToList();
-
-            foreach (var learningPath in learningPaths)
-            {
-                curriculum.Semester = learningPath.Semester;
-
-                foreach (var scheduleEntry in learningPath.Schedule)
+        if (school == null)
+            throw new ArgumentNullException(nameof(school), "School cannot be null.");
+    
+        if (learningPath == null)
+            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+    
+        if (learningPath.Schedule == null || !learningPath.Schedule.Any())
+            throw new InvalidOperationException("Learning path has no schedules to generate a curriculum.");
+    
+        
+        int year = learningPath.Schedule.First().DateTime.Year;
+            
+            var semesterCurriculums = learningPath.Schedule
+                .Where(se => se.ClassSession != null) 
+                .GroupBy(se => se.DateTime.Month <= 4 ? 1 : se.DateTime.Month <= 8 ? 2 : 3)
+                .Select(group => new SemesterCurriculum
                 {
-                    var classSession = scheduleEntry.ClassSession;
-                    curriculum.ClassSessions.Add(classSession);
-                }
+                    Semester = group.Key,
+                    ClassSessions = group.Select(se => se.ClassSession).ToList()
+                })
+                .ToList();
+            
+            var newCurriculum = new Curriculum
+                {
+                    Id = school.Curricula.Any() ? school.Curricula.Max(c => c.Id) + 1 : 1, 
+                    Year = year,
+                    EducationLevel = learningPath.EducationLevel,
+                    ClassLevel = learningPath.ClassLevel,
+                    Semesters = semesterCurriculums
+                };
+            
+            if (school.Curricula.Any(c =>
+                    c.Year == newCurriculum.Year &&
+                    c.EducationLevel == newCurriculum.EducationLevel &&
+                    c.ClassLevel == newCurriculum.ClassLevel))
+            {
+                throw new InvalidOperationException($"A curriculum for {newCurriculum.EducationLevel} - {newCurriculum.ClassLevel} already exists for the year {newCurriculum.Year}.");
             }
-            return curriculum;
+            school.Curricula.Add(newCurriculum);
         }
+
+
         
         //Assign fees for all students in a specific learning path
         public static void AssignSemesterFeesToStudents(LearningPath learningPath)
