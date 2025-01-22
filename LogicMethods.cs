@@ -574,13 +574,6 @@ namespace FcmsPortal
 
         Console.WriteLine($"Event '{eventEntry.Title}' has been successfully posted to all students, staff, and guardians.");
     }
-
-
-
-
-
-
-
         
         //display all students in a learning path along with their schedules
         public static void DisplayStudentSchedules(LearningPath learningPath)
@@ -602,17 +595,9 @@ namespace FcmsPortal
                 {
                     Console.WriteLine(" - No schedules available.");
                 }
-                Console.WriteLine(); // Blank line for better readability
+                Console.WriteLine(); 
             }
         }
-
-
-      
-        
-        
-        
-        
-        
         
         /// <summary>
         /// Methods for Curriculum

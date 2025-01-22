@@ -467,6 +467,24 @@ namespace FcmsPortal
                 }
             }
             
+            //generate curriculum for
+            var curriculum = LogicMethods.GenerateCurriculum(fcmSchool, 2026, ClassLevel.SC_3, EducationLevel.SeniorCollege, 1, 301);
+            int year = curriculum.Year;
+            Console.WriteLine($"Curriculum for {year}:");
+            Console.WriteLine($"Education Level: {curriculum.EducationLevel}");
+            Console.WriteLine($"Class Level: {curriculum.ClassLevel}");
+            Console.WriteLine($"Year: {curriculum.Year}");
+            Console.WriteLine($"Semester: {curriculum.Semester}");
+            Console.WriteLine("=============================================");
+
+            foreach (var entry in curriculum.ClassSessions)
+            {
+                Console.WriteLine($"Course: {entry.Course}, Topic: {entry.Topic}");
+                Console.WriteLine($"Lesson Note: {entry.LessonNote}");
+                Console.WriteLine($"Teacher's Remark: {entry.TeacherRemarks}");
+                Console.WriteLine("------------------------------------------------");
+            }
+            
             
             
             
@@ -554,23 +572,7 @@ namespace FcmsPortal
             //add all learning paths to school
             fcmSchool.LearningPath = new List<LearningPath> { learningPath1 };
 
-            //generate curriculum for
-            var curriculum = LogicMethods.GenerateCurriculum(fcmSchool, 2024, ClassLevel.PRI_3, EducationLevel.Primary, 1, 301);
-            int year = curriculum.Year;
-            Console.WriteLine($"Curriculum for {year}:");
-            Console.WriteLine($"Education Level: {curriculum.EducationLevel}");
-            Console.WriteLine($"Class Level: {curriculum.ClassLevel}");
-            Console.WriteLine($"Year: {curriculum.Year}");
-            Console.WriteLine($"Semester: {curriculum.Semester}");
-            Console.WriteLine("=============================================");
-
-            foreach (var entry in curriculum.ClassSessions)
-            {
-                Console.WriteLine($"Course: {entry.Course}, Topic: {entry.Topic}");
-                Console.WriteLine($"Lesson Note: {entry.LessonNote}");
-                Console.WriteLine($"Teacher's Remark: {entry.TeacherRemarks}");
-                Console.WriteLine("------------------------------------------------");
-            }
+            
             //student1 make payment of 200 out of 1000
             student1.Person.SchoolFees = new Schoolfees();
             student1.Person.SchoolFees.TotalAmount = 1000.0;
