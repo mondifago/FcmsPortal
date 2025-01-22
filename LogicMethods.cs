@@ -705,6 +705,36 @@ namespace FcmsPortal
                 }
             }
         }
+        
+        //to increment year and update all curricula
+        public static void IncrementYearAndUpdateCurricula(School school)
+        {
+            if (school == null)
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+
+            if (school.Curricula == null || !school.Curricula.Any())
+                throw new InvalidOperationException("No curricula found in the school to update.");
+
+            Console.WriteLine("Incrementing year and updating curricula...");
+            
+            foreach (var curriculum in school.Curricula)
+            {
+                curriculum.Year++;
+            }
+            
+            foreach (var learningPath in school.LearningPath)
+            {
+                try
+                {
+                    UpdateCurriculumForLearningPath(school, learningPath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to update curriculum for Learning Path ID: {learningPath.Id}. Error: {ex.Message}");
+                }
+            }
+        }
+
 
 
 
