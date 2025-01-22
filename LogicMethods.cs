@@ -644,6 +644,47 @@ namespace FcmsPortal
             }
             school.Curricula.Add(newCurriculum);
         }
+        
+        //method to update curriculum from changes in learning path
+        public static void UpdateCurriculumForLearningPath(School school, LearningPath learningPath)
+        {
+            if (school == null)
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+    
+            if (learningPath == null)
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+
+            if (learningPath.Schedule == null || !learningPath.Schedule.Any())
+                throw new InvalidOperationException("Learning path has no schedules to update the curriculum.");
+            
+            int year = learningPath.Schedule.First().DateTime.Year;
+            
+            var existingCurriculum = school.Curricula.FirstOrDefault(c =>
+                c.Year == year &&
+                c.EducationLevel == learningPath.EducationLevel &&
+                c.ClassLevel == learningPath.ClassLevel);
+            
+            if (existingCurriculum == null)
+            {
+                Console.WriteLine($"No existing curriculum found for {learningPath.EducationLevel} - {learningPath.ClassLevel}, Year {year}. Generating a new curriculum...");
+                GenerateCurriculumForLearningPath(school, learningPath);
+                return;
+            }
+            
+            var semesterCurriculums = learningPath.Schedule
+                .Where(se => se.ClassSession != null) // Filter out non-class sessions
+                .GroupBy(se => se.DateTime.Month <= 4 ? 1 : se.DateTime.Month <= 8 ? 2 : 3)
+                .Select(group => new SemesterCurriculum
+                {
+                    Semester = group.Key,
+                    ClassSessions = group.Select(se => se.ClassSession).ToList()
+                })
+                .ToList();
+            
+            existingCurriculum.Semesters = semesterCurriculums;
+            
+        }
+
 
 
         

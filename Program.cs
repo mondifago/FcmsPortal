@@ -491,8 +491,7 @@ namespace FcmsPortal
                     Console.WriteLine($"  Meeting: {entry.Meeting}, Date: {entry.DateTime}, Venue: {entry.Venue}");
                 }
             }
-
-            //generate curriculum for
+            
             // Generate the curriculum for the Senior College Learning Path
             LogicMethods.GenerateCurriculumForLearningPath(fcmSchool, learningPath1);
 
