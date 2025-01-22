@@ -512,6 +512,32 @@ namespace FcmsPortal
                         Console.WriteLine($"    Lesson Note: {classSession.LessonNote}");
                     }
                 }
+                
+                //test retrieve curriculum
+                try
+                {
+                    var curriculumForClass = LogicMethods.GetCurriculumForClass(fcmSchool, EducationLevel.SeniorCollege, ClassLevel.SC_3, 2026);
+
+                    Console.WriteLine($"Curriculum ID: {curriculum.Id}");
+                    Console.WriteLine($"Year: {curriculum.Year}");
+                    Console.WriteLine($"Education Level: {curriculum.EducationLevel}");
+                    Console.WriteLine($"Class Level: {curriculum.ClassLevel}");
+                    foreach (var semester in curriculum.Semesters)
+                    {
+                        Console.WriteLine($"  Semester {semester.Semester}:");
+                        foreach (var classSession in semester.ClassSessions)
+                        {
+                            Console.WriteLine($"    Course: {classSession.Course}");
+                            Console.WriteLine($"    Topic: {classSession.Topic}");
+                            Console.WriteLine($"    Description: {classSession.Description}");
+                            Console.WriteLine($"    Lesson Note: {classSession.LessonNote}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
 
 
 

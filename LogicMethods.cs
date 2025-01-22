@@ -734,6 +734,28 @@ namespace FcmsPortal
                 }
             }
         }
+        
+        //to retrieve curriculum of any class
+        public static Curriculum GetCurriculumForClass(School school, EducationLevel educationLevel, ClassLevel classLevel, int year)
+        {
+            if (school == null)
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+    
+            if (school.Curricula == null || !school.Curricula.Any())
+                throw new InvalidOperationException("No curricula exist in the school.");
+            
+            var curriculum = school.Curricula
+                .FirstOrDefault(c => c.EducationLevel == educationLevel && 
+                                     c.ClassLevel == classLevel && 
+                                     c.Year == year);
+
+            if (curriculum == null)
+                throw new InvalidOperationException($"No curriculum found for Education Level: {educationLevel}, Class Level: {classLevel}, Year: {year}.");
+
+            return curriculum;
+        }
+
+        
 
 
 
