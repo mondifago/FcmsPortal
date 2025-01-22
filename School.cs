@@ -1,4 +1,6 @@
-﻿namespace FcmsPortal
+﻿using FcmsPortal.ViewModel;
+
+namespace FcmsPortal
 {
     public class School
     {
@@ -13,6 +15,7 @@
         public List<Guardian> Guardians { get; set; } = new();
         public List<LearningPath> LearningPath { get; set; } = new();
         public List<Calendar> SchoolCalendar { get; set; }
+        public List<Curriculum> Curricula { get; set; }
         public List<CourseGrade> Grades { get; set; } = new();
     }
 }
