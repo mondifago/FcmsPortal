@@ -672,7 +672,7 @@ namespace FcmsPortal
             }
             
             var semesterCurriculums = learningPath.Schedule
-                .Where(se => se.ClassSession != null) // Filter out non-class sessions
+                .Where(se => se.ClassSession != null) 
                 .GroupBy(se => se.DateTime.Month <= 4 ? 1 : se.DateTime.Month <= 8 ? 2 : 3)
                 .Select(group => new SemesterCurriculum
                 {
@@ -682,8 +682,30 @@ namespace FcmsPortal
                 .ToList();
             
             existingCurriculum.Semesters = semesterCurriculums;
-            
         }
+        
+        //method to update all curricula
+        public static void UpdateAllCurricula(School school)
+        {
+            if (school == null)
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+
+            if (school.LearningPath == null || !school.LearningPath.Any())
+                throw new InvalidOperationException("No learning paths available in the school to update curricula.");
+            
+            foreach (var learningPath in school.LearningPath)
+            {
+                try
+                {
+                    UpdateCurriculumForLearningPath(school, learningPath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to update curriculum for Learning Path ID: {learningPath.Id}. Error: {ex.Message}");
+                }
+            }
+        }
+
 
 
 
