@@ -538,37 +538,21 @@ namespace FcmsPortal
                 {
                     Console.WriteLine($"Error: {ex.Message}");
                 }
-
-
-
-
-                /*
+                
                 //add fee for learning path 1
                 learningPath1.FeePerSemester = 100.0;
 
                 //assign semester fee to each student in learning path1
-                LogicMethods.AssignSemesterFeesToStudents(learningPath1);
+                LogicMethods.SetStudentFeesForLearningPath(learningPath1);
 
                 foreach (var student in learningPath1.Students)
                 {
                     Console.WriteLine($"Student: {student.Person.FirstName} - {student.Person.SchoolFees.TotalAmount}");
                 }
 
-                Student student5 = new Student();
-                student5.ID = 304;
-                student5.Person = new Person();
-                student5.Person.FirstName = "Kevin";
-
-                learningPath1.Students.Add(student5);
-
-                //Console.WriteLine($"Name: {student5.Person.FirstName} - Fees: {student5.Person.SchoolFees.TotalAmount}");
-                //above created new student Kevin does not have a set school fees Amount because event has to happen automatically
-
-
-
-
-
-
+                
+                
+                /*
                 foreach (var scheduleEntry in learningPath1.Schedule)
                 {
                     Console.WriteLine($"{scheduleEntry.Id}: {scheduleEntry.DateTime} - {scheduleEntry.Title}, {scheduleEntry.Duration}");
@@ -590,21 +574,7 @@ namespace FcmsPortal
                 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
                 /*
-
-
 
 
                 //create corresponding schedule for them

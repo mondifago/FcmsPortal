@@ -754,38 +754,48 @@ namespace FcmsPortal
 
             return curriculum;
         }
-
         
-
-
-
-
-
+        /// <summary>
+        /// Methods for Payment
+        /// </summary>
         
         //Assign fees for all students in a specific learning path
-        public static void AssignSemesterFeesToStudents(LearningPath learningPath)
+        public static void SetStudentFeesForLearningPath(LearningPath learningPath)
         {
-            if (learningPath == null) throw new ArgumentNullException(nameof(learningPath));
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+            
+            if (learningPath.Students == null || !learningPath.Students.Any())
+            {
+                Console.WriteLine("No students are enrolled in this learning path.");
+                return;
+            }
 
+            if (learningPath.FeePerSemester <= 0)
+            {
+                throw new InvalidOperationException("The learning path must have a valid cost greater than zero.");
+            }
+            
             foreach (var student in learningPath.Students)
             {
                 if (student.Person.SchoolFees == null)
                 {
                     student.Person.SchoolFees = new Schoolfees();
                 }
-                // Assign the semester fee
                 student.Person.SchoolFees.TotalAmount = learningPath.FeePerSemester;
             }
         }
         
         //Assign fees to all students in all learning paths of a school assuming all students in the school has uniform school fees
-        public static void AssignFeesForAllLearningPaths(School school)
+        public static void SetFeesForAllLearningPaths(School school)
         {
             if (school == null) throw new ArgumentNullException(nameof(school));
 
             foreach (var learningPath in school.LearningPath)
             {
-                AssignSemesterFeesToStudents(learningPath);
+                SetStudentFeesForLearningPath(learningPath);
             }
         }
         
