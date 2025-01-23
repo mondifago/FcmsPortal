@@ -540,7 +540,7 @@ namespace FcmsPortal
                 }
                 
                 //add fee for learning path 1
-                learningPath1.FeePerSemester = 100.0;
+                learningPath1.FeePerSemester = 1000.0;
 
                 //assign semester fee to each student in learning path1
                 LogicMethods.SetStudentFeesForLearningPath(learningPath1);
@@ -549,9 +549,17 @@ namespace FcmsPortal
                 {
                     Console.WriteLine($"Student: {student.Person.FirstName} - {student.Person.SchoolFees.TotalAmount}");
                 }
+                //student1 make payment of 200 out of 1000
+                //student1.Person.SchoolFees = new School fees();
+                LogicMethods.MakePaymentForStudent(student1, 200.0, "Cash");
 
-                
-                
+                LogicMethods.MakePaymentForStudent(student1, 100.0, "Credit Card");
+                Console.WriteLine($"Student 1's school fees cost is: {student1.Person.SchoolFees.TotalAmount}");
+
+                Console.WriteLine($"student 1's total fees are: {student1.Person.SchoolFees.Balance}");
+
+
+
                 /*
                 foreach (var scheduleEntry in learningPath1.Schedule)
                 {
@@ -597,14 +605,7 @@ namespace FcmsPortal
                 fcmSchool.LearningPath = new List<LearningPath> { learningPath1 };
 
 
-                //student1 make payment of 200 out of 1000
-                student1.Person.SchoolFees = new Schoolfees();
-                student1.Person.SchoolFees.TotalAmount = 1000.0;
-                LogicMethods.MakePayment(student1, 200.0, "Cash");
-
-                LogicMethods.MakePayment(student1, 100.0, "Credit Card");
-
-                //LogicMethods.ShowAllPayments(student1); */
+                 */
             }
 
         }

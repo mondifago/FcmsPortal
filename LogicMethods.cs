@@ -772,11 +772,6 @@ namespace FcmsPortal
                 Console.WriteLine("No students are enrolled in this learning path.");
                 return;
             }
-
-            if (learningPath.FeePerSemester <= 0)
-            {
-                throw new InvalidOperationException("The learning path must have a valid cost greater than zero.");
-            }
             
             foreach (var student in learningPath.Students)
             {
@@ -826,6 +821,25 @@ namespace FcmsPortal
                 }
             }
         }
+        
+        //student make payment
+        public static void MakePaymentForStudent(Student student, double amount, string paymentMethod)
+        {
+            if (student?.Person?.SchoolFees == null)
+            {
+                throw new ArgumentException("Invalid student or school fees record.");
+            }
+            
+            var payment = new Payment
+            {
+                Amount = amount,
+                Date = DateTime.Now,
+                PaymentMethod = paymentMethod
+            };
+            student.Person.SchoolFees.Payments.Add(payment);
+        }
+        
+        
         
         
         
@@ -923,21 +937,7 @@ namespace FcmsPortal
             learningPath.Students.Add(student);
         }
 
-        //student make payment
-        public static void MakePayment(Student student, double amount, string paymentMethod)
-        {
-            if (student?.Person?.SchoolFees == null)
-            {
-                throw new ArgumentException("Invalid student or school fees record.");
-            }
-            var payment = new Payment
-            {
-                Amount = amount,
-                Date = DateTime.Now,
-                PaymentMethod = paymentMethod
-            };
-            student.Person.SchoolFees.Payments.Add(payment);
-        }
+        
         
        
 
@@ -1187,11 +1187,5 @@ namespace FcmsPortal
                 .Where(grade => grade.Course == courseName && grade.GradeType == GradeType.Homework)
                 .ToList() ?? new List<TestGrade>();
         }
-
-
-
-
-
-
     }
 }
