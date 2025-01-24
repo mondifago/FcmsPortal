@@ -839,6 +839,19 @@ namespace FcmsPortal
             student.Person.SchoolFees.Payments.Add(payment);
         }
         
+        //Check if student has made upto half the school fees payment
+        public static bool HasMetPaymentThreshold(Student student)
+        {
+            if (student?.Person?.SchoolFees == null)
+            {
+                throw new ArgumentException("Invalid student or school fees record.");
+            }
+
+            double totalPayments = student.Person.SchoolFees.Payments.Sum(p => p.Amount);
+            return totalPayments >= (student.Person.SchoolFees.TotalAmount / 2);
+        }
+
+        
         
         
         
@@ -898,46 +911,8 @@ namespace FcmsPortal
 
 
 
-        //Check for any payment for a student
-        public static bool IsStudentPaymentMade(Student student)
-        {
-            return student.Person.SchoolFees.Payments != null && student.Person.SchoolFees.Payments.Any(p => p.Amount > 0);
-        }
-        //Check for successful payment for a student based on half of Total amount required
-        public static bool IsStudentPaymentSuccessful(Student student)
-        {
-            double requiredAmount = student.Person.SchoolFees.TotalAmount / 2;
-            return student.Person.SchoolFees.Payments != null
-                   && student.Person.SchoolFees.Payments.Any(p => p.Amount >= requiredAmount);
-        }
-
-        //Enroll student to learning path based on successful payment
-        public static void EnrollStudentInLearningPath(Student student, LearningPath learningPath)
-        {
-            if (student == null)
-            {
-                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-            }
-
-            if (learningPath == null)
-            {
-                throw new ArgumentNullException(nameof(learningPath), "LearningPath cannot be null.");
-            }
-
-            if (!IsStudentPaymentSuccessful(student))
-            {
-                throw new InvalidOperationException("Student cannot be enrolled without successful payment.");
-            }
-
-            if (learningPath.Students.Contains(student))
-            {
-                throw new InvalidOperationException("Student is already enrolled in the learning path.");
-            }
-
-            learningPath.Students.Add(student);
-        }
-
         
+
         
        
 

@@ -550,12 +550,9 @@ namespace FcmsPortal
                     Console.WriteLine($"Student: {student.Person.FirstName} - {student.Person.SchoolFees.TotalAmount}");
                 }
                 //student1 make payment of 200 out of 1000
-                //student1.Person.SchoolFees = new School fees();
                 LogicMethods.MakePaymentForStudent(student1, 200.0, "Cash");
-
                 LogicMethods.MakePaymentForStudent(student1, 100.0, "Credit Card");
                 Console.WriteLine($"Student 1's school fees cost is: {student1.Person.SchoolFees.TotalAmount}");
-
                 Console.WriteLine($"student 1's total fees are: {student1.Person.SchoolFees.Balance}");
 
 
