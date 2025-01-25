@@ -1068,6 +1068,29 @@ namespace FcmsPortal
                 Console.WriteLine($"Access revoked for student {student.Person.FirstName} {student.Person.LastName}.");
             }
         }
+        
+        //confirm student's eligibility for payment
+        public static bool ValidatePaymentEligibilityForLearningPath(Student student, LearningPath learningPath)
+        {
+            if (student == null)
+            {
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+            }
+
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+            
+            bool isEnrolled = learningPath.Students.Contains(student);
+
+            if (!isEnrolled)
+            {
+                Console.WriteLine($"Student {student.Person.FirstName} {student.Person.LastName} is not enrolled in the learning path '{learningPath.EducationLevel} - {learningPath.ClassLevel}'. Payment is not allowed.");
+            }
+
+            return isEnrolled;
+        }
 
 
 
