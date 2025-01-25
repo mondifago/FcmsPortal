@@ -851,6 +851,7 @@ namespace FcmsPortal
             return totalPayments >= (student.Person.SchoolFees.TotalAmount / 2);
         }
         
+        //get student's outstanding balance
         public static double GetStudentOutstandingBalance(Student student)
         {
             if (student?.Person?.SchoolFees == null)
@@ -859,7 +860,8 @@ namespace FcmsPortal
             }
             return student.Person.SchoolFees.Balance;
         }
-
+        
+        //generate payment summery
         public static List<string> GeneratePaymentSummaryForStudent(Student student)
         {
             if (student?.Person?.SchoolFees == null)
@@ -879,6 +881,33 @@ namespace FcmsPortal
 
             return paymentSummary;
         }
+        
+        //retrieve students with outstanding balance
+        public static List<(Student Student, double OutstandingBalance)> GetStudentsWithOutstandingPayments(LearningPath learningPath)
+        {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+
+            var result = new List<(Student Student, double OutstandingBalance)>();
+
+            foreach (var student in learningPath.Students)
+            {
+                if (student.Person?.SchoolFees == null)
+                {
+                    continue; 
+                }
+
+                double outstandingBalance = student.Person.SchoolFees.Balance;
+                if (outstandingBalance > 0)
+                {
+                    result.Add((student, outstandingBalance));
+                }
+            }
+            return result;
+        }
+
 
         
         

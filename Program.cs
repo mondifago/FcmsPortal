@@ -555,11 +555,21 @@ namespace FcmsPortal
                 Console.WriteLine($"Student 1's school fees cost is: {student1.Person.SchoolFees.TotalAmount}");
                 Console.WriteLine($"student 1's total fees are: {student1.Person.SchoolFees.Balance}");
                 
+                //test generate payment summery
                 var summary = LogicMethods.GeneratePaymentSummaryForStudent(student1);
                 foreach (var line in summary)
                 {
                     Console.WriteLine(line);
                 }
+                
+                //students with outstanding payments
+                var outstandingPayments = LogicMethods.GetStudentsWithOutstandingPayments(learningPath1);
+
+                foreach (var (student, balance) in outstandingPayments)
+                {
+                    Console.WriteLine($"Student: {student.Person.FirstName} {student.Person.LastName}, Outstanding Balance: {balance:C}");
+                }
+
 
 
 
