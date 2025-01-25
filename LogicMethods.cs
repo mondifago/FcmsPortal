@@ -947,6 +947,33 @@ namespace FcmsPortal
                 }
             }
         }
+        
+        //Generate payment report of all students in a learning path
+        public static List<PaymentReportEntry> GetPaymentReportForLearningPath(LearningPath learningPath)
+        {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning Path cannot be null.");
+            }
+
+            var paymentReport = learningPath.Students.Select(student => new PaymentReportEntry
+            {
+                StudentName = $"{student.Person.FirstName} {student.Person.LastName}",
+                TotalFees = student.Person.SchoolFees.TotalAmount,
+                TotalPaid = student.Person.SchoolFees.Payments.Sum(payment => payment.Amount),
+                OutstandingBalance = student.Person.SchoolFees.Balance,
+                PaymentDetails = student.Person.SchoolFees.Payments.Select(payment => new PaymentDetails
+                {
+                    Date = payment.Date,
+                    Amount = payment.Amount,
+                    PaymentMethod = payment.PaymentMethod.ToString()
+                }).ToList()
+            }).ToList();
+
+            return paymentReport;
+        }
+
+
 
 
         

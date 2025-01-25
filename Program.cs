@@ -578,6 +578,26 @@ namespace FcmsPortal
                 {
                     Console.WriteLine($"Student ID: {student.ID}, Name: {student.Person.FirstName} {student.Person.LastName}");
                 }
+                
+                //generate payment report for learning path
+                var report = LogicMethods.GetPaymentReportForLearningPath(learningPath1);
+
+                foreach (var entry in report)
+                {
+                    Console.WriteLine($"Student: {entry.StudentName}");
+                    Console.WriteLine($"Total Fees: {entry.TotalFees:C}");
+                    Console.WriteLine($"Total Paid: {entry.TotalPaid:C}");
+                    Console.WriteLine($"Outstanding Balance: {entry.OutstandingBalance:C}");
+            
+                    Console.WriteLine("Payment Details:");
+                    foreach (var payment in entry.PaymentDetails)
+                    {
+                        Console.WriteLine($"  Date: {payment.Date:d}, Amount: {payment.Amount:C}, Method: {payment.PaymentMethod}");
+                    }
+                    Console.WriteLine(); 
+                }
+
+
 
 
 
