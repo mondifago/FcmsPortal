@@ -972,6 +972,52 @@ namespace FcmsPortal
 
             return paymentReport;
         }
+        
+        //send notification of outstanding 
+        public static void NotifyStudentsOfPaymentStatus(LearningPath learningPath)
+        {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath));
+            }
+            
+            foreach (var student in learningPath.Students)
+            {
+                var schoolFees = student.Person?.SchoolFees;
+                if (schoolFees == null) continue;
+                var outstandingBalance = schoolFees.Balance;
+                
+                if (outstandingBalance > 0)
+                {
+                    string studentMessage = $"Dear {student.Person.FirstName}, " +
+                        $"you have an outstanding balance of {outstandingBalance:C}. " +
+                        "Please ensure payment is made to retain access to your classes.";
+
+                    string guardianMessage = student.GuardianId.HasValue
+                        ? $"Dear Guardian of {student.Person.FirstName}, " +
+                          $"your ward has an outstanding balance of {outstandingBalance:C}. " +
+                          "Please ensure payment is made promptly."
+                        : null;
+                    
+                    SendNotification(student.Person.Email, studentMessage, "Outstanding Payment Reminder");
+
+                    if (!string.IsNullOrEmpty(student.Guardian?.Person.Email))
+                    {
+                        SendNotification(student.Guardian.Person.Email, guardianMessage, "Outstanding Payment Reminder");
+                    }
+                }
+            }
+        }
+
+        private static void SendNotification(string email, string message, string subject)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                Console.WriteLine("No email address provided. Notification skipped.");
+                return;
+            }
+            Console.WriteLine($"Notification sent to {email}:\nSubject: {subject}\nMessage: {message}\n");
+        }
 
 
 

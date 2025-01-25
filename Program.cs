@@ -596,6 +596,8 @@ namespace FcmsPortal
                     }
                     Console.WriteLine(); 
                 }
+                
+                LogicMethods.NotifyStudentsOfPaymentStatus(learningPath1);
 
 
 
