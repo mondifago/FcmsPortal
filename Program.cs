@@ -570,6 +570,7 @@ namespace FcmsPortal
                     Console.WriteLine($"Student: {student.Person.FirstName} {student.Person.LastName}, Outstanding Balance: {balance:C}");
                 }
                 LogicMethods.MakePaymentForStudent(student1, 700.0, PaymentMethod.Card);
+                LogicMethods.GrantAccessToSchedules(student1, learningPath1);
                 //retrieve students with up to 50% payment
                 var studentsWithAccess = LogicMethods.GetStudentsWithAccess(learningPath1);
 

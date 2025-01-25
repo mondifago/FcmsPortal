@@ -918,6 +918,36 @@ namespace FcmsPortal
 
             return learningPath.StudentsPaymentSuccessful;
         }
+        
+        //Grant student full access to schedule entries in learning path 
+        public static void GrantAccessToSchedules(Student student, LearningPath learningPath)
+        {
+            if (student == null)
+            {
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+            }
+
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
+
+            if (student.Person?.SchoolFees == null)
+            {
+                throw new ArgumentException("Student does not have a valid school fees record.");
+            }
+            
+            double totalPaid = student.Person.SchoolFees.Payments.Sum(payment => payment.Amount);
+            
+            if (totalPaid >= student.Person.SchoolFees.TotalAmount / 2)
+            {
+                if (!learningPath.StudentsPaymentSuccessful.Contains(student))
+                {
+                    learningPath.StudentsPaymentSuccessful.Add(student);
+                }
+            }
+        }
+
 
         
             
