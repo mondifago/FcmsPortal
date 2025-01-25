@@ -555,7 +555,12 @@ namespace FcmsPortal
                 Console.WriteLine($"Student 1's school fees cost is: {student1.Person.SchoolFees.TotalAmount}");
                 Console.WriteLine($"student 1's total fees are: {student1.Person.SchoolFees.Balance}");
                 
-                
+                var summary = LogicMethods.GeneratePaymentSummaryForStudent(student1);
+                foreach (var line in summary)
+                {
+                    Console.WriteLine(line);
+                }
+
 
 
 

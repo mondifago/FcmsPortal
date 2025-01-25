@@ -860,8 +860,26 @@ namespace FcmsPortal
             return student.Person.SchoolFees.Balance;
         }
 
+        public static List<string> GeneratePaymentSummaryForStudent(Student student)
+        {
+            if (student?.Person?.SchoolFees == null)
+            {
+                throw new ArgumentException("Invalid student or school fees record.");
+            }
+            var paymentSummary = new List<string>();
+            double totalPaid = 0;
+            
+            foreach (var payment in student.Person.SchoolFees.Payments)
+            {
+                totalPaid += payment.Amount;
+                paymentSummary.Add($"Date: {payment.Date:yyyy-MM-dd}\tAmount paid: {payment.Amount:C}\t\tPayment Method: {payment.PaymentMethod}");
+            }
+            paymentSummary.Add($"Total Paid: {totalPaid:C}");
+            paymentSummary.Add($"Outstanding Balance: {student.Person.SchoolFees.Balance:C}");
 
-        
+            return paymentSummary;
+        }
+
         
         
         
