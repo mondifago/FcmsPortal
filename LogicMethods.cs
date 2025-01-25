@@ -823,7 +823,7 @@ namespace FcmsPortal
         }
         
         //student make payment
-        public static void MakePaymentForStudent(Student student, double amount, string paymentMethod)
+        public static void MakePaymentForStudent(Student student, double amount, PaymentMethod paymentMethod)
         {
             if (student?.Person?.SchoolFees == null)
             {
@@ -834,7 +834,7 @@ namespace FcmsPortal
             {
                 Amount = amount,
                 Date = DateTime.Now,
-                PaymentMethod = paymentMethod
+                PaymentMethod = paymentMethod 
             };
             student.Person.SchoolFees.Payments.Add(payment);
         }
@@ -907,10 +907,24 @@ namespace FcmsPortal
             }
             return result;
         }
+        
+        //Get students with access
+        public static List<Student> GetStudentsWithAccess(LearningPath learningPath)
+        {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+            }
 
+            return learningPath.StudentsPaymentSuccessful;
+        }
 
         
-        
+            
+          
+
+
+
         
         
         

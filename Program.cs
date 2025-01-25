@@ -550,8 +550,8 @@ namespace FcmsPortal
                     Console.WriteLine($"Student: {student.Person.FirstName} - {student.Person.SchoolFees.TotalAmount}");
                 }
                 //student1 make payment of 200 out of 1000
-                LogicMethods.MakePaymentForStudent(student1, 200.0, "Cash");
-                LogicMethods.MakePaymentForStudent(student1, 100.0, "Credit Card");
+                LogicMethods.MakePaymentForStudent(student1, 200.0, PaymentMethod.Cash);
+                LogicMethods.MakePaymentForStudent(student1, 100.0, PaymentMethod.Card);
                 Console.WriteLine($"Student 1's school fees cost is: {student1.Person.SchoolFees.TotalAmount}");
                 Console.WriteLine($"student 1's total fees are: {student1.Person.SchoolFees.Balance}");
                 
@@ -569,6 +569,15 @@ namespace FcmsPortal
                 {
                     Console.WriteLine($"Student: {student.Person.FirstName} {student.Person.LastName}, Outstanding Balance: {balance:C}");
                 }
+                LogicMethods.MakePaymentForStudent(student1, 700.0, PaymentMethod.Card);
+                //retrieve students with up to 50% payment
+                var studentsWithAccess = LogicMethods.GetStudentsWithAccess(learningPath1);
+
+                foreach (var student in studentsWithAccess)
+                {
+                    Console.WriteLine($"Student ID: {student.ID}, Name: {student.Person.FirstName} {student.Person.LastName}");
+                }
+
 
 
 
