@@ -554,6 +554,8 @@ namespace FcmsPortal
                 LogicMethods.MakePaymentForStudent(student1, 100.0, "Credit Card");
                 Console.WriteLine($"Student 1's school fees cost is: {student1.Person.SchoolFees.TotalAmount}");
                 Console.WriteLine($"student 1's total fees are: {student1.Person.SchoolFees.Balance}");
+                
+                
 
 
 

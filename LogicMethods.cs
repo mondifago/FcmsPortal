@@ -850,6 +850,16 @@ namespace FcmsPortal
             double totalPayments = student.Person.SchoolFees.Payments.Sum(p => p.Amount);
             return totalPayments >= (student.Person.SchoolFees.TotalAmount / 2);
         }
+        
+        public static double GetStudentOutstandingBalance(Student student)
+        {
+            if (student?.Person?.SchoolFees == null)
+            {
+                throw new ArgumentException("Invalid student or school fees record.");
+            }
+            return student.Person.SchoolFees.Balance;
+        }
+
 
         
         
