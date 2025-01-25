@@ -777,7 +777,7 @@ namespace FcmsPortal
             {
                 if (student.Person.SchoolFees == null)
                 {
-                    student.Person.SchoolFees = new Schoolfees();
+                    student.Person.SchoolFees = new SchoolFees();
                 }
                 student.Person.SchoolFees.TotalAmount = learningPath.FeePerSemester;
             }
@@ -813,7 +813,7 @@ namespace FcmsPortal
                 {
                     if (student.Person.SchoolFees == null)
                     {
-                        student.Person.SchoolFees = new Schoolfees();
+                        student.Person.SchoolFees = new SchoolFees();
                     }
 
                     // Assign the semester fee
@@ -1017,6 +1017,56 @@ namespace FcmsPortal
                 return;
             }
             Console.WriteLine($"Notification sent to {email}:\nSubject: {subject}\nMessage: {message}\n");
+        }
+        
+        //handle changes to Total amount of school fees
+        public static void HandleFeeChangeForLearningPath(LearningPath learningPath, double newTotalFeeAmount)
+        {
+            if (learningPath == null)
+            {
+                throw new ArgumentNullException(nameof(learningPath));
+            }
+
+            if (newTotalFeeAmount < 0)
+            {
+                throw new ArgumentException("Total fee amount cannot be negative.", nameof(newTotalFeeAmount));
+            }
+
+            foreach (var student in learningPath.Students)
+            {
+                var schoolFees = student.Person?.SchoolFees;
+                
+                if (schoolFees == null) continue;
+                
+                schoolFees.TotalAmount = newTotalFeeAmount;
+                
+                if (schoolFees.TotalPaid >= (0.5 * newTotalFeeAmount) && !learningPath.StudentsPaymentSuccessful.Contains(student))
+                {
+                    GrantStudentAccess(student, learningPath);
+                }
+                else if (schoolFees.TotalPaid < (0.5 * newTotalFeeAmount) && learningPath.StudentsPaymentSuccessful.Contains(student))
+                {
+                    RevokeStudentAccess(student, learningPath);
+                }
+            }
+        }
+        
+        private static void GrantStudentAccess(Student student, LearningPath learningPath)
+        {
+            if (!learningPath.StudentsPaymentSuccessful.Contains(student))
+            {
+                learningPath.StudentsPaymentSuccessful.Add(student);
+                Console.WriteLine($"Access granted to student {student.Person.FirstName} {student.Person.LastName}.");
+            }
+        }
+
+        private static void RevokeStudentAccess(Student student, LearningPath learningPath)
+        {
+            if (learningPath.StudentsPaymentSuccessful.Contains(student))
+            {
+                learningPath.StudentsPaymentSuccessful.Remove(student);
+                Console.WriteLine($"Access revoked for student {student.Person.FirstName} {student.Person.LastName}.");
+            }
         }
 
 

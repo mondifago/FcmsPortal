@@ -114,7 +114,7 @@ namespace FcmsPortal
             }
         }
 
-        public Schoolfees SchoolFees { get; set; }
+        public SchoolFees SchoolFees { get; set; }
 
         private string _nextOfKin;
         public string NextOfKin
