@@ -721,24 +721,12 @@ namespace FcmsPortal
             if (school.Curricula == null || !school.Curricula.Any())
                 throw new InvalidOperationException("No curricula found in the school to update.");
 
-            Console.WriteLine("Incrementing year and updating curricula...");
-
             foreach (var curriculum in school.Curricula)
             {
                 curriculum.Year++;
             }
 
-            foreach (var learningPath in school.LearningPath)
-            {
-                try
-                {
-                    UpdateCurriculumForLearningPath(school, learningPath);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Failed to update curriculum for Learning Path ID: {learningPath.Id}. Error: {ex.Message}");
-                }
-            }
+            UpdateAllCurricula(school);
         }
 
         //to retrieve curriculum of any class
@@ -752,8 +740,8 @@ namespace FcmsPortal
 
             var curriculum = school.Curricula
                 .FirstOrDefault(c => c.EducationLevel == educationLevel &&
-                                     c.ClassLevel == classLevel &&
-                                     c.Year == year);
+                                              c.ClassLevel == classLevel &&
+                                              c.Year == year);
 
             if (curriculum == null)
                 throw new InvalidOperationException($"No curriculum found for Education Level: {educationLevel}, Class Level: {classLevel}, Year: {year}.");
