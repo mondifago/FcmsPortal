@@ -603,23 +603,11 @@ namespace FcmsPortal
         /// <summary>
         /// Methods for Curriculum
         /// </summary>
-        public static void GenerateCurriculumForLearningPath(School school, LearningPath learningPath)
+
+        //semester grouping 
+        private static List<SemesterCurriculum> GroupSchedulesIntoSemesters(List<ScheduleEntry> schedules)
         {
-            // Validate inputs
-            if (school == null)
-                throw new ArgumentNullException(nameof(school), "School cannot be null.");
-
-            if (learningPath == null)
-                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-
-            if (learningPath.Schedule == null || !learningPath.Schedule.Any())
-                throw new InvalidOperationException("Learning path has no schedules to generate a curriculum.");
-
-            // Extract the year from the first schedule entry
-            int year = learningPath.Schedule.First().DateTime.Year;
-
-            // Group schedule entries into semesters
-            var semesterCurriculums = learningPath.Schedule
+            return schedules
                 .Where(se => se.ClassSession != null)
                 .GroupBy(se => se.DateTime.Month <= FcmsConstants.Semester1EndMonth ? Semester.First :
                                se.DateTime.Month <= FcmsConstants.Semester2EndMonth ? Semester.Second : Semester.Third)
@@ -629,8 +617,36 @@ namespace FcmsPortal
                     ClassSessions = group.Select(se => se.ClassSession).ToList()
                 })
                 .ToList();
+        }
 
-            // Create a new curriculum
+        //check for curriculum uniqueness
+        private static void ValidateCurriculumUniqueness(School school, Curriculum newCurriculum)
+        {
+            if (school.Curricula.Any(c =>
+                    c.Year == newCurriculum.Year &&
+                    c.EducationLevel == newCurriculum.EducationLevel &&
+                    c.ClassLevel == newCurriculum.ClassLevel))
+            {
+                throw new InvalidOperationException($"A curriculum for {newCurriculum.EducationLevel} - {newCurriculum.ClassLevel} already exists for the year {newCurriculum.Year}.");
+            }
+        }
+
+        //Generate curriculum for learning path
+        public static void GenerateCurriculumForLearningPath(School school, LearningPath learningPath)
+        {
+            if (school == null)
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+
+            if (learningPath == null)
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+
+            if (learningPath.Schedule == null || !learningPath.Schedule.Any())
+                throw new InvalidOperationException("Learning path has no schedules to generate a curriculum.");
+
+            int year = learningPath.Schedule.First().DateTime.Year;
+
+            var semesterCurriculums = GroupSchedulesIntoSemesters(learningPath.Schedule);
+
             var newCurriculum = new Curriculum
             {
                 Id = school.Curricula.Any() ? school.Curricula.Max(c => c.Id) + 1 : 1,
@@ -640,15 +656,7 @@ namespace FcmsPortal
                 Semesters = semesterCurriculums
             };
 
-            // Check for duplicate curriculum
-            if (school.Curricula.Any(c =>
-                    c.Year == newCurriculum.Year &&
-                    c.EducationLevel == newCurriculum.EducationLevel &&
-                    c.ClassLevel == newCurriculum.ClassLevel))
-            {
-                throw new InvalidOperationException($"A curriculum for {newCurriculum.EducationLevel} - {newCurriculum.ClassLevel} already exists for the year {newCurriculum.Year}.");
-            }
-            school.Curricula.Add(newCurriculum);
+            ValidateCurriculumUniqueness(school, newCurriculum);
         }
 
         //method to update curriculum from changes in learning path
@@ -677,16 +685,7 @@ namespace FcmsPortal
                 return;
             }
 
-            var semesterCurriculums = learningPath.Schedule
-                .Where(se => se.ClassSession != null)
-                .GroupBy(se => se.DateTime.Month <= FcmsConstants.Semester1EndMonth ? Semester.First :
-                               se.DateTime.Month <= FcmsConstants.Semester2EndMonth ? Semester.Second : Semester.Third)
-                .Select(group => new SemesterCurriculum
-                {
-                    Semester = group.Key,
-                    ClassSessions = group.Select(se => se.ClassSession).ToList()
-                })
-                .ToList();
+            var semesterCurriculums = GroupSchedulesIntoSemesters(learningPath.Schedule);
 
             existingCurriculum.Semesters = semesterCurriculums;
         }
