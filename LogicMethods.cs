@@ -1,4 +1,5 @@
-﻿using FcmsPortal.Enums;
+﻿using FcmsPortal.Constants;
+using FcmsPortal.Enums;
 using FcmsPortal.ViewModel;
 
 namespace FcmsPortal
@@ -28,7 +29,7 @@ namespace FcmsPortal
             return school.Staff
                 .Where(staff => staff.Person.EducationLevel == educationLevel).ToList();
         }
-        
+
         //Get all teachers from school list of staff
         public static List<Staff> GetAllTeachers(School school)
         {
@@ -53,7 +54,7 @@ namespace FcmsPortal
                 throw;
             }
         }
-        
+
         //Adding a schedule entry to learning path
         public static void AddAScheduleToLearningPath(LearningPath learningPath, ScheduleEntry scheduleEntry)
         {
@@ -94,7 +95,7 @@ namespace FcmsPortal
             learningPath.Schedule.Add(scheduleEntry);
             Console.WriteLine($"Schedule with ID {scheduleEntry.Id} has been successfully added to Learning Path ID {learningPath.Id}.");
         }
-        
+
         //Adding multiple schedules to a learning path
         public static void AddMultipleSchedulesToLearningPath(LearningPath learningPath, List<ScheduleEntry> scheduleEntries)
         {
@@ -118,12 +119,12 @@ namespace FcmsPortal
                 {
                     throw new ArgumentNullException(nameof(scheduleEntry.ClassSession), "Class session cannot be null.");
                 }
-                
+
                 if (learningPath.Schedule.Any(s => s.Id == scheduleEntry.Id))
                 {
                     throw new ArgumentException($"A schedule with ID {scheduleEntry.Id} already exists in the learning path.");
                 }
-                
+
                 bool hasOverlap = learningPath.Schedule.Any(existing =>
                     existing.DateTime < scheduleEntry.DateTime.Add(scheduleEntry.Duration) &&
                     scheduleEntry.DateTime < existing.DateTime.Add(existing.Duration));
@@ -132,7 +133,7 @@ namespace FcmsPortal
                 {
                     throw new InvalidOperationException($"Schedule ID {scheduleEntry.Id} overlaps with an existing class session.");
                 }
-                
+
                 bool sameTimePeriod = learningPath.Schedule.Any(existing =>
                     existing.DateTime == scheduleEntry.DateTime &&
                     existing.Duration == scheduleEntry.Duration);
@@ -142,11 +143,11 @@ namespace FcmsPortal
                     throw new InvalidOperationException($"A schedule with the same time period as ID {scheduleEntry.Id} already exists.");
                 }
             }
-            
+
             learningPath.Schedule.AddRange(scheduleEntries);
             Console.WriteLine($"{scheduleEntries.Count} schedules have been successfully added to Learning Path ID {learningPath.Id}.");
         }
-        
+
         //Add learning path to school
         public static void AddLearningPathToSchool(School school, LearningPath learningPath)
         {
@@ -159,7 +160,7 @@ namespace FcmsPortal
             {
                 throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
             }
-            
+
             bool isDuplicatePath = school.LearningPath.Any(existingPath =>
                 existingPath.EducationLevel == learningPath.EducationLevel &&
                 existingPath.ClassLevel == learningPath.ClassLevel &&
@@ -169,7 +170,7 @@ namespace FcmsPortal
             {
                 throw new InvalidOperationException("A learning path with the same Education Level, Class Level, and Semester already exists in the school.");
             }
-            
+
             foreach (var student in learningPath.Students)
             {
                 bool isStudentInAnotherPath = school.LearningPath.Any(existingPath =>
@@ -181,9 +182,9 @@ namespace FcmsPortal
                 }
             }
             school.LearningPath.Add(learningPath);
-            
+
         }
-        
+
         //Add student to school, which automatically adds guardian as well if the guardian is not previously added
         public static void AddStudentToSchool(School school, Student student)
         {
@@ -195,24 +196,24 @@ namespace FcmsPortal
             {
                 throw new ArgumentNullException(nameof(student), "Student cannot be null.");
             }
-            
+
             if (school.Students.Any(s => s.ID == student.ID))
             {
                 throw new ArgumentException($"Student with ID {student.ID} is already registered in the school.");
             }
-            
+
             if (school.LearningPath.Any(lp => lp.Students.Any(s => s.ID == student.ID)))
             {
                 throw new ArgumentException($"Student with ID {student.ID} is already enrolled in a learning path.");
             }
-            
+
             if (student.Guardian != null && !school.Guardians.Any(g => g.Id == student.Guardian.Id))
             {
                 school.Guardians.Add(student.Guardian);
             }
             school.Students.Add(student);
         }
-        
+
         //retrieve all guardians registered to school
         public static List<Guardian> GetAllGuardians(School school)
         {
@@ -224,12 +225,12 @@ namespace FcmsPortal
             if (school.Guardians == null || !school.Guardians.Any())
             {
                 Console.WriteLine("No guardians found in the school.");
-                return new List<Guardian>(); 
+                return new List<Guardian>();
             }
             return school.Guardians;
         }
 
-        
+
         //Add Staff newly created staff to school
         public static void AddStaffToSchool(School school, Staff staff)
         {
@@ -242,14 +243,14 @@ namespace FcmsPortal
             {
                 throw new ArgumentNullException(nameof(staff), "Staff cannot be null.");
             }
-            
+
             if (school.Staff.Any(s => s.Person.Email == staff.Person.Email))
             {
                 throw new InvalidOperationException($"Staff with email {staff.Person.Email} is already registered in the school.");
             }
             school.Staff.Add(staff);
         }
-        
+
         /// <summary>
         /// Methods involved in Scheduling
         /// </summary>
@@ -335,7 +336,7 @@ namespace FcmsPortal
                 }
             }
         }
-        
+
         //To get all schedules in a learning path
         public static List<ScheduleEntry> GetAllSchedulesInLearningPath(LearningPath learningPath)
         {
@@ -343,15 +344,15 @@ namespace FcmsPortal
             {
                 throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
             }
-            
+
             if (learningPath.Schedule == null || !learningPath.Schedule.Any())
             {
-                return new List<ScheduleEntry>(); 
+                return new List<ScheduleEntry>();
             }
-            
+
             return learningPath.Schedule;
         }
-        
+
         //Get all schedules of a learning path for a particular date
         public static List<ScheduleEntry> GetSchedulesByDateInLearningPath(LearningPath learningPath, DateTime date)
         {
@@ -359,17 +360,17 @@ namespace FcmsPortal
             {
                 throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
             }
-            
+
             if (learningPath.Schedule == null || !learningPath.Schedule.Any())
             {
-                return new List<ScheduleEntry>(); 
+                return new List<ScheduleEntry>();
             }
-            
+
             return learningPath.Schedule
-                .Where(schedule => schedule.DateTime.Date == date.Date) 
+                .Where(schedule => schedule.DateTime.Date == date.Date)
                 .ToList();
         }
-        
+
         //Get all class sessions in a learning path
         public static List<ClassSession> GetClassSessionsInLearningPath(LearningPath learningPath)
         {
@@ -377,18 +378,18 @@ namespace FcmsPortal
             {
                 throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
             }
-            
+
             if (learningPath.Schedule == null || !learningPath.Schedule.Any())
             {
-                return new List<ClassSession>(); 
+                return new List<ClassSession>();
             }
-            
+
             return learningPath.Schedule
-                .Where(schedule => schedule.ClassSession != null) 
-                .Select(schedule => schedule.ClassSession)       
+                .Where(schedule => schedule.ClassSession != null)
+                .Select(schedule => schedule.ClassSession)
                 .ToList();
         }
-        
+
         //Get all meetings on a particular date from any calendar
         public static List<ScheduleEntry> GetAllMeetingsByDate(Calendar calendar, DateTime date)
         {
@@ -397,14 +398,14 @@ namespace FcmsPortal
                 Console.WriteLine("The calendar is empty or null.");
                 return new List<ScheduleEntry>();
             }
-            
+
             var meetings = calendar.ScheduleEntries
                 .Where(entry => !string.IsNullOrEmpty(entry.Meeting) && entry.DateTime.Date == date.Date)
                 .ToList();
 
             return meetings;
         }
-        
+
         //Get all events on a particular date from any calendar
         public static List<ScheduleEntry> GetAllEventsByDate(Calendar calendar, DateTime date)
         {
@@ -413,14 +414,14 @@ namespace FcmsPortal
                 Console.WriteLine("The calendar is empty or null.");
                 return new List<ScheduleEntry>();
             }
-            
+
             var events = calendar.ScheduleEntries
                 .Where(entry => !string.IsNullOrEmpty(entry.Event) && entry.DateTime.Date == date.Date)
                 .ToList();
 
             return events;
         }
-        
+
         //Post meeting to all staff
         public static void PostMeetingToStaff(School school, ScheduleEntry meeting)
         {
@@ -444,7 +445,7 @@ namespace FcmsPortal
                 Console.WriteLine("No staff available to post the meeting.");
                 return;
             }
-            
+
             foreach (var staff in school.Staff)
             {
                 if (staff.Person.PersonalCalendar == null)
@@ -465,23 +466,23 @@ namespace FcmsPortal
             }
             Console.WriteLine($"Meeting '{meeting.Meeting}' has been posted to all staff calendars.");
         }
-        
+
         //post meeting to guardians
         public static void PostMeetingToGuardian(School school, ScheduleEntry meeting)
         {
             if (school == null)
             {
-                    throw new ArgumentNullException(nameof(school), "School cannot be null.");
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
             }
 
             if (meeting == null)
             {
-                    throw new ArgumentNullException(nameof(meeting), "Meeting cannot be null.");
+                throw new ArgumentNullException(nameof(meeting), "Meeting cannot be null.");
             }
 
             if (string.IsNullOrWhiteSpace(meeting.Title) || meeting.DateTime == default || meeting.Duration == default)
             {
-                    throw new ArgumentException("Meeting must have a valid title, date, and duration.");
+                throw new ArgumentException("Meeting must have a valid title, date, and duration.");
             }
 
             if (school.Guardians == null || school.Guardians.Count == 0)
@@ -499,82 +500,82 @@ namespace FcmsPortal
                         Id = guardian.Id,
                         Name = $"{guardian.Person.LastName}'s Calendar"
                     };
-                } 
+                }
                 guardian.Person.PersonalCalendar.ScheduleEntries.Add(meeting);
             }
 
             Console.WriteLine($"Meeting '{meeting.Title}' has been successfully posted to all guardians.");
         }
-        
+
         //Post event to all
         public static void PostEventToAll(School school, ScheduleEntry eventEntry)
         {
-        if (school == null)
-        {
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            if (school == null)
+            {
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            }
+
+            if (eventEntry == null)
+            {
+                throw new ArgumentNullException(nameof(eventEntry), "Event entry cannot be null.");
+            }
+
+            if (string.IsNullOrWhiteSpace(eventEntry.Title) || eventEntry.DateTime == default || eventEntry.Duration == default)
+            {
+                throw new ArgumentException("Event must have a valid title, date, and duration.");
+            }
+
+            if (school.Students != null && school.Students.Any())
+            {
+                foreach (var student in school.Students)
+                {
+                    if (student.Person.PersonalCalendar == null)
+                    {
+                        student.Person.PersonalCalendar = new Calendar
+                        {
+                            Id = student.ID,
+                            Name = $"{student.Person.FirstName} {student.Person.LastName}'s Calendar"
+                        };
+                    }
+                    student.Person.PersonalCalendar.ScheduleEntries.Add(eventEntry);
+                }
+            }
+
+            if (school.Staff != null && school.Staff.Any())
+            {
+                foreach (var staff in school.Staff)
+                {
+                    if (staff.Person.PersonalCalendar == null)
+                    {
+                        staff.Person.PersonalCalendar = new Calendar
+                        {
+                            Id = staff.Id,
+                            Name = $"{staff.Person.LastName}'s Calendar"
+                        };
+                    }
+                    staff.Person.PersonalCalendar.ScheduleEntries.Add(eventEntry);
+                }
+            }
+
+            if (school.Guardians != null && school.Guardians.Any())
+            {
+                foreach (var guardian in school.Guardians)
+                {
+                    if (guardian.Person.PersonalCalendar == null)
+                    {
+                        guardian.Person.PersonalCalendar = new Calendar
+                        {
+                            Id = guardian.Id,
+                            Name = $"{guardian.Person.LastName}'s Calendar"
+                        };
+                    }
+                    guardian.Person.PersonalCalendar.ScheduleEntries.Add(eventEntry);
+                }
+            }
+
+            Console.WriteLine($"Event '{eventEntry.Title}' has been successfully posted to all students, staff, and guardians.");
         }
 
-        if (eventEntry == null)
-        {
-            throw new ArgumentNullException(nameof(eventEntry), "Event entry cannot be null.");
-        }
-
-        if (string.IsNullOrWhiteSpace(eventEntry.Title) || eventEntry.DateTime == default || eventEntry.Duration == default)
-        {
-            throw new ArgumentException("Event must have a valid title, date, and duration.");
-        }
-        
-        if (school.Students != null && school.Students.Any())
-        {
-            foreach (var student in school.Students)
-            {
-                if (student.Person.PersonalCalendar == null)
-                {
-                    student.Person.PersonalCalendar = new Calendar
-                    {
-                        Id = student.ID,
-                        Name = $"{student.Person.FirstName} {student.Person.LastName}'s Calendar"
-                    };
-                }
-                student.Person.PersonalCalendar.ScheduleEntries.Add(eventEntry);
-            }
-        }
-        
-        if (school.Staff != null && school.Staff.Any())
-        {
-            foreach (var staff in school.Staff)
-            {
-                if (staff.Person.PersonalCalendar == null)
-                {
-                    staff.Person.PersonalCalendar = new Calendar
-                    {
-                        Id = staff.Id,
-                        Name = $"{staff.Person.LastName}'s Calendar"
-                    };
-                }
-                staff.Person.PersonalCalendar.ScheduleEntries.Add(eventEntry);
-            }
-        }
-        
-        if (school.Guardians != null && school.Guardians.Any())
-        {
-            foreach (var guardian in school.Guardians)
-            {
-                if (guardian.Person.PersonalCalendar == null)
-                {
-                    guardian.Person.PersonalCalendar = new Calendar
-                    {
-                        Id = guardian.Id,
-                        Name = $"{guardian.Person.LastName}'s Calendar"
-                    };
-                }
-                guardian.Person.PersonalCalendar.ScheduleEntries.Add(eventEntry);
-            }
-        }
-
-        Console.WriteLine($"Event '{eventEntry.Title}' has been successfully posted to all students, staff, and guardians.");
-    }
-        
         //display all students in a learning path along with their schedules
         public static void DisplayStudentSchedules(LearningPath learningPath)
         {
@@ -595,46 +596,51 @@ namespace FcmsPortal
                 {
                     Console.WriteLine(" - No schedules available.");
                 }
-                Console.WriteLine(); 
+                Console.WriteLine();
             }
         }
-        
+
         /// <summary>
         /// Methods for Curriculum
         /// </summary>
         public static void GenerateCurriculumForLearningPath(School school, LearningPath learningPath)
         {
-        if (school == null)
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
-    
-        if (learningPath == null)
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-    
-        if (learningPath.Schedule == null || !learningPath.Schedule.Any())
-            throw new InvalidOperationException("Learning path has no schedules to generate a curriculum.");
-    
-        
-        int year = learningPath.Schedule.First().DateTime.Year;
-            
+            // Validate inputs
+            if (school == null)
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+
+            if (learningPath == null)
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+
+            if (learningPath.Schedule == null || !learningPath.Schedule.Any())
+                throw new InvalidOperationException("Learning path has no schedules to generate a curriculum.");
+
+            // Extract the year from the first schedule entry
+            int year = learningPath.Schedule.First().DateTime.Year;
+
+            // Group schedule entries into semesters
             var semesterCurriculums = learningPath.Schedule
-                .Where(se => se.ClassSession != null) 
-                .GroupBy(se => se.DateTime.Month <= 4 ? 1 : se.DateTime.Month <= 8 ? 2 : 3)
+                .Where(se => se.ClassSession != null)
+                .GroupBy(se => se.DateTime.Month <= FcmsConstants.Semester1EndMonth ? Semester.First :
+                               se.DateTime.Month <= FcmsConstants.Semester2EndMonth ? Semester.Second : Semester.Third)
                 .Select(group => new SemesterCurriculum
                 {
                     Semester = group.Key,
                     ClassSessions = group.Select(se => se.ClassSession).ToList()
                 })
                 .ToList();
-            
+
+            // Create a new curriculum
             var newCurriculum = new Curriculum
-                {
-                    Id = school.Curricula.Any() ? school.Curricula.Max(c => c.Id) + 1 : 1, 
-                    Year = year,
-                    EducationLevel = learningPath.EducationLevel,
-                    ClassLevel = learningPath.ClassLevel,
-                    Semesters = semesterCurriculums
-                };
-            
+            {
+                Id = school.Curricula.Any() ? school.Curricula.Max(c => c.Id) + 1 : 1,
+                Year = year,
+                EducationLevel = learningPath.EducationLevel,
+                ClassLevel = learningPath.ClassLevel,
+                Semesters = semesterCurriculums
+            };
+
+            // Check for duplicate curriculum
             if (school.Curricula.Any(c =>
                     c.Year == newCurriculum.Year &&
                     c.EducationLevel == newCurriculum.EducationLevel &&
@@ -644,46 +650,47 @@ namespace FcmsPortal
             }
             school.Curricula.Add(newCurriculum);
         }
-        
+
         //method to update curriculum from changes in learning path
         public static void UpdateCurriculumForLearningPath(School school, LearningPath learningPath)
         {
             if (school == null)
                 throw new ArgumentNullException(nameof(school), "School cannot be null.");
-    
+
             if (learningPath == null)
                 throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
 
             if (learningPath.Schedule == null || !learningPath.Schedule.Any())
                 throw new InvalidOperationException("Learning path has no schedules to update the curriculum.");
-            
+
             int year = learningPath.Schedule.First().DateTime.Year;
-            
+
             var existingCurriculum = school.Curricula.FirstOrDefault(c =>
                 c.Year == year &&
                 c.EducationLevel == learningPath.EducationLevel &&
                 c.ClassLevel == learningPath.ClassLevel);
-            
+
             if (existingCurriculum == null)
             {
                 Console.WriteLine($"No existing curriculum found for {learningPath.EducationLevel} - {learningPath.ClassLevel}, Year {year}. Generating a new curriculum...");
                 GenerateCurriculumForLearningPath(school, learningPath);
                 return;
             }
-            
+
             var semesterCurriculums = learningPath.Schedule
-                .Where(se => se.ClassSession != null) 
-                .GroupBy(se => se.DateTime.Month <= 4 ? 1 : se.DateTime.Month <= 8 ? 2 : 3)
+                .Where(se => se.ClassSession != null)
+                .GroupBy(se => se.DateTime.Month <= FcmsConstants.Semester1EndMonth ? Semester.First :
+                               se.DateTime.Month <= FcmsConstants.Semester2EndMonth ? Semester.Second : Semester.Third)
                 .Select(group => new SemesterCurriculum
                 {
                     Semester = group.Key,
                     ClassSessions = group.Select(se => se.ClassSession).ToList()
                 })
                 .ToList();
-            
+
             existingCurriculum.Semesters = semesterCurriculums;
         }
-        
+
         //method to update all curricula
         public static void UpdateAllCurricula(School school)
         {
@@ -692,7 +699,7 @@ namespace FcmsPortal
 
             if (school.LearningPath == null || !school.LearningPath.Any())
                 throw new InvalidOperationException("No learning paths available in the school to update curricula.");
-            
+
             foreach (var learningPath in school.LearningPath)
             {
                 try
@@ -705,7 +712,7 @@ namespace FcmsPortal
                 }
             }
         }
-        
+
         //to increment year and update all curricula
         public static void IncrementYearAndUpdateCurricula(School school)
         {
@@ -716,12 +723,12 @@ namespace FcmsPortal
                 throw new InvalidOperationException("No curricula found in the school to update.");
 
             Console.WriteLine("Incrementing year and updating curricula...");
-            
+
             foreach (var curriculum in school.Curricula)
             {
                 curriculum.Year++;
             }
-            
+
             foreach (var learningPath in school.LearningPath)
             {
                 try
@@ -734,19 +741,19 @@ namespace FcmsPortal
                 }
             }
         }
-        
+
         //to retrieve curriculum of any class
         public static Curriculum GetCurriculumForClass(School school, EducationLevel educationLevel, ClassLevel classLevel, int year)
         {
             if (school == null)
                 throw new ArgumentNullException(nameof(school), "School cannot be null.");
-    
+
             if (school.Curricula == null || !school.Curricula.Any())
                 throw new InvalidOperationException("No curricula exist in the school.");
-            
+
             var curriculum = school.Curricula
-                .FirstOrDefault(c => c.EducationLevel == educationLevel && 
-                                     c.ClassLevel == classLevel && 
+                .FirstOrDefault(c => c.EducationLevel == educationLevel &&
+                                     c.ClassLevel == classLevel &&
                                      c.Year == year);
 
             if (curriculum == null)
@@ -754,11 +761,11 @@ namespace FcmsPortal
 
             return curriculum;
         }
-        
+
         /// <summary>
         /// Methods for Payment
         /// </summary>
-        
+
         //Assign fees for all students in a specific learning path
         public static void SetStudentFeesForLearningPath(LearningPath learningPath)
         {
@@ -766,13 +773,13 @@ namespace FcmsPortal
             {
                 throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
             }
-            
+
             if (learningPath.Students == null || !learningPath.Students.Any())
             {
                 Console.WriteLine("No students are enrolled in this learning path.");
                 return;
             }
-            
+
             foreach (var student in learningPath.Students)
             {
                 if (student.Person.SchoolFees == null)
@@ -782,7 +789,7 @@ namespace FcmsPortal
                 student.Person.SchoolFees.TotalAmount = learningPath.FeePerSemester;
             }
         }
-        
+
         //Assign fees to all students in all learning paths of a school assuming all students in the school has uniform school fees
         public static void SetFeesForAllLearningPaths(School school)
         {
@@ -793,7 +800,7 @@ namespace FcmsPortal
                 SetStudentFeesForLearningPath(learningPath);
             }
         }
-        
+
         //Assign fees to list of selected learning paths 
         public static void AssignFeesForSelectedLearningPaths(List<LearningPath> selectedLearningPaths)
         {
@@ -821,7 +828,7 @@ namespace FcmsPortal
                 }
             }
         }
-        
+
         //student make payment
         public static void MakePaymentForStudent(Student student, double amount, PaymentMethod paymentMethod)
         {
@@ -829,16 +836,16 @@ namespace FcmsPortal
             {
                 throw new ArgumentException("Invalid student or school fees record.");
             }
-            
+
             var payment = new Payment
             {
                 Amount = amount,
                 Date = DateTime.Now,
-                PaymentMethod = paymentMethod 
+                PaymentMethod = paymentMethod
             };
             student.Person.SchoolFees.Payments.Add(payment);
         }
-        
+
         //Check if student has made upto half the school fees payment
         public static bool HasMetPaymentThreshold(Student student)
         {
@@ -848,9 +855,9 @@ namespace FcmsPortal
             }
 
             double totalPayments = student.Person.SchoolFees.Payments.Sum(p => p.Amount);
-            return totalPayments >= (student.Person.SchoolFees.TotalAmount / 2);
+            return totalPayments >= (student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR);
         }
-        
+
         //get student's outstanding balance
         public static double GetStudentOutstandingBalance(Student student)
         {
@@ -860,7 +867,7 @@ namespace FcmsPortal
             }
             return student.Person.SchoolFees.Balance;
         }
-        
+
         //generate payment summery
         public static List<string> GeneratePaymentSummaryForStudent(Student student)
         {
@@ -870,7 +877,7 @@ namespace FcmsPortal
             }
             var paymentSummary = new List<string>();
             double totalPaid = 0;
-            
+
             foreach (var payment in student.Person.SchoolFees.Payments)
             {
                 totalPaid += payment.Amount;
@@ -881,7 +888,7 @@ namespace FcmsPortal
 
             return paymentSummary;
         }
-        
+
         //retrieve students with outstanding balance
         public static List<(Student Student, double OutstandingBalance)> GetStudentsWithOutstandingPayments(LearningPath learningPath)
         {
@@ -896,7 +903,7 @@ namespace FcmsPortal
             {
                 if (student.Person?.SchoolFees == null)
                 {
-                    continue; 
+                    continue;
                 }
 
                 double outstandingBalance = student.Person.SchoolFees.Balance;
@@ -907,7 +914,7 @@ namespace FcmsPortal
             }
             return result;
         }
-        
+
         //Get students with access
         public static List<Student> GetStudentsWithAccess(LearningPath learningPath)
         {
@@ -918,7 +925,7 @@ namespace FcmsPortal
 
             return learningPath.StudentsPaymentSuccessful;
         }
-        
+
         //Grant student full access to schedule entries in learning path 
         public static void GrantAccessToSchedules(Student student, LearningPath learningPath)
         {
@@ -936,10 +943,10 @@ namespace FcmsPortal
             {
                 throw new ArgumentException("Student does not have a valid school fees record.");
             }
-            
+
             double totalPaid = student.Person.SchoolFees.Payments.Sum(payment => payment.Amount);
-            
-            if (totalPaid >= student.Person.SchoolFees.TotalAmount / 2)
+
+            if (totalPaid >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR)
             {
                 if (!learningPath.StudentsPaymentSuccessful.Contains(student))
                 {
@@ -947,7 +954,7 @@ namespace FcmsPortal
                 }
             }
         }
-        
+
         //Generate payment report of all students in a learning path
         public static List<PaymentReportEntry> GetPaymentReportForLearningPath(LearningPath learningPath)
         {
@@ -972,7 +979,7 @@ namespace FcmsPortal
 
             return paymentReport;
         }
-        
+
         //send notification of outstanding 
         public static void NotifyStudentsOfPaymentStatus(LearningPath learningPath)
         {
@@ -980,13 +987,13 @@ namespace FcmsPortal
             {
                 throw new ArgumentNullException(nameof(learningPath));
             }
-            
+
             foreach (var student in learningPath.Students)
             {
                 var schoolFees = student.Person?.SchoolFees;
                 if (schoolFees == null) continue;
                 var outstandingBalance = schoolFees.Balance;
-                
+
                 if (outstandingBalance > 0)
                 {
                     string studentMessage = $"Dear {student.Person.FirstName}, " +
@@ -998,7 +1005,7 @@ namespace FcmsPortal
                           $"your ward has an outstanding balance of {outstandingBalance:C}. " +
                           "Please ensure payment is made promptly."
                         : null;
-                    
+
                     SendNotification(student.Person.Email, studentMessage, "Outstanding Payment Reminder");
 
                     if (!string.IsNullOrEmpty(student.Guardian?.Person.Email))
@@ -1018,7 +1025,7 @@ namespace FcmsPortal
             }
             Console.WriteLine($"Notification sent to {email}:\nSubject: {subject}\nMessage: {message}\n");
         }
-        
+
         //handle changes to Total amount of school fees
         public static void HandleFeeChangeForLearningPath(LearningPath learningPath, double newTotalFeeAmount)
         {
@@ -1035,22 +1042,22 @@ namespace FcmsPortal
             foreach (var student in learningPath.Students)
             {
                 var schoolFees = student.Person?.SchoolFees;
-                
+
                 if (schoolFees == null) continue;
-                
+
                 schoolFees.TotalAmount = newTotalFeeAmount;
-                
-                if (schoolFees.TotalPaid >= (0.5 * newTotalFeeAmount) && !learningPath.StudentsPaymentSuccessful.Contains(student))
+
+                if (schoolFees.TotalPaid >= (FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount) && !learningPath.StudentsPaymentSuccessful.Contains(student))
                 {
                     GrantStudentAccess(student, learningPath);
                 }
-                else if (schoolFees.TotalPaid < (0.5 * newTotalFeeAmount) && learningPath.StudentsPaymentSuccessful.Contains(student))
+                else if (schoolFees.TotalPaid < (FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount) && learningPath.StudentsPaymentSuccessful.Contains(student))
                 {
                     RevokeStudentAccess(student, learningPath);
                 }
             }
         }
-        
+
         private static void GrantStudentAccess(Student student, LearningPath learningPath)
         {
             if (!learningPath.StudentsPaymentSuccessful.Contains(student))
@@ -1068,7 +1075,7 @@ namespace FcmsPortal
                 Console.WriteLine($"Access revoked for student {student.Person.FirstName} {student.Person.LastName}.");
             }
         }
-        
+
         //confirm student's eligibility for payment
         public static bool ValidatePaymentEligibilityForLearningPath(Student student, LearningPath learningPath)
         {
@@ -1081,7 +1088,7 @@ namespace FcmsPortal
             {
                 throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
             }
-            
+
             bool isEnrolled = learningPath.Students.Contains(student);
 
             if (!isEnrolled)
@@ -1092,21 +1099,10 @@ namespace FcmsPortal
             return isEnrolled;
         }
 
+        /// <summary>
+        /// Methods for Enrollemnt
+        /// </summary>
 
-
-
-        
-            
-          
-
-
-
-        
-        
-        
-        
-        
-        
         public static void SynchronizeSchedulesWithStudents(LearningPath learningPath)
         {
             if (learningPath == null)
@@ -1121,7 +1117,6 @@ namespace FcmsPortal
 
             foreach (var student in learningPath.Students)
             {
-                // Ensure the student's calendar is initialized
                 if (student.Person.PersonalCalendar == null)
                 {
                     student.Person.PersonalCalendar = new Calendar
@@ -1130,7 +1125,7 @@ namespace FcmsPortal
                         Name = $"{student.Person.FirstName} {student.Person.LastName}'s Calendar"
                     };
                 }
-                // Synchronize the schedule entries from the learning path to the student's calendar
+
                 foreach (var entry in learningPath.Schedule)
                 {
                     // Avoid duplicate entries by checking if the entry already exists
@@ -1142,26 +1137,26 @@ namespace FcmsPortal
             }
         }
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
 
 
 
 
 
-        
 
-        
-       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         //generate a student's calendar
         public static List<ScheduleEntry> GenerateStudentCalendar(School school, Student student)
@@ -1186,7 +1181,7 @@ namespace FcmsPortal
             studentCalendar.Sort((entry1, entry2) => entry1.DateTime.CompareTo(entry2.DateTime));
 
             return studentCalendar;
-            
+
         }
 
         //generate teacher's calendar
