@@ -260,13 +260,13 @@ namespace FcmsPortal
             learningPath1.Id = 3301;
             learningPath1.EducationLevel = EducationLevel.SeniorCollege;
             learningPath1.ClassLevel = ClassLevel.SC_3;
-            learningPath1.Semester = 1;
+            learningPath1.Semester = Semester.First;
             learningPath1.Schedule = new List<ScheduleEntry>
                 { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
             learningPath1.Students = new List<Student>() { student1, student2, student3 };
-            fcmSchool.LearningPath.Add(learningPath1);
+           
 
-            //learningpath1 is added again for test and detected to have been added before
+            //learning path1 is added again for test and detected to have been added before
             //LogicMethods.AddAScheduleToLearningPath(learningPath1,scheduleEntry1);
 
             Console.WriteLine(
@@ -307,11 +307,12 @@ namespace FcmsPortal
             var learningPath2 = new LearningPath
             {
                 Id = 4401,
-                EducationLevel = EducationLevel.Primary,
-                ClassLevel = ClassLevel.PRI_1,
-                Semester = 1,
+                EducationLevel = EducationLevel.SeniorCollege,
+                ClassLevel = ClassLevel.SC_3,
+                Semester = Semester.Second,
                 Schedule = new List<ScheduleEntry>()
             };
+            
             // Add multiple schedules
             try
             {
@@ -331,7 +332,7 @@ namespace FcmsPortal
                 Console.WriteLine($"ID: {schedule.Id}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
             }
 
-            //testing add learning path to school: adding learningpath2 which has not been added - success
+            //testing add learning path to school: adding learning path2 which has not been added - success
             try
             {
                 LogicMethods.AddLearningPathToSchool(fcmSchool, learningPath2);
@@ -341,7 +342,7 @@ namespace FcmsPortal
                 Console.WriteLine($"Error: {ex.Message}");
             }
 
-            //add learningpath1 which has been added - fail
+            //add learning path1 which has been added - fail
             try
             {
                 LogicMethods.AddLearningPathToSchool(fcmSchool, learningPath1);
@@ -599,8 +600,20 @@ namespace FcmsPortal
                 
                 LogicMethods.NotifyStudentsOfPaymentStatus(learningPath1);
 
+                var nextLearningPath = LogicMethods.GetNextLearningPath(learningPath2, fcmSchool);
 
+                if (nextLearningPath != null)
+                {
+                    Console.WriteLine($"Next Learning Path ID: {nextLearningPath.Id}");
+                    Console.WriteLine($"Next Semester: {nextLearningPath.Semester}");
+                }
+                else
+                {
+                    Console.WriteLine("No next learning path found, or manual promotion is required.");
+                }
 
+                var paths = fcmSchool.LearningPath.Count;
+                Console.WriteLine($"{paths}");
 
 
 

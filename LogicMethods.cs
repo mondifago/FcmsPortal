@@ -842,7 +842,7 @@ namespace FcmsPortal
             }
 
             double totalPayments = student.Person.SchoolFees.Payments.Sum(p => p.Amount);
-            return totalPayments >= (student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR);
+            return totalPayments >= (student.Person.SchoolFees.TotalAmount * FcmsConstants.PaymentThresholdFactor);
         }
 
         //get student's outstanding balance
@@ -933,7 +933,7 @@ namespace FcmsPortal
 
             double totalPaid = student.Person.SchoolFees.Payments.Sum(payment => payment.Amount);
 
-            if (totalPaid >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR)
+            if (totalPaid >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PaymentThresholdFactor)
             {
                 if (!learningPath.StudentsPaymentSuccessful.Contains(student))
                 {
@@ -1034,11 +1034,11 @@ namespace FcmsPortal
 
                 schoolFees.TotalAmount = newTotalFeeAmount;
 
-                if (schoolFees.TotalPaid >= (FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount) && !learningPath.StudentsPaymentSuccessful.Contains(student))
+                if (schoolFees.TotalPaid >= (FcmsConstants.PaymentThresholdFactor * newTotalFeeAmount) && !learningPath.StudentsPaymentSuccessful.Contains(student))
                 {
                     GrantStudentAccess(student, learningPath);
                 }
-                else if (schoolFees.TotalPaid < (FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount) && learningPath.StudentsPaymentSuccessful.Contains(student))
+                else if (schoolFees.TotalPaid < (FcmsConstants.PaymentThresholdFactor * newTotalFeeAmount) && learningPath.StudentsPaymentSuccessful.Contains(student))
                 {
                     RevokeStudentAccess(student, learningPath);
                 }
@@ -1087,8 +1087,54 @@ namespace FcmsPortal
         }
 
         /// <summary>
-        /// Methods for Enrollemnt
+        /// Methods for Enrollment
         /// </summary>
+
+        public static LearningPath? GetNextLearningPath(LearningPath currentLearningPath, School school)
+        {
+            if (currentLearningPath == null)
+            {
+                throw new ArgumentNullException(nameof(currentLearningPath), "Current learning path cannot be null.");
+            }
+
+            if (school == null || school.LearningPath == null || !school.LearningPath.Any())
+            {
+                throw new ArgumentException("The school must have a list of learning paths.", nameof(school));
+            }
+
+            // If the current semester is the last one, return null
+            if (currentLearningPath.Semester == Semester.Third)
+            {
+                Console.WriteLine("Manual promotion to the next class level is required.");
+                return null;
+            }
+
+            // Determine the next semester
+            Semester nextSemester = currentLearningPath.Semester + 1;
+
+            // Find the learning path for the next semester
+            var nextLearningPath = school.LearningPath.FirstOrDefault(lp =>
+                lp.EducationLevel == currentLearningPath.EducationLevel &&
+                lp.ClassLevel == currentLearningPath.ClassLevel &&
+                lp.Semester == nextSemester);
+
+            if (nextLearningPath != null)
+            {
+                Console.WriteLine($"Next Learning Path found: Semester {nextSemester}");
+            }
+            else
+            {
+                Console.WriteLine($"No learning path found for Semester {nextSemester}.");
+            }
+
+            return nextLearningPath;
+        }
+
+
+
+
+
+
 
         public static void SynchronizeSchedulesWithStudents(LearningPath learningPath)
         {
