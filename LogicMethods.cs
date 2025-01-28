@@ -1138,6 +1138,36 @@ namespace FcmsPortal
             calendar.ScheduleEntries.Clear();
         }
 
+        //Synch calendar with learning path
+        public static void SynchronizeCalendarWithLearningPath(Calendar calendar, LearningPath learningPath)
+        {
+            if (calendar == null) throw new ArgumentNullException(nameof(calendar));
+            if (learningPath == null) throw new ArgumentNullException(nameof(learningPath));
+
+            foreach (var scheduleEntry in learningPath.Schedule)
+            {
+                calendar.ScheduleEntries.Add(new ScheduleEntry
+                {
+                    Id = scheduleEntry.Id,
+                    DateTime = scheduleEntry.DateTime,
+                    Duration = scheduleEntry.Duration,
+                    Venue = scheduleEntry.Venue,
+                    ClassSession = scheduleEntry.ClassSession,
+                    Title = scheduleEntry.Title,
+                    Event = scheduleEntry.Event,
+                    Meeting = scheduleEntry.Meeting,
+                    Notes = scheduleEntry.Notes,
+                    IsRecurring = scheduleEntry.IsRecurring,
+                    RecurrencePattern = scheduleEntry.RecurrencePattern,
+                    DaysOfWeek = scheduleEntry.DaysOfWeek,
+                    DayOfMonth = scheduleEntry.DayOfMonth,
+                    RecurrenceInterval = scheduleEntry.RecurrenceInterval,
+                    EndDate = scheduleEntry.EndDate
+                });
+            }
+        }
+
+
 
 
 
