@@ -1138,43 +1138,7 @@ namespace FcmsPortal
             calendar.ScheduleEntries.Clear();
         }
 
-        //Synch calendar with learning path
-        public static void SynchronizeCalendarWithLearningPath(Calendar calendar, LearningPath learningPath)
-        {
-            if (calendar == null) throw new ArgumentNullException(nameof(calendar));
-            if (learningPath == null) throw new ArgumentNullException(nameof(learningPath));
-
-            foreach (var scheduleEntry in learningPath.Schedule)
-            {
-                calendar.ScheduleEntries.Add(new ScheduleEntry
-                {
-                    Id = scheduleEntry.Id,
-                    DateTime = scheduleEntry.DateTime,
-                    Duration = scheduleEntry.Duration,
-                    Venue = scheduleEntry.Venue,
-                    ClassSession = scheduleEntry.ClassSession,
-                    Title = scheduleEntry.Title,
-                    Event = scheduleEntry.Event,
-                    Meeting = scheduleEntry.Meeting,
-                    Notes = scheduleEntry.Notes,
-                    IsRecurring = scheduleEntry.IsRecurring,
-                    RecurrencePattern = scheduleEntry.RecurrencePattern,
-                    DaysOfWeek = scheduleEntry.DaysOfWeek,
-                    DayOfMonth = scheduleEntry.DayOfMonth,
-                    RecurrenceInterval = scheduleEntry.RecurrenceInterval,
-                    EndDate = scheduleEntry.EndDate
-                });
-            }
-        }
-
-
-
-
-
-
-
-
-
+        //Synch student's calendar with learning path
         public static void SynchronizeSchedulesWithStudents(LearningPath learningPath)
         {
             if (learningPath == null)
@@ -1184,7 +1148,7 @@ namespace FcmsPortal
 
             if (learningPath.Students == null || !learningPath.Students.Any())
             {
-                throw new InvalidOperationException("No students are enrolled in the learning path.");
+                return;
             }
 
             foreach (var student in learningPath.Students)
@@ -1200,14 +1164,41 @@ namespace FcmsPortal
 
                 foreach (var entry in learningPath.Schedule)
                 {
-                    // Avoid duplicate entries by checking if the entry already exists
-                    if (!student.Person.PersonalCalendar.ScheduleEntries.Contains(entry))
+                    if (!student.Person.PersonalCalendar.ScheduleEntries.Any(e => e.Id == entry.Id))
                     {
-                        student.Person.PersonalCalendar.ScheduleEntries.Add(entry);
+                        student.Person.PersonalCalendar.ScheduleEntries.Add(new ScheduleEntry
+                        {
+                            Id = entry.Id,
+                            DateTime = entry.DateTime,
+                            Duration = entry.Duration,
+                            Venue = entry.Venue,
+                            ClassSession = entry.ClassSession,
+                            Title = entry.Title,
+                            Event = entry.Event,
+                            Meeting = entry.Meeting,
+                            Notes = entry.Notes,
+                            IsRecurring = entry.IsRecurring,
+                            RecurrencePattern = entry.RecurrencePattern,
+                            DaysOfWeek = entry.DaysOfWeek,
+                            DayOfMonth = entry.DayOfMonth,
+                            RecurrenceInterval = entry.RecurrenceInterval,
+                            EndDate = entry.EndDate
+                        });
                     }
                 }
             }
         }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -624,9 +624,30 @@ namespace FcmsPortal
                 Console.WriteLine("No next learning path found. Manual promotion may be required.");
             }
 
+            foreach (var student in learningPath1.Students)
+            {
+                Console.WriteLine($"{student.ID}");
+            }
 
+            foreach (var entry in student1.Person.PersonalCalendar.ScheduleEntries)
+            {
+                Console.WriteLine($"{scheduleEntry.DateTime}, {scheduleEntry.Title}, {scheduleEntry.Venue}");
+            }
+            LogicMethods.SynchronizeSchedulesWithStudents(learningPath1);
 
+            foreach (var entry in student1.Person.PersonalCalendar.ScheduleEntries)
+            {
+                Console.WriteLine($"{scheduleEntry.DateTime}, {scheduleEntry.Title}, {scheduleEntry.Venue}");
+            }
 
+            var student1Calendar = student1.Person.PersonalCalendar;
+
+            LogicMethods.ClearCalendar(student1Calendar);
+
+            foreach (var entry in student1.Person.PersonalCalendar.ScheduleEntries)
+            {
+                Console.WriteLine($"{scheduleEntry.DateTime}, {scheduleEntry.Title}, {scheduleEntry.Venue}");
+            }
 
             /*
             foreach (var scheduleEntry in learningPath1.Schedule)
