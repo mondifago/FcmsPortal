@@ -649,6 +649,18 @@ namespace FcmsPortal
                 Console.WriteLine($"{scheduleEntry.DateTime}, {scheduleEntry.Title}, {scheduleEntry.Venue}");
             }
 
+            LogicMethods.TransferStudentsToNextLearningPath(learningPath1, learningPath2);
+
+            foreach (var student in learningPath1.Students)
+            {
+                Console.WriteLine($"{student.ID}");
+            }
+
+            foreach (var student in learningPath2.Students)
+            {
+                Console.WriteLine($"{student.ID}");
+            }
+
             /*
             foreach (var scheduleEntry in learningPath1.Schedule)
             {

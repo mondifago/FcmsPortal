@@ -1189,6 +1189,42 @@ namespace FcmsPortal
             }
         }
 
+        //Transfer students to next learning path
+        public static void TransferStudentsToNextLearningPath(LearningPath currentLearningPath, LearningPath nextLearningPath)
+        {
+            if (currentLearningPath == null)
+            {
+                throw new ArgumentNullException(nameof(currentLearningPath), "Current learning path cannot be null.");
+            }
+
+            if (nextLearningPath == null)
+            {
+                throw new ArgumentNullException(nameof(nextLearningPath), "Next learning path cannot be null.");
+            }
+
+            if (currentLearningPath.EducationLevel != nextLearningPath.EducationLevel ||
+                currentLearningPath.ClassLevel != nextLearningPath.ClassLevel)
+            {
+                throw new InvalidOperationException("The next learning path must belong to the same education level and class level as the current learning path.");
+            }
+
+            if (nextLearningPath.Semester != currentLearningPath.Semester + 1)
+            {
+                throw new InvalidOperationException("The next learning path must represent the immediate next semester.");
+            }
+
+            var studentsToTransfer = currentLearningPath.Students.ToList();
+            foreach (var student in studentsToTransfer)
+            {
+                if (!nextLearningPath.Students.Contains(student))
+                {
+                    nextLearningPath.Students.Add(student);
+                }
+                currentLearningPath.Students.Remove(student);
+            }
+        }
+
+
 
 
 
