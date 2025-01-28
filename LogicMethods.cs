@@ -1127,6 +1127,18 @@ namespace FcmsPortal
             return nextLearningPath;
         }
 
+        //Clear Calendar
+        public static void ClearCalendar(Calendar calendar)
+        {
+            if (calendar == null)
+            {
+                throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
+            }
+
+            calendar.ScheduleEntries.Clear();
+        }
+
+
 
 
 
