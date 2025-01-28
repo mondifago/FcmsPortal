@@ -264,7 +264,7 @@ namespace FcmsPortal
             learningPath1.Schedule = new List<ScheduleEntry>
                 { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
             learningPath1.Students = new List<Student>() { student1, student2, student3 };
-           
+
 
             //learning path1 is added again for test and detected to have been added before
             //LogicMethods.AddAScheduleToLearningPath(learningPath1,scheduleEntry1);
@@ -275,16 +275,24 @@ namespace FcmsPortal
             //testing time overlap
             var schedule1 = new ScheduleEntry
             {
-                Id = 101, DateTime = DateTime.Now, Duration = TimeSpan.FromHours(1), ClassSession = new ClassSession()
+                Id = 101,
+                DateTime = DateTime.Now,
+                Duration = TimeSpan.FromHours(1),
+                ClassSession = new ClassSession()
             };
             var schedule2 = new ScheduleEntry
             {
-                Id = 102, DateTime = DateTime.Now.AddHours(2), Duration = TimeSpan.FromHours(1),
+                Id = 102,
+                DateTime = DateTime.Now.AddHours(2),
+                Duration = TimeSpan.FromHours(1),
                 ClassSession = new ClassSession()
             };
             var schedule3 = new ScheduleEntry
             {
-                Id = 103, DateTime = DateTime.Now, Duration = TimeSpan.FromHours(1), ClassSession = new ClassSession()
+                Id = 103,
+                DateTime = DateTime.Now,
+                Duration = TimeSpan.FromHours(1),
+                ClassSession = new ClassSession()
             };
 
             try
@@ -312,7 +320,7 @@ namespace FcmsPortal
                 Semester = Semester.Second,
                 Schedule = new List<ScheduleEntry>()
             };
-            
+
             // Add multiple schedules
             try
             {
@@ -492,9 +500,9 @@ namespace FcmsPortal
                     Console.WriteLine($"  Meeting: {entry.Meeting}, Date: {entry.DateTime}, Venue: {entry.Venue}");
                 }
             }
-            
+
             // Generate the curriculum for the Senior College Learning Path
-            LogicMethods.GenerateCurriculumForLearningPath(fcmSchool, learningPath1);
+            /*LogicMethods.GenerateCurriculumForLearningPath(fcmSchool, learningPath1);
 
             foreach (var curriculum in fcmSchool.Curricula)
             {
@@ -513,7 +521,7 @@ namespace FcmsPortal
                         Console.WriteLine($"    Lesson Note: {classSession.LessonNote}");
                     }
                 }
-                
+
                 //test retrieve curriculum
                 try
                 {
@@ -539,137 +547,138 @@ namespace FcmsPortal
                 {
                     Console.WriteLine($"Error: {ex.Message}");
                 }
-                
-                //add fee for learning path 1
-                learningPath1.FeePerSemester = 1000.0;
 
-                //assign semester fee to each student in learning path1
-                LogicMethods.SetStudentFeesForLearningPath(learningPath1);
+            //add fee for learning path 1
+            learningPath1.FeePerSemester = 1000.0;
 
-                foreach (var student in learningPath1.Students)
-                {
-                    Console.WriteLine($"Student: {student.Person.FirstName} - {student.Person.SchoolFees.TotalAmount}");
-                }
-                //student1 make payment of 200 out of 1000
-                LogicMethods.MakePaymentForStudent(student1, 200.0, PaymentMethod.Cash);
-                LogicMethods.MakePaymentForStudent(student1, 100.0, PaymentMethod.Card);
-                Console.WriteLine($"Student 1's school fees cost is: {student1.Person.SchoolFees.TotalAmount}");
-                Console.WriteLine($"student 1's total fees are: {student1.Person.SchoolFees.Balance}");
-                
-                //test generate payment summery
-                var summary = LogicMethods.GeneratePaymentSummaryForStudent(student1);
-                foreach (var line in summary)
-                {
-                    Console.WriteLine(line);
-                }
-                
-                //students with outstanding payments
-                var outstandingPayments = LogicMethods.GetStudentsWithOutstandingPayments(learningPath1);
+            //assign semester fee to each student in learning path1
+            LogicMethods.SetStudentFeesForLearningPath(learningPath1);
 
-                foreach (var (student, balance) in outstandingPayments)
-                {
-                    Console.WriteLine($"Student: {student.Person.FirstName} {student.Person.LastName}, Outstanding Balance: {balance:C}");
-                }
-                LogicMethods.MakePaymentForStudent(student1, 700.0, PaymentMethod.Card);
-                LogicMethods.GrantAccessToSchedules(student1, learningPath1);
-                //retrieve students with up to 50% payment
-                var studentsWithAccess = LogicMethods.GetStudentsWithAccess(learningPath1);
+            foreach (var student in learningPath1.Students)
+            {
+                Console.WriteLine($"Student: {student.Person.FirstName} - {student.Person.SchoolFees.TotalAmount}");
+            }
+            //student1 make payment of 200 out of 1000
+            LogicMethods.MakePaymentForStudent(student1, 200.0, PaymentMethod.Cash);
+            LogicMethods.MakePaymentForStudent(student1, 100.0, PaymentMethod.Card);
+            Console.WriteLine($"Student 1's school fees cost is: {student1.Person.SchoolFees.TotalAmount}");
+            Console.WriteLine($"student 1's total fees are: {student1.Person.SchoolFees.Balance}");
 
-                foreach (var student in studentsWithAccess)
-                {
-                    Console.WriteLine($"Student ID: {student.ID}, Name: {student.Person.FirstName} {student.Person.LastName}");
-                }
-                
-                //generate payment report for learning path
-                var report = LogicMethods.GetPaymentReportForLearningPath(learningPath1);
-
-                foreach (var entry in report)
-                {
-                    Console.WriteLine($"Student: {entry.StudentName}");
-                    Console.WriteLine($"Total Fees: {entry.TotalFees:C}");
-                    Console.WriteLine($"Total Paid: {entry.TotalPaid:C}");
-                    Console.WriteLine($"Outstanding Balance: {entry.OutstandingBalance:C}");
-            
-                    Console.WriteLine("Payment Details:");
-                    foreach (var payment in entry.PaymentDetails)
-                    {
-                        Console.WriteLine($"  Date: {payment.Date:d}, Amount: {payment.Amount:C}, Method: {payment.PaymentMethod}");
-                    }
-                    Console.WriteLine(); 
-                }
-                
-                LogicMethods.NotifyStudentsOfPaymentStatus(learningPath1);
-
-                var nextLearningPath = LogicMethods.GetNextLearningPath(learningPath2, fcmSchool);
-
-                if (nextLearningPath != null)
-                {
-                    Console.WriteLine($"Next Learning Path ID: {nextLearningPath.Id}");
-                    Console.WriteLine($"Next Semester: {nextLearningPath.Semester}");
-                }
-                else
-                {
-                    Console.WriteLine("No next learning path found, or manual promotion is required.");
-                }
-
-                var paths = fcmSchool.LearningPath.Count;
-                Console.WriteLine($"{paths}");
-
-
-
-
-
-                /*
-                foreach (var scheduleEntry in learningPath1.Schedule)
-                {
-                    Console.WriteLine($"{scheduleEntry.Id}: {scheduleEntry.DateTime} - {scheduleEntry.Title}, {scheduleEntry.Duration}");
-                }
-
-                LogicMethods.DisplayStudentSchedules(learningPath1);
-
-                // Synchronize schedules
-                LogicMethods.SynchronizeSchedulesWithStudents(learningPath1);
-
-                LogicMethods.DisplayStudentSchedules(learningPath1);
-                var calendar = LogicMethods.GenerateStudentCalendar(fcmSchool, student1);
-
-                // Display the student's calendar
-                Console.WriteLine($"Calendar for {student1.Person.FirstName} {student1.Person.LastName}:");
-                foreach (var entry in calendar)
-                {
-                    Console.WriteLine($"Date: {entry.DateTime}, Course: {entry.ClassSession.Course}, Topic: {entry.ClassSession.Topic}");
-                }
-
-
-                /*
-
-
-                //create corresponding schedule for them
-                var scheduleEntry2 = new ScheduleEntry();
-                var scheduleEntry3 = new ScheduleEntry();
-
-                //put class session 2 and 3 into schedule entry 2 and 3
-                scheduleEntry2.ClassSession = classSession2;
-                scheduleEntry3.ClassSession = classSession3;
-
-                //add all schedules to the first learning path
-                Console.WriteLine(learningPath1.Schedule.Count);
-
-                learningPath1.Schedule.Add(scheduleEntry1);
-                learningPath1.Schedule.Add(scheduleEntry2);
-
-                Console.WriteLine(learningPath1.Schedule.Count);
-
-                //add all learning paths to school
-                fcmSchool.LearningPath = new List<LearningPath> { learningPath1 };
-
-
-                 */
+            //test generate payment summery
+            var summary = LogicMethods.GeneratePaymentSummaryForStudent(student1);
+            foreach (var line in summary)
+            {
+                Console.WriteLine(line);
             }
 
+            //students with outstanding payments
+            var outstandingPayments = LogicMethods.GetStudentsWithOutstandingPayments(learningPath1);
+
+            foreach (var (student, balance) in outstandingPayments)
+            {
+                Console.WriteLine($"Student: {student.Person.FirstName} {student.Person.LastName}, Outstanding Balance: {balance:C}");
+            }
+            LogicMethods.MakePaymentForStudent(student1, 700.0, PaymentMethod.Card);
+            LogicMethods.GrantAccessToSchedules(student1, learningPath1);
+            //retrieve students with up to 50% payment
+            var studentsWithAccess = LogicMethods.GetStudentsWithAccess(learningPath1);
+
+            foreach (var student in studentsWithAccess)
+            {
+                Console.WriteLine($"Student ID: {student.ID}, Name: {student.Person.FirstName} {student.Person.LastName}");
+            }
+
+            //generate payment report for learning path
+            var report = LogicMethods.GetPaymentReportForLearningPath(learningPath1);
+
+            foreach (var entry in report)
+            {
+                Console.WriteLine($"Student: {entry.StudentName}");
+                Console.WriteLine($"Total Fees: {entry.TotalFees:C}");
+                Console.WriteLine($"Total Paid: {entry.TotalPaid:C}");
+                Console.WriteLine($"Outstanding Balance: {entry.OutstandingBalance:C}");
+
+                Console.WriteLine("Payment Details:");
+                foreach (var payment in entry.PaymentDetails)
+                {
+                    Console.WriteLine($"  Date: {payment.Date:d}, Amount: {payment.Amount:C}, Method: {payment.PaymentMethod}");
+                }
+                Console.WriteLine();
+            }*/
+
+            LogicMethods.NotifyStudentsOfPaymentStatus(learningPath1);
+
+            var currentLearningPath = learningPath1;
+
+            Console.WriteLine($"Current Learning Path: {currentLearningPath.ClassLevel} - Semester {currentLearningPath.Semester}");
+
+            // Get the next learning path
+            var nextLearningPath = LogicMethods.GetNextLearningPath(currentLearningPath, fcmSchool);
+
+            if (nextLearningPath != null)
+            {
+                Console.WriteLine($"Next Learning Path: {nextLearningPath.ClassLevel} - Semester {nextLearningPath.Semester}");
+            }
+            else
+            {
+                Console.WriteLine("No next learning path found. Manual promotion may be required.");
+            }
+
+
+
+
+
+            /*
+            foreach (var scheduleEntry in learningPath1.Schedule)
+            {
+                Console.WriteLine($"{scheduleEntry.Id}: {scheduleEntry.DateTime} - {scheduleEntry.Title}, {scheduleEntry.Duration}");
+            }
+
+            LogicMethods.DisplayStudentSchedules(learningPath1);
+
+            // Synchronize schedules
+            LogicMethods.SynchronizeSchedulesWithStudents(learningPath1);
+
+            LogicMethods.DisplayStudentSchedules(learningPath1);
+            var calendar = LogicMethods.GenerateStudentCalendar(fcmSchool, student1);
+
+            // Display the student's calendar
+            Console.WriteLine($"Calendar for {student1.Person.FirstName} {student1.Person.LastName}:");
+            foreach (var entry in calendar)
+            {
+                Console.WriteLine($"Date: {entry.DateTime}, Course: {entry.ClassSession.Course}, Topic: {entry.ClassSession.Topic}");
+            }
+
+
+            /*
+
+
+            //create corresponding schedule for them
+            var scheduleEntry2 = new ScheduleEntry();
+            var scheduleEntry3 = new ScheduleEntry();
+
+            //put class session 2 and 3 into schedule entry 2 and 3
+            scheduleEntry2.ClassSession = classSession2;
+            scheduleEntry3.ClassSession = classSession3;
+
+            //add all schedules to the first learning path
+            Console.WriteLine(learningPath1.Schedule.Count);
+
+            learningPath1.Schedule.Add(scheduleEntry1);
+            learningPath1.Schedule.Add(scheduleEntry2);
+
+            Console.WriteLine(learningPath1.Schedule.Count);
+
+            //add all learning paths to school
+            fcmSchool.LearningPath = new List<LearningPath> { learningPath1 };
+
+
+             */
         }
+
     }
 }
+
 
 
 

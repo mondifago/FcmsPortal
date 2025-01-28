@@ -1102,17 +1102,14 @@ namespace FcmsPortal
                 throw new ArgumentException("The school must have a list of learning paths.", nameof(school));
             }
 
-            // If the current semester is the last one, return null
             if (currentLearningPath.Semester == Semester.Third)
             {
                 Console.WriteLine("Manual promotion to the next class level is required.");
                 return null;
             }
 
-            // Determine the next semester
             Semester nextSemester = currentLearningPath.Semester + 1;
 
-            // Find the learning path for the next semester
             var nextLearningPath = school.LearningPath.FirstOrDefault(lp =>
                 lp.EducationLevel == currentLearningPath.EducationLevel &&
                 lp.ClassLevel == currentLearningPath.ClassLevel &&
