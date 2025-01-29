@@ -1289,6 +1289,20 @@ namespace FcmsPortal
                 .ToList();
         }
         
+        //Retrieves all past schedule entries
+        public static List<ScheduleEntry> GetPastEntries(Calendar calendar)
+        {
+            if (calendar == null)
+            {
+                throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
+            }
+    
+            return calendar.ScheduleEntries
+                .Where(e => e.DateTime < DateTime.Now)
+                .OrderByDescending(e => e.DateTime)
+                .ToList();
+        }
+        
         
 
 
