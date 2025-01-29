@@ -1313,7 +1313,16 @@ namespace FcmsPortal
             calendar.ScheduleEntries.Clear();
         }
         
-        
+        //Retrieves all recurring schedule entries
+        public static List<ScheduleEntry> GetRecurringEntries(Calendar calendar)
+        {
+            if (calendar == null)
+            {
+                throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
+            }
+            return calendar.ScheduleEntries.Where(e => e.IsRecurring).ToList();
+        }
+
 
 
 
