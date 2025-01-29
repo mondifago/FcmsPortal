@@ -1263,6 +1263,19 @@ namespace FcmsPortal
             calendar.ScheduleEntries.Remove(entry);
         }
         
+        //Retrieves all schedule entries for a specific date.
+        public static List<ScheduleEntry> GetEntriesByDate(Calendar calendar, DateTime date)
+        {
+            if (calendar == null)
+            {
+                throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
+            }
+            return calendar.ScheduleEntries
+                .Where(e => e.DateTime.Date == date.Date)
+                .OrderBy(e => e.DateTime)
+                .ToList();
+        }
+        
         
 
 
@@ -1284,21 +1297,6 @@ namespace FcmsPortal
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       
 
         
 

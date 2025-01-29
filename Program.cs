@@ -678,10 +678,15 @@ namespace FcmsPortal
 
             Console.WriteLine(learningPath1.Schedule.Count);
 
-            
+            var todaysSchedule = LogicMethods.GetEntriesByDate(allCalendar, DateTime.Today);
+
+            foreach (var entry in todaysSchedule)
+            {
+                Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
+            }
 
 
-             
+
         }
 
     }
