@@ -1,4 +1,5 @@
-﻿using FcmsPortal.Constants;
+﻿using System.Text.Json;
+using FcmsPortal.Constants;
 using FcmsPortal.Enums;
 using FcmsPortal.ViewModel;
 
@@ -1331,6 +1332,17 @@ namespace FcmsPortal
                 throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
             }
             return calendar.ScheduleEntries.Where(e => e.DateTime.DayOfWeek == dayOfWeek).ToList();
+        }
+        
+        //Exports calendar entries to a JSON file
+        public static void ExportCalendar(Calendar calendar, string filePath)
+        {
+            if (calendar == null)
+            {
+                throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
+            }
+            var serializedEntries = JsonSerializer.Serialize(calendar.ScheduleEntries);
+            File.WriteAllText(filePath, serializedEntries);
         }
         
 

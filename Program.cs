@@ -697,6 +697,19 @@ namespace FcmsPortal
             {
                 Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
             }
+            
+            LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry1);
+            LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry2);
+            LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry3);
+            LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry4);
+            fcmSchool.SchoolCalendar.Add(allCalendar);
+            
+            foreach (var entry in fcmSchool.SchoolCalendar)
+            {
+                Console.WriteLine($" {entry.Name} ,  {entry.Id}");
+            }
+            
+            //LogicMethods.ExportCalendar(allCalendar, @"../../../MYSTUDIES.xml");
 
 
         }
