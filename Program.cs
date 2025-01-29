@@ -692,6 +692,12 @@ namespace FcmsPortal
                 Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
             }
 
+            var mondayEntries = LogicMethods.GetEntriesForDayOfWeek(allCalendar, DayOfWeek.Thursday);
+            foreach (var entry in mondayEntries)
+            {
+                Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
+            }
+
 
         }
 

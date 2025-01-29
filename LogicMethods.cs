@@ -1322,6 +1322,17 @@ namespace FcmsPortal
             }
             return calendar.ScheduleEntries.Where(e => e.IsRecurring).ToList();
         }
+        
+        //Retrieves all schedule entries for a specific day of the week
+        public static List<ScheduleEntry> GetEntriesForDayOfWeek(Calendar calendar, DayOfWeek dayOfWeek)
+        {
+            if (calendar == null)
+            {
+                throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
+            }
+            return calendar.ScheduleEntries.Where(e => e.DateTime.DayOfWeek == dayOfWeek).ToList();
+        }
+        
 
 
 
