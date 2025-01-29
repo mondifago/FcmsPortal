@@ -1276,6 +1276,19 @@ namespace FcmsPortal
                 .ToList();
         }
         
+        //Get upcoming events
+        public static List<ScheduleEntry> GetUpcomingEntries(Calendar calendar)
+        {
+            if (calendar == null)
+            {
+                throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
+            }
+            return calendar.ScheduleEntries
+                .Where(e => e.DateTime >= DateTime.Now)
+                .OrderBy(e => e.DateTime)
+                .ToList();
+        }
+        
         
 
 

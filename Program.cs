@@ -685,6 +685,12 @@ namespace FcmsPortal
                 Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
             }
 
+            var futureEntries = LogicMethods.GetUpcomingEntries(allCalendar);
+            
+            foreach (var entry in futureEntries)
+            {
+                Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
+            }
 
 
         }
