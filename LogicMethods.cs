@@ -1303,6 +1303,16 @@ namespace FcmsPortal
                 .ToList();
         }
         
+        //Clears all schedule entries in the calendar
+        public static void ClearAllEntries(Calendar calendar)
+        {
+            if (calendar == null)
+            {
+                throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
+            }
+            calendar.ScheduleEntries.Clear();
+        }
+        
         
 
 
