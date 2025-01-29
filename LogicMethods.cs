@@ -1345,29 +1345,32 @@ namespace FcmsPortal
             File.WriteAllText(filePath, serializedEntries);
         }
         
+        //Imports calendar entries from a JSON file
+        public static void ImportCalendar(Calendar calendar, string filePath)
+        {
+            if (calendar == null)
+            {
+                throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
+            }
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", filePath);
+            }
 
+            var serializedEntries = File.ReadAllText(filePath);
+            var importedEntries = JsonSerializer.Deserialize<List<ScheduleEntry>>(serializedEntries);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
+            if (importedEntries != null)
+            {
+                foreach (var entry in importedEntries)
+                {
+                    if (!calendar.ScheduleEntries.Any(e => e.Id == entry.Id))
+                    {
+                        calendar.ScheduleEntries.Add(entry);
+                    }
+                }
+            }
+        }
 
         //generate school calendar
         public static List<ScheduleEntry> GenerateSchoolCalendar(School school)
@@ -1386,6 +1389,16 @@ namespace FcmsPortal
             return schoolCalendar;
         }
 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         //take attendance for class session
         public static void TakeAttendanceForClassSession(ClassSession classSession, List<Student> presentStudents, Staff teacher)
         {

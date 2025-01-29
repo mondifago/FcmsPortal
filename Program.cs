@@ -711,6 +711,13 @@ namespace FcmsPortal
             
             //LogicMethods.ExportCalendar(allCalendar, @"../../../MYSTUDIES.xml");
 
+            var termWork = LogicMethods.GenerateSchoolCalendar(fcmSchool);
+            
+            foreach (var entry in termWork)
+            {
+                Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
+            }
+
 
         }
 
