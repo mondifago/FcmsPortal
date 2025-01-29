@@ -1246,94 +1246,61 @@ namespace FcmsPortal
 
             calendar.ScheduleEntries.Add(entry);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //generate a student's calendar
-        public static List<ScheduleEntry> GenerateStudentCalendar(School school, Student student)
+        
+        //Remove Schedule Entry
+        public static void RemoveScheduleEntry(Calendar calendar, int entryId)
         {
-            if (school == null)
+            if (calendar == null)
             {
-                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+                throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
+            }
+            var entry = calendar.ScheduleEntries.FirstOrDefault(e => e.Id == entryId);
+            if (entry == null)
+            {
+                throw new InvalidOperationException($"Schedule entry with ID {entryId} not found.");
             }
 
-            if (student == null)
-            {
-                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-            }
-            List<ScheduleEntry> studentCalendar = new();
-            foreach (var learningPath in school.LearningPath)
-            {
-                if (learningPath.Students.Contains(student))
-                {
-                    studentCalendar.AddRange(learningPath.Schedule);
-                }
-            }
-            studentCalendar.Sort((entry1, entry2) => entry1.DateTime.CompareTo(entry2.DateTime));
-
-            return studentCalendar;
-
+            calendar.ScheduleEntries.Remove(entry);
         }
+        
+        
 
-        //generate teacher's calendar
-        public static List<ScheduleEntry> GenerateTeacherCalendar(School school, Staff teacher)
-        {
-            if (school == null)
-            {
-                throw new ArgumentNullException(nameof(school), "School cannot be null.");
-            }
 
-            if (teacher == null)
-            {
-                throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
-            }
-            List<ScheduleEntry> teacherCalendar = new();
 
-            foreach (var learningPath in school.LearningPath)
-            {
-                foreach (var schedule in learningPath.Schedule)
-                {
-                    if (schedule.ClassSession.Teacher != null && schedule.ClassSession.Teacher.Id == teacher.Id)
-                    {
-                        teacherCalendar.Add(schedule);
-                    }
-                }
-            }
-            teacherCalendar.Sort((entry1, entry2) => entry1.DateTime.CompareTo(entry2.DateTime));
 
-            return teacherCalendar;
-        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+        
 
         //generate school calendar
         public static List<ScheduleEntry> GenerateSchoolCalendar(School school)
