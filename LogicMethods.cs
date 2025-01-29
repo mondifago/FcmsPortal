@@ -1223,6 +1223,29 @@ namespace FcmsPortal
                 currentLearningPath.Students.Remove(student);
             }
         }
+        
+        /// <summary>
+        /// Methods for Calendar
+        /// </summary>
+
+        //Add schedule entry
+        public static void AddScheduleEntry(Calendar calendar, ScheduleEntry entry)
+        {
+            if (calendar == null)
+            {
+                throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
+            }
+            if (entry == null)
+            {
+                throw new ArgumentNullException(nameof(entry), "Schedule entry cannot be null.");
+            }
+            if (calendar.ScheduleEntries.Any(e => e.Id == entry.Id))
+            {
+                throw new InvalidOperationException($"A schedule entry with ID {entry.Id} already exists.");
+            }
+
+            calendar.ScheduleEntries.Add(entry);
+        }
 
 
 

@@ -611,7 +611,13 @@ namespace FcmsPortal
             var currentLearningPath = learningPath1;
 
             Console.WriteLine($"Current Learning Path: {currentLearningPath.ClassLevel} - Semester {currentLearningPath.Semester}");
+            
+            foreach (var schedule in learningPath1.Schedule)
+            {
+                Console.WriteLine($"{scheduleEntry.Id}: {scheduleEntry.DateTime} - {scheduleEntry.Title}, {scheduleEntry.Duration}");
+            }
 
+            LogicMethods.DisplayStudentSchedules(learningPath1);
             // Get the next learning path
             var nextLearningPath = LogicMethods.GetNextLearningPath(currentLearningPath, fcmSchool);
 
@@ -660,36 +666,6 @@ namespace FcmsPortal
             {
                 Console.WriteLine($"{student.ID}");
             }
-
-            /*
-            foreach (var scheduleEntry in learningPath1.Schedule)
-            {
-                Console.WriteLine($"{scheduleEntry.Id}: {scheduleEntry.DateTime} - {scheduleEntry.Title}, {scheduleEntry.Duration}");
-            }
-
-            LogicMethods.DisplayStudentSchedules(learningPath1);
-
-            // Synchronize schedules
-            LogicMethods.SynchronizeSchedulesWithStudents(learningPath1);
-
-            LogicMethods.DisplayStudentSchedules(learningPath1);
-            var calendar = LogicMethods.GenerateStudentCalendar(fcmSchool, student1);
-
-            // Display the student's calendar
-            Console.WriteLine($"Calendar for {student1.Person.FirstName} {student1.Person.LastName}:");
-            foreach (var entry in calendar)
-            {
-                Console.WriteLine($"Date: {entry.DateTime}, Course: {entry.ClassSession.Course}, Topic: {entry.ClassSession.Topic}");
-            }
-
-
-            /*
-
-
-            //create corresponding schedule for them
-            var scheduleEntry2 = new ScheduleEntry();
-            var scheduleEntry3 = new ScheduleEntry();
-
             //put class session 2 and 3 into schedule entry 2 and 3
             scheduleEntry2.ClassSession = classSession2;
             scheduleEntry3.ClassSession = classSession3;
@@ -702,11 +678,10 @@ namespace FcmsPortal
 
             Console.WriteLine(learningPath1.Schedule.Count);
 
-            //add all learning paths to school
-            fcmSchool.LearningPath = new List<LearningPath> { learningPath1 };
+            
 
 
-             */
+             
         }
 
     }
