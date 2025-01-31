@@ -655,7 +655,7 @@ namespace FcmsPortal
                 Console.WriteLine($"{scheduleEntry.DateTime}, {scheduleEntry.Title}, {scheduleEntry.Venue}");
             }
 
-            LogicMethods.TransferStudentsToNextLearningPath(learningPath1, learningPath2);
+            //LogicMethods.TransferStudentsToNextLearningPath(learningPath1, learningPath2);
 
             foreach (var student in learningPath1.Students)
             {
@@ -717,6 +717,17 @@ namespace FcmsPortal
             {
                 Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
             }
+            
+            //Attendance test
+            fcmSchool.LearningPath.Add(learningPath1);
+            
+            var expectedStudents = LogicMethods.GetExpectedStudentsForClassSession(fcmSchool,classSession2);
+            foreach (var student in expectedStudents)
+            {
+                Console.WriteLine($"{student.ID}, {student.Person.FirstName} {student.Person.LastName}");
+            }
+            
+            
 
 
         }

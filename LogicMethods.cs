@@ -1388,8 +1388,26 @@ namespace FcmsPortal
 
             return schoolCalendar;
         }
-
         
+        /// <summary>
+        /// Methods for Attendance
+        /// </summary>
+
+        //Get expected students that ought to attend a class session
+        public static List<Student> GetExpectedStudentsForClassSession(School school, ClassSession classSession)
+        {
+            if (school == null)
+                throw new ArgumentNullException(nameof(school));
+
+            if (classSession == null)
+                throw new ArgumentNullException(nameof(classSession));
+            
+            var learningPath = school.LearningPath
+                .FirstOrDefault(lp => lp.Schedule.Any(s => s.ClassSession?.Id == classSession.Id));
+
+            return learningPath?.Students ?? new List<Student>();
+        }
+
         
         
         
