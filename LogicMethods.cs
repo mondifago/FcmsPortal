@@ -1426,7 +1426,6 @@ namespace FcmsPortal
                 Attendees = presentStudents,
                 TimeStamp = DateTime.Now
             };
-
             classSession.AttendanceLog.Add(attendanceLogEntry);
         }
 
