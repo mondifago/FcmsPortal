@@ -1451,6 +1451,19 @@ namespace FcmsPortal
             };
             classSession.AttendanceLog.Add(attendanceLogEntry);
         }
+        
+        //Retrieve students Absent from a class session
+        public static List<Student> GetStudentsAbsentForClassSession(ClassSession classSession)
+        {
+            if (classSession == null)
+                throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
+            
+            var latestAttendanceLog = classSession.AttendanceLog.LastOrDefault();
+            
+            return latestAttendanceLog?.AbsentStudents ?? new List<Student>();
+        }
+
+
 
 
         //Retrieve a student's attendance for a particular course in a semester

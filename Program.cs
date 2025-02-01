@@ -200,9 +200,9 @@ namespace FcmsPortal
             classSession2.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
             classSession2.Topic = "Digestive System";
             classSession2.Description = "Function of Enzymes in Digestive System";
-            classSession1.LessonNote =
+            classSession2.LessonNote =
                 "Make the students understand the function of every Enzyme within the Digestive system";
-            classSession1.Teacher = staff2;
+            classSession2.Teacher = staff2;
 
             //create a geography class session
             var classSession3 = new ClassSession();
@@ -728,7 +728,13 @@ namespace FcmsPortal
             }
             
             List<Student> presenStudents = new List<Student>() { student1, student2 };
-            LogicMethods.TakeAttendanceForClassSession(fcmSchool, classSession2, presenStudents, classSession2.Teacher);
+            LogicMethods.TakeAttendanceForClassSession(fcmSchool, classSession2, presenStudents, staff2);
+
+            var absent = LogicMethods.GetStudentsAbsentForClassSession(classSession2);
+            foreach (var student in absent)
+            {
+                Console.WriteLine($"Absentees from math class: {student.ID}: {student.Person.FirstName} {student.Person.LastName}");
+            }
 
 
 
