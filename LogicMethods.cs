@@ -1473,54 +1473,22 @@ namespace FcmsPortal
             
             return latestAttendanceLog?.Attendees ?? new List<Student>();
         }
-
-
-
-
-
-        //Retrieve a student's attendance for a particular course in a semester
-        public static List<ClassAttendanceLogEntry> GetStudentAttendanceForCourse(
-        Student student,
-        string course,
-        LearningPath learningPath)
+        
+        //Retrieve attendance of a class session
+        public static ClassAttendanceLogEntry RetrieveAttendanceForClassSession(ClassSession classSession)
         {
-            if (student == null)
-            {
-                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-            }
-            if (string.IsNullOrWhiteSpace(course))
-            {
-                throw new ArgumentException("Course cannot be null or empty.", nameof(course));
-            }
-            if (learningPath == null)
-            {
-                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-            }
+            if (classSession == null)
+                throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
 
-            var validCourses = CourseDefaults.GetCourseNames(learningPath.EducationLevel);
-            if (!validCourses.Contains(course))
-            {
-                throw new ArgumentException($"The course '{course}' is not valid for the education level {learningPath.EducationLevel}.", nameof(course));
-            }
+            var latestAttendanceLog = classSession.AttendanceLog.LastOrDefault();
+    
+            if (latestAttendanceLog == null)
+                throw new InvalidOperationException("No attendance records found for this class session.");
 
-            // Retrieve all schedule entries in the learning path
-            var scheduleEntries = learningPath.Schedule;
-
-            // Filter schedule entries for the specified course
-            var courseSessions = scheduleEntries
-                .Where(se => se.ClassSession.Course.Equals(course, StringComparison.OrdinalIgnoreCase))
-                .Select(se => se.ClassSession)
-                .ToList();
-
-            // Get attendance logs where the student is marked as present
-            var attendanceLogs = courseSessions
-                .SelectMany(cs => cs.AttendanceLog)
-                .Where(log => log.Attendees.Contains(student))
-                .ToList();
-
-            return attendanceLogs;
+            return latestAttendanceLog;
         }
 
+        
         //Get attendance of all the students in a particular learning path for a day
         public static List<ClassAttendanceLogEntry> GetAttendanceForLearningPathOnDay(
         LearningPath learningPath,
