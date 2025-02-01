@@ -742,7 +742,28 @@ namespace FcmsPortal
             {
                 Console.WriteLine($" Student present for math class: {student.ID}: {student.Person.FirstName} {student.Person.LastName}");
             }
+
+            var attLog = LogicMethods.GetAttendanceForLearningPath(learningPath1);
             
+            Console.WriteLine($"Attendance Records for {learningPath1.Semester} Semester:");
+            foreach (var log in attLog)
+            {
+                Console.WriteLine($"Class Session ID: {log.ClassSession.Id}, Course: {log.ClassSession.Course}, Topic: {log.ClassSession.Topic}");
+                Console.WriteLine($"Teacher: {log.Teacher.Person.FirstName}");
+                Console.WriteLine("Present Students:");
+                foreach (var student in log.Attendees)
+                {
+                    Console.WriteLine($" - {student.Person.FirstName}");
+                }
+                Console.WriteLine("Absent Students:");
+                foreach (var student in log.AbsentStudents)
+                {
+                    Console.WriteLine($" - {student.Person.FirstName}");
+                }
+                Console.WriteLine("--------------------------------------------------");
+            }
+        }
+
 
 
 
@@ -751,7 +772,7 @@ namespace FcmsPortal
         }
 
     }
-}
+
 
 
 

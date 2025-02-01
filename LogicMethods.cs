@@ -1487,6 +1487,26 @@ namespace FcmsPortal
 
             return latestAttendanceLog;
         }
+        
+        //Retrieve all attendance recorded for a learning path
+        public static List<ClassAttendanceLogEntry> GetAttendanceForLearningPath(LearningPath learningPath)
+        {
+            if (learningPath == null)
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+
+            List<ClassAttendanceLogEntry> attendanceLogs = new();
+
+            foreach (var schedule in learningPath.Schedule)
+            {
+                if (schedule.ClassSession != null && schedule.ClassSession.AttendanceLog.Any())
+                {
+                    attendanceLogs.AddRange(schedule.ClassSession.AttendanceLog);
+                }
+            }
+
+            return attendanceLogs;
+        }
+
 
         
         //Get attendance of all the students in a particular learning path for a day
