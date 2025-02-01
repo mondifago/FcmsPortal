@@ -1506,10 +1506,8 @@ namespace FcmsPortal
 
             return attendanceLogs;
         }
-
-
         
-        //Get attendance of all the students in a particular learning path for a day
+        //Get attendance of all the students in a particular learning path for a select day
         public static List<ClassAttendanceLogEntry> GetAttendanceForLearningPathByDate(LearningPath learningPath, DateTime date)
         {
             if (learningPath == null)
@@ -1531,42 +1529,37 @@ namespace FcmsPortal
 
             return attendanceLogs;
         }
-
-
-        //Get attendance of a teacher for a specified time period
-        public static List<ClassAttendanceLogEntry> GetTeacherAttendanceForPeriod(
-           Staff teacher,
-           List<LearningPath> learningPaths,
-           DateTime startDate,
-           DateTime endDate)
+        
+        //Get a student's Attendance record for a semester
+        public static List<ClassAttendanceLogEntry> GetAStudentSemesterAttendance(LearningPath learningPath, Student student)
         {
-            if (teacher == null)
-                throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
+            if (learningPath == null)
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
 
-            if (learningPaths == null || !learningPaths.Any())
-                throw new ArgumentException("Learning paths list cannot be null or empty.", nameof(learningPaths));
-
-            if (endDate < startDate)
-                throw new ArgumentException("End date must be greater than or equal to start date.");
-
-            var teacherAttendance = new List<ClassAttendanceLogEntry>();
-
-            foreach (var learningPath in learningPaths)
+            if (student == null)
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+            
+            List<ClassAttendanceLogEntry> studentAttendance = new();
+            
+            foreach (var schedule in learningPath.Schedule)
             {
-                foreach (var schedule in learningPath.Schedule)
+                if (schedule.ClassSession != null && schedule.ClassSession.AttendanceLog.Any())
                 {
-                    var classSession = schedule.ClassSession;
-                    var attendanceLogs = classSession.AttendanceLog
-                        .Where(log => log.Teacher.Id == teacher.Id &&
-                                      log.TimeStamp >= startDate &&
-                                      log.TimeStamp <= endDate)
-                        .ToList();
-
-                    teacherAttendance.AddRange(attendanceLogs);
+                    var latestLog = schedule.ClassSession.AttendanceLog.LastOrDefault();
+            
+                    if (latestLog != null && (latestLog.Attendees.Contains(student) || latestLog.AbsentStudents.Contains(student)))
+                    {
+                        studentAttendance.Add(latestLog);
+                    }
                 }
             }
-            return teacherAttendance;
+
+            return studentAttendance;
         }
+
+
+
+               
 
         //To retrieve all Grades of all students for a particular course
         public static List<TestGrade> GetAllGradesForCourse(string courseName, List<Student> students)
