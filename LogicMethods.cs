@@ -1407,45 +1407,51 @@ namespace FcmsPortal
 
             return learningPath?.Students ?? new List<Student>();
         }
-
-        
-        
-        
-        
-        
-        
-        
-        
         
         //take attendance for class session
-        public static void TakeAttendanceForClassSession(ClassSession classSession, List<Student> presentStudents, Staff teacher)
+        public static void TakeAttendanceForClassSession(School school, ClassSession classSession, List<Student> presentStudents, Staff teacher)
         {
+            if (school == null)
+                throw new ArgumentNullException(nameof(school), "School cannot be null.");
+            
             if (classSession == null)
-            {
                 throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
-            }
-            if (teacher == null)
-            {
-                throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
-            }
-            if (presentStudents == null || !presentStudents.Any())
-            {
-                throw new ArgumentException("The list of present students cannot be null or empty.", nameof(presentStudents));
-            }
-            if (classSession.Teacher != teacher)
-            {
-                throw new InvalidOperationException("Only the assigned teacher can take attendance for this class session.");
-            }
 
+            if (teacher == null)
+                throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
+
+            if (classSession.Teacher != teacher)
+                throw new InvalidOperationException("Only the assigned teacher can take attendance for this class session.");
+            
+            List<Student> expectedStudents = GetExpectedStudentsForClassSession(school,classSession);
+
+            if (!expectedStudents.Any())
+                throw new InvalidOperationException("No students are expected for this class session.");
+
+            if (presentStudents == null)
+                throw new ArgumentNullException(nameof(presentStudents), "Present students list cannot be null.");
+            
+            foreach (var student in presentStudents)
+            {
+                if (!expectedStudents.Contains(student))
+                    throw new InvalidOperationException($"Student {student.ID} is not expected in this class session.");
+            }
+            
+            List<Student> absentStudents = expectedStudents.Except(presentStudents).ToList();
+            
             var attendanceLogEntry = new ClassAttendanceLogEntry
             {
                 Id = classSession.AttendanceLog.Count + 1,
+                ClassSession = classSession,
+                ClassSessionId = classSession.Id,
                 Teacher = teacher,
                 Attendees = presentStudents,
+                AbsentStudents = absentStudents,
                 TimeStamp = DateTime.Now
             };
             classSession.AttendanceLog.Add(attendanceLogEntry);
         }
+
 
         //Retrieve a student's attendance for a particular course in a semester
         public static List<ClassAttendanceLogEntry> GetStudentAttendanceForCourse(

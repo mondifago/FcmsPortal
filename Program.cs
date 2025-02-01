@@ -727,7 +727,10 @@ namespace FcmsPortal
                 Console.WriteLine($"{student.ID}, {student.Person.FirstName} {student.Person.LastName}");
             }
             
-            
+            List<Student> presenStudents = new List<Student>() { student1, student2 };
+            LogicMethods.TakeAttendanceForClassSession(fcmSchool, classSession2, presenStudents, classSession2.Teacher);
+
+
 
 
         }
