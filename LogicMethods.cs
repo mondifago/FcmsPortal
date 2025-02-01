@@ -1510,31 +1510,28 @@ namespace FcmsPortal
 
         
         //Get attendance of all the students in a particular learning path for a day
-        public static List<ClassAttendanceLogEntry> GetAttendanceForLearningPathOnDay(
-        LearningPath learningPath,
-        DateTime date)
+        public static List<ClassAttendanceLogEntry> GetAttendanceForLearningPathByDate(LearningPath learningPath, DateTime date)
         {
             if (learningPath == null)
-            {
                 throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-            }
 
-            var relevantScheduleEntries = learningPath.Schedule
-                .Where(se => se.DateTime.Date == date.Date)
-                .ToList();
+            List<ClassAttendanceLogEntry> attendanceLogs = new();
 
-            if (!relevantScheduleEntries.Any())
+            foreach (var schedule in learningPath.Schedule)
             {
-                Console.WriteLine($"No class sessions were scheduled for the date {date.ToShortDateString()}.");
-                return new List<ClassAttendanceLogEntry>();
-            }
+                if (schedule.ClassSession != null)
+                {
+                    var filteredLogs = schedule.ClassSession.AttendanceLog
+                        .Where(log => log.TimeStamp.Date == date.Date)
+                        .ToList();
 
-            var attendanceLogs = relevantScheduleEntries
-                .SelectMany(se => se.ClassSession.AttendanceLog)
-                .ToList();
+                    attendanceLogs.AddRange(filteredLogs);
+                }
+            }
 
             return attendanceLogs;
         }
+
 
         //Get attendance of a teacher for a specified time period
         public static List<ClassAttendanceLogEntry> GetTeacherAttendanceForPeriod(
