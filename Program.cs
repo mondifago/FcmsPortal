@@ -735,6 +735,15 @@ namespace FcmsPortal
             {
                 Console.WriteLine($"Absentees from math class: {student.ID}: {student.Person.FirstName} {student.Person.LastName}");
             }
+            
+            List<Student> presentStudents = LogicMethods.GetStudentsPresentForClassSession(classSession2);
+            
+            foreach (var student in presenStudents)
+            {
+                Console.WriteLine($" Student present for math class: {student.ID}: {student.Person.FirstName} {student.Person.LastName}");
+            }
+            
+
 
 
 

@@ -1462,6 +1462,18 @@ namespace FcmsPortal
             
             return latestAttendanceLog?.AbsentStudents ?? new List<Student>();
         }
+        
+        //Retrieve students present for a class session
+        public static List<Student> GetStudentsPresentForClassSession(ClassSession classSession)
+        {
+            if (classSession == null)
+                throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
+            
+            var latestAttendanceLog = classSession.AttendanceLog.LastOrDefault();
+            
+            return latestAttendanceLog?.Attendees ?? new List<Student>();
+        }
+
 
 
 
