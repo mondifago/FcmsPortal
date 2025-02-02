@@ -1,4 +1,6 @@
-﻿namespace FcmsPortal
+﻿using System.Net.Mail;
+
+namespace FcmsPortal
 {
     public class ClassSession
     {
@@ -11,5 +13,6 @@
         public List<ClassAttendanceLogEntry> AttendanceLog { get; set; } = new List<ClassAttendanceLogEntry>();
         public Homework HomeworkDetails { get; set; }
         public string TeacherRemarks { get; set; }
+        public List<Attachment> StudyMaterials { get; set; } = new List<Attachment>();
     }
 }

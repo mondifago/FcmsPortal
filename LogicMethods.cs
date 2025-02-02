@@ -1,7 +1,7 @@
-﻿using System.Text.Json;
-using FcmsPortal.Constants;
+﻿using FcmsPortal.Constants;
 using FcmsPortal.Enums;
 using FcmsPortal.ViewModel;
+using System.Text.Json;
 
 namespace FcmsPortal
 {
@@ -1224,7 +1224,7 @@ namespace FcmsPortal
                 currentLearningPath.Students.Remove(student);
             }
         }
-        
+
         /// <summary>
         /// Methods for Calendar
         /// </summary>
@@ -1247,7 +1247,7 @@ namespace FcmsPortal
 
             calendar.ScheduleEntries.Add(entry);
         }
-        
+
         //Remove Schedule Entry
         public static void RemoveScheduleEntry(Calendar calendar, int entryId)
         {
@@ -1263,7 +1263,7 @@ namespace FcmsPortal
 
             calendar.ScheduleEntries.Remove(entry);
         }
-        
+
         //Retrieves all schedule entries for a specific date.
         public static List<ScheduleEntry> GetEntriesByDate(Calendar calendar, DateTime date)
         {
@@ -1276,7 +1276,7 @@ namespace FcmsPortal
                 .OrderBy(e => e.DateTime)
                 .ToList();
         }
-        
+
         //Get upcoming events
         public static List<ScheduleEntry> GetUpcomingEntries(Calendar calendar)
         {
@@ -1289,7 +1289,7 @@ namespace FcmsPortal
                 .OrderBy(e => e.DateTime)
                 .ToList();
         }
-        
+
         //Retrieves all past schedule entries
         public static List<ScheduleEntry> GetPastEntries(Calendar calendar)
         {
@@ -1297,13 +1297,13 @@ namespace FcmsPortal
             {
                 throw new ArgumentNullException(nameof(calendar), "Calendar cannot be null.");
             }
-    
+
             return calendar.ScheduleEntries
                 .Where(e => e.DateTime < DateTime.Now)
                 .OrderByDescending(e => e.DateTime)
                 .ToList();
         }
-        
+
         //Clears all schedule entries in the calendar
         public static void ClearAllEntries(Calendar calendar)
         {
@@ -1313,7 +1313,7 @@ namespace FcmsPortal
             }
             calendar.ScheduleEntries.Clear();
         }
-        
+
         //Retrieves all recurring schedule entries
         public static List<ScheduleEntry> GetRecurringEntries(Calendar calendar)
         {
@@ -1323,7 +1323,7 @@ namespace FcmsPortal
             }
             return calendar.ScheduleEntries.Where(e => e.IsRecurring).ToList();
         }
-        
+
         //Retrieves all schedule entries for a specific day of the week
         public static List<ScheduleEntry> GetEntriesForDayOfWeek(Calendar calendar, DayOfWeek dayOfWeek)
         {
@@ -1333,7 +1333,7 @@ namespace FcmsPortal
             }
             return calendar.ScheduleEntries.Where(e => e.DateTime.DayOfWeek == dayOfWeek).ToList();
         }
-        
+
         //Exports calendar entries to a JSON file
         public static void ExportCalendar(Calendar calendar, string filePath)
         {
@@ -1344,7 +1344,7 @@ namespace FcmsPortal
             var serializedEntries = JsonSerializer.Serialize(calendar.ScheduleEntries);
             File.WriteAllText(filePath, serializedEntries);
         }
-        
+
         //Imports calendar entries from a JSON file
         public static void ImportCalendar(Calendar calendar, string filePath)
         {
@@ -1388,7 +1388,7 @@ namespace FcmsPortal
 
             return schoolCalendar;
         }
-        
+
         /// <summary>
         /// Methods for Attendance
         /// </summary>
@@ -1401,19 +1401,19 @@ namespace FcmsPortal
 
             if (classSession == null)
                 throw new ArgumentNullException(nameof(classSession));
-            
+
             var learningPath = school.LearningPath
                 .FirstOrDefault(lp => lp.Schedule.Any(s => s.ClassSession?.Id == classSession.Id));
 
             return learningPath?.Students ?? new List<Student>();
         }
-        
+
         //take attendance for class session
         public static void TakeAttendanceForClassSession(School school, ClassSession classSession, List<Student> presentStudents, Staff teacher)
         {
             if (school == null)
                 throw new ArgumentNullException(nameof(school), "School cannot be null.");
-            
+
             if (classSession == null)
                 throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
 
@@ -1422,23 +1422,23 @@ namespace FcmsPortal
 
             if (classSession.Teacher != teacher)
                 throw new InvalidOperationException("Only the assigned teacher can take attendance for this class session.");
-            
-            List<Student> expectedStudents = GetExpectedStudentsForClassSession(school,classSession);
+
+            List<Student> expectedStudents = GetExpectedStudentsForClassSession(school, classSession);
 
             if (!expectedStudents.Any())
                 throw new InvalidOperationException("No students are expected for this class session.");
 
             if (presentStudents == null)
                 throw new ArgumentNullException(nameof(presentStudents), "Present students list cannot be null.");
-            
+
             foreach (var student in presentStudents)
             {
                 if (!expectedStudents.Contains(student))
                     throw new InvalidOperationException($"Student {student.ID} is not expected in this class session.");
             }
-            
+
             List<Student> absentStudents = expectedStudents.Except(presentStudents).ToList();
-            
+
             var attendanceLogEntry = new ClassAttendanceLogEntry
             {
                 Id = classSession.AttendanceLog.Count + 1,
@@ -1451,29 +1451,29 @@ namespace FcmsPortal
             };
             classSession.AttendanceLog.Add(attendanceLogEntry);
         }
-        
+
         //Retrieve students Absent from a class session
         public static List<Student> GetStudentsAbsentForClassSession(ClassSession classSession)
         {
             if (classSession == null)
                 throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
-            
+
             var latestAttendanceLog = classSession.AttendanceLog.LastOrDefault();
-            
+
             return latestAttendanceLog?.AbsentStudents ?? new List<Student>();
         }
-        
+
         //Retrieve students present for a class session
         public static List<Student> GetStudentsPresentForClassSession(ClassSession classSession)
         {
             if (classSession == null)
                 throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
-            
+
             var latestAttendanceLog = classSession.AttendanceLog.LastOrDefault();
-            
+
             return latestAttendanceLog?.Attendees ?? new List<Student>();
         }
-        
+
         //Retrieve attendance of a class session
         public static ClassAttendanceLogEntry RetrieveAttendanceForClassSession(ClassSession classSession)
         {
@@ -1481,13 +1481,13 @@ namespace FcmsPortal
                 throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
 
             var latestAttendanceLog = classSession.AttendanceLog.LastOrDefault();
-    
+
             if (latestAttendanceLog == null)
                 throw new InvalidOperationException("No attendance records found for this class session.");
 
             return latestAttendanceLog;
         }
-        
+
         //Retrieve all attendance recorded for a learning path
         public static List<ClassAttendanceLogEntry> GetAttendanceForLearningPath(LearningPath learningPath)
         {
@@ -1506,7 +1506,7 @@ namespace FcmsPortal
 
             return attendanceLogs;
         }
-        
+
         //Get attendance of all the students in a particular learning path for a select day
         public static List<ClassAttendanceLogEntry> GetAttendanceForLearningPathByDate(LearningPath learningPath, DateTime date)
         {
@@ -1529,7 +1529,7 @@ namespace FcmsPortal
 
             return attendanceLogs;
         }
-        
+
         //Get a student's Attendance record for a semester
         public static List<ClassAttendanceLogEntry> GetAStudentSemesterAttendance(LearningPath learningPath, Student student)
         {
@@ -1538,15 +1538,15 @@ namespace FcmsPortal
 
             if (student == null)
                 throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-            
+
             List<ClassAttendanceLogEntry> studentAttendance = new();
-            
+
             foreach (var schedule in learningPath.Schedule)
             {
                 if (schedule.ClassSession != null && schedule.ClassSession.AttendanceLog.Any())
                 {
                     var latestLog = schedule.ClassSession.AttendanceLog.LastOrDefault();
-            
+
                     if (latestLog != null && (latestLog.Attendees.Contains(student) || latestLog.AbsentStudents.Contains(student)))
                     {
                         studentAttendance.Add(latestLog);
@@ -1557,9 +1557,13 @@ namespace FcmsPortal
             return studentAttendance;
         }
 
+        /// <summary>
+        /// Methods for Class Session Collarboration
+        /// </summary>
 
 
-               
+
+
 
         //To retrieve all Grades of all students for a particular course
         public static List<TestGrade> GetAllGradesForCourse(string courseName, List<Student> students)

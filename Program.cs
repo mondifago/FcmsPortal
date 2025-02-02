@@ -611,7 +611,7 @@ namespace FcmsPortal
             var currentLearningPath = learningPath1;
 
             Console.WriteLine($"Current Learning Path: {currentLearningPath.ClassLevel} - Semester {currentLearningPath.Semester}");
-            
+
             foreach (var schedule in learningPath1.Schedule)
             {
                 Console.WriteLine($"{scheduleEntry.Id}: {scheduleEntry.DateTime} - {scheduleEntry.Title}, {scheduleEntry.Duration}");
@@ -686,7 +686,7 @@ namespace FcmsPortal
             }
 
             var futureEntries = LogicMethods.GetUpcomingEntries(allCalendar);
-            
+
             foreach (var entry in futureEntries)
             {
                 Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
@@ -697,36 +697,36 @@ namespace FcmsPortal
             {
                 Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
             }
-            
+
             LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry1);
             LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry2);
             LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry3);
             LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry4);
             fcmSchool.SchoolCalendar.Add(allCalendar);
-            
+
             foreach (var entry in fcmSchool.SchoolCalendar)
             {
                 Console.WriteLine($" {entry.Name} ,  {entry.Id}");
             }
-            
+
             //LogicMethods.ExportCalendar(allCalendar, @"../../../MYSTUDIES.xml");
 
             var termWork = LogicMethods.GenerateSchoolCalendar(fcmSchool);
-            
+
             foreach (var entry in termWork)
             {
                 Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
             }
-            
+
             //Attendance test
             fcmSchool.LearningPath.Add(learningPath1);
-            
-            var expectedStudents = LogicMethods.GetExpectedStudentsForClassSession(fcmSchool,classSession2);
+
+            var expectedStudents = LogicMethods.GetExpectedStudentsForClassSession(fcmSchool, classSession2);
             foreach (var student in expectedStudents)
             {
                 Console.WriteLine($"{student.ID}, {student.Person.FirstName} {student.Person.LastName}");
             }
-            
+
             List<Student> presenStudents = new List<Student>() { student1, student2 };
             LogicMethods.TakeAttendanceForClassSession(fcmSchool, classSession2, presenStudents, staff2);
 
@@ -735,16 +735,16 @@ namespace FcmsPortal
             {
                 Console.WriteLine($"Absentees from math class: {student.ID}: {student.Person.FirstName} {student.Person.LastName}");
             }
-            
+
             List<Student> presentStudents = LogicMethods.GetStudentsPresentForClassSession(classSession2);
-            
+
             foreach (var student in presenStudents)
             {
                 Console.WriteLine($" Student present for math class: {student.ID}: {student.Person.FirstName} {student.Person.LastName}");
             }
 
             var attLog = LogicMethods.GetAttendanceForLearningPath(learningPath1);
-            
+
             Console.WriteLine($"Attendance Records for {learningPath1.Semester} Semester:");
             foreach (var log in attLog)
             {
@@ -764,14 +764,9 @@ namespace FcmsPortal
             }
         }
 
-
-
-
-
-
-        }
-
     }
+
+}
 
 
 

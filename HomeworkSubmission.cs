@@ -1,4 +1,6 @@
-﻿namespace FcmsPortal
+﻿using System.Net.Mail;
+
+namespace FcmsPortal
 {
     public class HomeworkSubmission
     {
@@ -9,5 +11,6 @@
         public bool IsGraded { get; set; }
         public string FeedbackComment { get; set; }
         public TestGrade HomeworkGrade { get; set; }
+        public List<Attachment> Attachments { get; set; } = new List<Attachment>();
     }
 }
