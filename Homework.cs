@@ -7,7 +7,7 @@
         public string Description { get; set; }
         public DateTime AssignedDate { get; set; }
         public DateTime DueDate { get; set; }
-        public ClassSession ClassSession { get; set; } // Reference to the session
+        public ClassSession ClassSession { get; set; } 
         public List<HomeworkSubmission> Submissions { get; set; } = new List<HomeworkSubmission>();
         public List<DiscussionThread> Discussions { get; set; } = new();
     }

@@ -7,7 +7,7 @@
         public string Answer { get; set; }
         public DateTime SubmissionDate { get; set; }
         public bool IsGraded { get; set; }
-        public string Feedback { get; set; }
+        public string FeedbackComment { get; set; }
         public TestGrade HomeworkGrade { get; set; }
     }
 }
