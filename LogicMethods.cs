@@ -1583,6 +1583,30 @@ namespace FcmsPortal
             classSession.HomeworkDetails = homework;
         }
 
+        //Submit homework
+        public static void SubmitHomework(Homework homework, Student student, string answer)
+        {
+            if (homework == null)
+                throw new ArgumentNullException(nameof(homework), "Homework cannot be null.");
+
+            if (student == null)
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(answer))
+                throw new ArgumentException("Answer cannot be null or empty.", nameof(answer));
+
+            var submission = new HomeworkSubmission
+            {
+                Id = homework.Submissions.Count + 1,
+                Student = student,
+                Answer = answer,
+                SubmissionDate = DateTime.Now,
+                IsGraded = false
+            };
+
+            homework.Submissions.Add(submission);
+        }
+
 
 
         //To retrieve all Grades of all students for a particular course
