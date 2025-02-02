@@ -1561,7 +1561,27 @@ namespace FcmsPortal
         /// Methods for Class Session Collarboration
         /// </summary>
 
+        //Assign Homework for class session
+        public static void AssignHomework(ClassSession classSession, string title, DateTime dueDate, List<string> questions)
+        {
+            if (classSession == null)
+                throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
 
+            if (questions == null || !questions.Any())
+                throw new ArgumentException("Homework must have at least one question.", nameof(questions));
+
+            var homework = new Homework
+            {
+                Id = classSession.HomeworkDetails == null ? 1 : classSession.HomeworkDetails.Id + 1,
+                Title = title,
+                AssignedDate = DateTime.Now,
+                DueDate = dueDate,
+                ClassSession = classSession,
+                Questions = new List<string>(questions)
+            };
+
+            classSession.HomeworkDetails = homework;
+        }
 
 
 
