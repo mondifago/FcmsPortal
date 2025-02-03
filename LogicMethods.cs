@@ -611,8 +611,8 @@ namespace FcmsPortal
         {
             return schedules
                 .Where(se => se.ClassSession != null)
-                .GroupBy(se => se.DateTime.Month <= FcmsConstants.Semester1EndMonth ? Semester.First :
-                               se.DateTime.Month <= FcmsConstants.Semester2EndMonth ? Semester.Second : Semester.Third)
+                .GroupBy(se => se.DateTime.Month <= FcmsConstants.SEMESTER_1_ENDMONTH ? Semester.First :
+                               se.DateTime.Month <= FcmsConstants.SEMESTER_2_ENDMONTH ? Semester.Second : Semester.Third)
                 .Select(group => new SemesterCurriculum
                 {
                     Semester = group.Key,
@@ -844,7 +844,7 @@ namespace FcmsPortal
             }
 
             double totalPayments = student.Person.SchoolFees.Payments.Sum(p => p.Amount);
-            return totalPayments >= (student.Person.SchoolFees.TotalAmount * FcmsConstants.PaymentThresholdFactor);
+            return totalPayments >= (student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR);
         }
 
         //get student's outstanding balance
@@ -935,7 +935,7 @@ namespace FcmsPortal
 
             double totalPaid = student.Person.SchoolFees.Payments.Sum(payment => payment.Amount);
 
-            if (totalPaid >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PaymentThresholdFactor)
+            if (totalPaid >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR)
             {
                 if (!learningPath.StudentsPaymentSuccessful.Contains(student))
                 {
@@ -1036,11 +1036,11 @@ namespace FcmsPortal
 
                 schoolFees.TotalAmount = newTotalFeeAmount;
 
-                if (schoolFees.TotalPaid >= (FcmsConstants.PaymentThresholdFactor * newTotalFeeAmount) && !learningPath.StudentsPaymentSuccessful.Contains(student))
+                if (schoolFees.TotalPaid >= (FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount) && !learningPath.StudentsPaymentSuccessful.Contains(student))
                 {
                     GrantStudentAccess(student, learningPath);
                 }
-                else if (schoolFees.TotalPaid < (FcmsConstants.PaymentThresholdFactor * newTotalFeeAmount) && learningPath.StudentsPaymentSuccessful.Contains(student))
+                else if (schoolFees.TotalPaid < (FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount) && learningPath.StudentsPaymentSuccessful.Contains(student))
                 {
                     RevokeStudentAccess(student, learningPath);
                 }
@@ -1703,7 +1703,7 @@ namespace FcmsPortal
             if (fileSize <= 0)
                 throw new ArgumentException("File size must be greater than zero.", nameof(fileSize));
 
-            if (fileSize > FcmsConstants.MaxFileSize)
+            if (fileSize > FcmsConstants.MAX_FILE_SIZE)
                 throw new InvalidOperationException($"File size exceeds the 10MB limit. File size: {fileSize / (1024.0 * 1024.0):F2}MB");
 
             var attachment = new FileAttachment
@@ -1727,17 +1727,9 @@ namespace FcmsPortal
             return attachment.FilePath;
         }
 
-
-
-
-
-
-
-
-
-
-
-
+        /// <summary>
+        /// Methods for Class Session Collarboration
+        /// </summary>
 
         //To retrieve all Grades of all students for a particular course
         public static List<TestGrade> GetAllGradesForCourse(string courseName, List<Student> students)
