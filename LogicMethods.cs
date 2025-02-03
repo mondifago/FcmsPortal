@@ -1688,6 +1688,36 @@ namespace FcmsPortal
             parentThread.Replies.Add(reply);
         }
 
+        //Upload attachment
+        public static void AttachFile(List<FileAttachment> attachments, string fileName, string filePath, long fileSize)
+        {
+            if (attachments == null)
+                throw new ArgumentNullException(nameof(attachments), "Attachment list cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentException("File name cannot be null or empty.", nameof(fileName));
+
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("File path cannot be null or empty.", nameof(filePath));
+
+            if (fileSize <= 0)
+                throw new ArgumentException("File size must be greater than zero.", nameof(fileSize));
+
+            if (fileSize > FcmsConstants.MaxFileSize)
+                throw new InvalidOperationException($"File size exceeds the 10MB limit. File size: {fileSize / (1024.0 * 1024.0):F2}MB");
+
+            var attachment = new FileAttachment
+            {
+                Id = attachments.Count + 1,
+                FileName = fileName,
+                FilePath = filePath,
+                FileSize = fileSize,
+                UploadDate = DateTime.Now
+            };
+
+            attachments.Add(attachment);
+        }
+
 
 
 
