@@ -1629,6 +1629,30 @@ namespace FcmsPortal
             return homework.Submissions.Where(s => s.Student.ID == student.ID).ToList();
         }
 
+        //Add a students homework grade to his cumulative grade for the course
+        public static void SubmitHomeworkGradeToStudent(Student student, HomeworkSubmission submission)
+        {
+            if (student == null)
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+
+            if (submission == null || !submission.IsGraded)
+                throw new ArgumentException("Homework submission must be graded before submission to Course Grade.");
+
+            student.CourseGrade.TestGrades.Add(submission.HomeworkGrade);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         //To retrieve all Grades of all students for a particular course
