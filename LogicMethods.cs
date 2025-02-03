@@ -1718,7 +1718,14 @@ namespace FcmsPortal
             attachments.Add(attachment);
         }
 
+        //Download Attachment
+        public static string DownloadAttachment(FileAttachment attachment)
+        {
+            if (attachment == null)
+                throw new ArgumentNullException(nameof(attachment), "Attachment cannot be null.");
 
+            return attachment.FilePath;
+        }
 
 
 
