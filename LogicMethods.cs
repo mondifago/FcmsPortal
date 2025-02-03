@@ -1665,6 +1665,28 @@ namespace FcmsPortal
             classSession.DiscussionThreads.Add(discussion);
         }
 
+        //Add reply to discussion
+        public static void AddReply(DiscussionThread parentThread, Person author, string comment)
+        {
+            if (parentThread == null)
+                throw new ArgumentNullException(nameof(parentThread), "Parent thread cannot be null.");
+
+            if (author == null)
+                throw new ArgumentNullException(nameof(author), "Author cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(comment))
+                throw new ArgumentException("Comment cannot be null or empty.", nameof(comment));
+
+            var reply = new DiscussionThread
+            {
+                Id = parentThread.Replies.Count + 1,
+                Author = author,
+                Comment = comment,
+                Timestamp = DateTime.Now
+            };
+
+            parentThread.Replies.Add(reply);
+        }
 
 
 
