@@ -1,5 +1,6 @@
 ﻿using FcmsPortal.Enums;
 using FcmsPortal.ViewModel;
+using System.Net.Mail;
 
 namespace FcmsPortal
 {
@@ -762,9 +763,85 @@ namespace FcmsPortal
                 }
                 Console.WriteLine("--------------------------------------------------");
             }
-        }
 
+            //Test session collarboration
+            Homework homework1 = new Homework();
+            homework1.Id = 22222;
+            homework1.Title = "Algebra Homework";
+            homework1.AssignedDate = DateTime.Now;
+            homework1.DueDate = DateTime.Now.AddMonths(1);
+            homework1.ClassSession = classSession2;
+            homework1.Attachments = new List<Attachment>();
+            homework1.Discussions = new List<DiscussionThread> { new DiscussionThread() };
+            homework1.Submissions = new List<HomeworkSubmission>();
+            homework1.Questions = new List<string> { "1, what is x?", "2, what is the lenght of a square", "3, what is algebra?" };
+
+            classSession2.HomeworkDetails = homework1;
+
+            Console.WriteLine($"Homework Title: {classSession2.HomeworkDetails.Title}");
+            Console.WriteLine($"Due Date: {classSession2.HomeworkDetails.DueDate}");
+            Console.WriteLine("Questions:");
+            foreach (var question in classSession2.HomeworkDetails.Questions)
+            {
+                Console.WriteLine($"- {question}");
+            }
+
+            try
+            {
+                // Student 1 submits their homework
+                LogicMethods.SubmitHomework(
+                    homework1,
+                    student1,
+                    "1. x = -2 or x = -3\n2. x = 3 or x = 0.5"
+                );
+                Console.WriteLine($"Homework submitted successfully by {student1.Person.FirstName} {student1.Person.LastName}");
+
+                // Student 2 submits their homework
+                LogicMethods.SubmitHomework(
+                    homework1,
+                    student2,
+                    "1. x = -2 or x = -3\n2. x = 3 or x = 0.5"
+                );
+                Console.WriteLine($"Homework submitted successfully by {student2.Person.FirstName} {student2.Person.LastName}");
+
+                // Display all submissions
+                Console.WriteLine("\nAll Submissions:");
+                foreach (var submission in homework1.Submissions)
+                {
+                    Console.WriteLine($"\nStudent: {submission.Student.Person.FirstName} {submission.Student.Person.LastName}");
+                    Console.WriteLine($"Submission Date: {submission.SubmissionDate}");
+                    Console.WriteLine($"Answer:\n{submission.Answer}");
+                    Console.WriteLine($"Graded: {submission.IsGraded}");
+                }
+
+                LogicMethods.SubmitHomework(homework1, student1, "   ");
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+            }
+
+            var student1Homework = LogicMethods.GetSubmissionsByStudent(homework1, student1);
+
+            foreach (var submission in student1Homework)
+            {
+                Console.WriteLine($"\nStudent: {submission.Student.Person.FirstName} {submission.Student.Person.LastName}");
+                Console.WriteLine($"Submission Date: {submission.SubmissionDate}");
+                Console.WriteLine($"Answer:\n{submission.Answer}");
+                Console.WriteLine($"Graded: {submission.IsGraded}");
+            }
+        }
     }
+
+
 
 }
 

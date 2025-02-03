@@ -1,6 +1,7 @@
 ﻿using FcmsPortal.Constants;
 using FcmsPortal.Enums;
 using FcmsPortal.ViewModel;
+using System.Net.Mail;
 using System.Text.Json;
 
 namespace FcmsPortal
@@ -1562,13 +1563,19 @@ namespace FcmsPortal
         /// </summary>
 
         //Assign Homework for class session
-        public static void AssignHomework(ClassSession classSession, string title, DateTime dueDate, List<string> questions)
+        public static void AssignHomework(ClassSession classSession, string title, DateTime dueDate, List<string> questions, List<Attachment> attachments = null)
         {
             if (classSession == null)
                 throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
 
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("Homework title cannot be null or empty.", nameof(title));
+
             if (questions == null || !questions.Any())
                 throw new ArgumentException("Homework must have at least one question.", nameof(questions));
+
+            if (dueDate < DateTime.Now)
+                throw new ArgumentException("Due date cannot be in the past.", nameof(dueDate));
 
             var homework = new Homework
             {
@@ -1577,7 +1584,10 @@ namespace FcmsPortal
                 AssignedDate = DateTime.Now,
                 DueDate = dueDate,
                 ClassSession = classSession,
-                Questions = new List<string>(questions)
+                Questions = new List<string>(questions),
+                Attachments = attachments ?? new List<Attachment>(),
+                Submissions = new List<HomeworkSubmission>(),
+                Discussions = new List<DiscussionThread>()
             };
 
             classSession.HomeworkDetails = homework;
@@ -1605,6 +1615,18 @@ namespace FcmsPortal
             };
 
             homework.Submissions.Add(submission);
+        }
+
+        //search and retrieve homework submitted by a particular student
+        public static List<HomeworkSubmission> GetSubmissionsByStudent(Homework homework, Student student)
+        {
+            if (homework == null)
+                throw new ArgumentNullException(nameof(homework), "Homework cannot be null.");
+
+            if (student == null)
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+
+            return homework.Submissions.Where(s => s.Student.ID == student.ID).ToList();
         }
 
 
