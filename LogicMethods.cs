@@ -1641,6 +1641,31 @@ namespace FcmsPortal
             student.CourseGrade.TestGrades.Add(submission.HomeworkGrade);
         }
 
+        //Start discussion open or private
+        public static void StartDiscussion(ClassSession classSession, Person author, string comment, bool isPrivate)
+        {
+            if (classSession == null)
+                throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
+
+            if (author == null)
+                throw new ArgumentNullException(nameof(author), "Author cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(comment))
+                throw new ArgumentException("Comment cannot be empty.", nameof(comment));
+
+            var discussion = new DiscussionThread
+            {
+                Id = classSession.DiscussionThreads.Count + 1,
+                Author = author,
+                Comment = comment,
+                Timestamp = DateTime.Now,
+                IsPrivate = isPrivate
+            };
+
+            classSession.DiscussionThreads.Add(discussion);
+        }
+
+
 
 
 
