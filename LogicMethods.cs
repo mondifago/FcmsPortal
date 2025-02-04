@@ -1888,10 +1888,22 @@ namespace FcmsPortal
             return semesterGrades.Average();
         }
 
+        //method to arrange CalculateSemesterOverallGrade() of all students in a learning path in descending order
+        public static List<(Student Student, double SemesterGrade)> RankStudentsBySemesterGrade(LearningPath learningPath)
+        {
+            if (learningPath == null)
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
 
+            if (learningPath.Students == null || learningPath.Students.Count == 0)
+                throw new InvalidOperationException("No students found in this learning path.");
 
+            var studentGrades = learningPath.Students
+                .Select(student => (Student: student, SemesterGrade: CalculateSemesterOverallGrade(student)))
+                .OrderByDescending(sg => sg.SemesterGrade)
+                .ToList();
 
-
+            return studentGrades;
+        }
 
         //To retrieve all Grades of all students for a particular course
         public static List<TestGrade> GetAllGradesForCourse(string courseName, List<Student> students)
