@@ -1822,6 +1822,27 @@ namespace FcmsPortal
             };
         }
 
+        //Compute final Semester grade for each student in learning path
+        public static void FinalizeSemesterGrades(LearningPath learningPath)
+        {
+            if (learningPath == null)
+                throw new ArgumentNullException(nameof(learningPath), "Learning Path cannot be null.");
+
+            foreach (var student in learningPath.Students)
+            {
+                foreach (var course in CourseDefaults.GetCourseNames(learningPath.EducationLevel))
+                {
+                    double totalGrade = ComputeTotalGrade(student, course);
+                    string gradeCode = GetGradeCode(totalGrade);
+
+                    // Save final grade for student
+                    student.CourseGrade.TotalGrade = totalGrade;
+                    student.CourseGrade.FinalGradeCode = gradeCode;
+                }
+            }
+        }
+
+
 
 
 
