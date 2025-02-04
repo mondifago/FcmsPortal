@@ -1791,6 +1791,24 @@ namespace FcmsPortal
             submission.IsGraded = true;
         }
 
+        //Compute Total Grade for a course at the end of semester
+        public static double ComputeTotalGrade(Student student, string course)
+        {
+            if (student == null || student.CourseGrade == null)
+                throw new ArgumentNullException(nameof(student), "Invalid student data.");
+
+            var testGrades = student.CourseGrade.TestGrades
+                .Where(tg => tg.Course == course)
+                .ToList();
+
+            if (!testGrades.Any())
+                return 0;
+
+            double weightedSum = testGrades.Sum(tg => tg.Score * (tg.WeightPercentage / FcmsConstants.TOTAL_SCORE));
+            return Math.Round(weightedSum, FcmsConstants.GRADE_ROUNDING_DIGIT);
+        }
+
+
 
 
 
