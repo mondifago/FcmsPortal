@@ -1731,7 +1731,7 @@ namespace FcmsPortal
         /// Methods for Class Session Collarboration
         /// </summary>
 
-        //Grade a test (Quiz or Exam) for a student
+        //Grade a test (Quiz or Exam or Homework) for a student
         public static void AddTestGrade(Student student, string course, double score, GradeType gradeType, double weightPercentage, Staff teacher, Semester semester, string teacherRemark)
         {
             if (student == null)
@@ -1757,6 +1757,41 @@ namespace FcmsPortal
 
             student.CourseGrade.TestGrades.Add(testGrade);
         }
+
+        //Grade Homework
+        public static void GradeHomework(HomeworkSubmission submission, double score, double weightPercentage, Staff teacher, Semester semester, Homework homework, ClassSession classSession)
+        {
+            if (submission == null)
+                throw new ArgumentNullException(nameof(submission), "Homework submission cannot be null.");
+
+            if (submission.Student == null)
+                throw new ArgumentNullException(nameof(submission.Student), "Student cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(classSession.Course))
+                throw new ArgumentException("Course name is required.", nameof(classSession.Course));
+
+            if (score < 0 || score > 100)
+                throw new ArgumentException("Score must be between 0 and 100.", nameof(score));
+
+            if (weightPercentage < 0 || weightPercentage > 100)
+                throw new ArgumentException("Weight percentage must be between 0 and 100.", nameof(weightPercentage));
+
+            var homeworkGrade = new TestGrade
+            {
+                Course = classSession.Course,
+                Score = score,
+                GradeType = GradeType.Homework,
+                WeightPercentage = weightPercentage,
+                Teacher = teacher,
+                Semester = semester,
+                Date = DateTime.Now
+            };
+
+            submission.HomeworkGrade = homeworkGrade;
+            submission.IsGraded = true;
+        }
+
+
 
 
 
