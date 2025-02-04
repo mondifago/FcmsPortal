@@ -1731,6 +1731,38 @@ namespace FcmsPortal
         /// Methods for Class Session Collarboration
         /// </summary>
 
+        //Grade a test (Quiz or Exam) for a student
+        public static void AddTestGrade(Student student, string course, double score, GradeType gradeType, double weightPercentage, Staff teacher, Semester semester, string teacherRemark)
+        {
+            if (student == null)
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(course))
+                throw new ArgumentException("Course name is required.", nameof(course));
+
+            if (weightPercentage < 0 || weightPercentage > 100)
+                throw new ArgumentException("Weight percentage must be between 0 and 100.", nameof(weightPercentage));
+
+            var testGrade = new TestGrade
+            {
+                Course = course,
+                Score = score,
+                GradeType = gradeType,
+                WeightPercentage = weightPercentage,
+                Teacher = teacher,
+                Semester = semester,
+                Date = DateTime.Now,
+                TeacherRemark = teacherRemark
+            };
+
+            student.CourseGrade.TestGrades.Add(testGrade);
+        }
+
+
+
+
+
+
         //To retrieve all Grades of all students for a particular course
         public static List<TestGrade> GetAllGradesForCourse(string courseName, List<Student> students)
         {
