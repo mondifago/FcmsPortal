@@ -16,6 +16,5 @@ namespace FcmsPortal
         public List<LearningPath> LearningPath { get; set; } = new();
         public List<Calendar> SchoolCalendar { get; set; }
         public List<Curriculum> Curricula { get; set; }
-        public Dictionary<Student, double> SemesterOverallGrades { get; set; } = new();
     }
 }

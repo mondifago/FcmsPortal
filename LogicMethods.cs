@@ -1835,17 +1835,33 @@ namespace FcmsPortal
                     double totalGrade = ComputeTotalGrade(student, course);
                     string gradeCode = GetGradeCode(totalGrade);
 
-                    // Save final grade for student
                     student.CourseGrade.TotalGrade = totalGrade;
                     student.CourseGrade.FinalGradeCode = gradeCode;
                 }
             }
         }
 
+        //Compute Semester overall grade average for a student
+        public static double CalculateSemesterOverallGrade(Student student)
+        {
+            if (student == null)
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
 
+            if (student.CourseGrade == null || student.CourseGrade.TestGrades.Count == 0)
+                throw new InvalidOperationException($"No grades found for student {student.ID}.");
 
+            var courseGrades = student.CourseGrade.TestGrades
+                .GroupBy(g => g.Course)
+                .Select(group => group.Sum(g => (g.Score * g.WeightPercentage) / 100))
+                .ToList();
 
+            if (courseGrades.Count == 0)
+                throw new InvalidOperationException($"Student {student.ID} has no valid course grades.");
 
+            double overallSemesterAverage = courseGrades.Sum() / courseGrades.Count;
+
+            return overallSemesterAverage;
+        }
 
 
 
