@@ -1852,7 +1852,7 @@ namespace FcmsPortal
 
             var courseGrades = student.CourseGrade.TestGrades
                 .GroupBy(g => g.Course)
-                .Select(group => group.Sum(g => (g.Score * g.WeightPercentage) / 100))
+                .Select(group => group.Sum(g => (g.Score * g.WeightPercentage) / FcmsConstants.TOTAL_SCORE))
                 .ToList();
 
             if (courseGrades.Count == 0)
@@ -1861,6 +1861,31 @@ namespace FcmsPortal
             double overallSemesterAverage = courseGrades.Sum() / courseGrades.Count;
 
             return overallSemesterAverage;
+        }
+
+        //Compute promotion grade for student 
+        public static double CalculatePromotionGrade(Student student, List<LearningPath> learningPaths)
+        {
+            if (student == null)
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+
+            if (learningPaths == null || learningPaths.Count == 0)
+                throw new ArgumentException("Learning paths list cannot be null or empty.", nameof(learningPaths));
+
+            var relevantLearningPaths = learningPaths
+                .Where(lp => lp.Students.Contains(student))
+                .OrderByDescending(lp => lp.Schedule.Min(se => se.DateTime.Year))
+                .Take(3)
+                .ToList();
+
+            if (relevantLearningPaths.Count < FcmsConstants.NUMBER_OF_SEMESTERS)
+                throw new InvalidOperationException($"Student {student.ID} has fewer than 3 semesters recorded for promotion.");
+
+            var semesterGrades = relevantLearningPaths
+                .Select(lp => CalculateSemesterOverallGrade(student))
+                .ToList();
+
+            return semesterGrades.Average();
         }
 
 
