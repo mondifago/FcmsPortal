@@ -1808,6 +1808,21 @@ namespace FcmsPortal
             return Math.Round(weightedSum, FcmsConstants.GRADE_ROUNDING_DIGIT);
         }
 
+        //Assign Grade Code
+        public static string GetGradeCode(double totalGrade)
+        {
+            return totalGrade switch
+            {
+                >= FcmsConstants.A_GRADE_MIN => "A",
+                >= FcmsConstants.B_GRADE_MIN => "B",
+                >= FcmsConstants.C_GRADE_MIN => "C",
+                >= FcmsConstants.D_GRADE_MIN => "D",
+                >= FcmsConstants.E_GRADE_MIN => "E",
+                _ => "F",
+            };
+        }
+
+
 
 
 
