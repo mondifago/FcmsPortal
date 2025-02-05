@@ -1,6 +1,6 @@
 ﻿using FcmsPortal.Enums;
 
-namespace FcmsPortal.ViewModel
+namespace FcmsPortal
 {
     public class Curriculum
     {

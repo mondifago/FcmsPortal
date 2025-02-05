@@ -1,7 +1,5 @@
 ﻿using FcmsPortal.Constants;
 using FcmsPortal.Enums;
-using FcmsPortal.ViewModel;
-using System.Net.Mail;
 using System.Text.Json;
 
 namespace FcmsPortal
@@ -1563,7 +1561,7 @@ namespace FcmsPortal
         /// </summary>
 
         //Assign Homework for class session
-        public static void AssignHomework(ClassSession classSession, string title, DateTime dueDate, List<string> questions, List<Attachment> attachments = null)
+        public static void AssignHomework(ClassSession classSession, string title, DateTime dueDate, List<string> questions, List<FileAttachment> attachments = null)
         {
             if (classSession == null)
                 throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
@@ -1585,7 +1583,7 @@ namespace FcmsPortal
                 DueDate = dueDate,
                 ClassSession = classSession,
                 Questions = new List<string>(questions),
-                Attachments = attachments ?? new List<Attachment>(),
+                Attachments = attachments ?? new List<FileAttachment>(),
                 Submissions = new List<HomeworkSubmission>(),
                 Discussions = new List<DiscussionThread>()
             };
@@ -1629,7 +1627,7 @@ namespace FcmsPortal
             return homework.Submissions.Where(s => s.Student.ID == student.ID).ToList();
         }
 
-        //Add a students homework grade to his cumulative grade for the course
+        // Add a student's graded homework to their cumulative course grade
         public static void SubmitHomeworkGradeToStudent(Student student, HomeworkSubmission submission)
         {
             if (student == null)
@@ -1638,14 +1636,52 @@ namespace FcmsPortal
             if (submission == null || !submission.IsGraded)
                 throw new ArgumentException("Homework submission must be graded before submission to Course Grade.");
 
-            student.CourseGrade.TestGrades.Add(submission.HomeworkGrade);
+            if (submission.HomeworkGrade == null)
+                throw new ArgumentException("Homework grade is missing.");
+
+            var courseGrade = student.CourseGrade.FirstOrDefault(cg => cg.Course == submission.HomeworkGrade.Course);
+
+            if (courseGrade == null)
+                throw new InvalidOperationException($"Student has no recorded CourseGrade for {submission.HomeworkGrade.Course}.");
+
+            courseGrade.TestGrades.Add(submission.HomeworkGrade);
         }
 
+
         //Start discussion open or private
-        public static void StartDiscussion(ClassSession classSession, Person author, string comment, bool isPrivate)
+        public static DiscussionThread StartDiscussion(int id, Person author, string comment, bool isPrivate, List<FileAttachment> attachments = null)
         {
-            if (classSession == null)
-                throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
+            if (author == null)
+                throw new ArgumentNullException(nameof(author), "Author cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(comment))
+                throw new ArgumentException("Comment cannot be empty.", nameof(comment));
+
+            var firstPost = new DiscussionPost
+            {
+                Id = id,
+                Author = author,
+                Comment = comment,
+                Timestamp = DateTime.Now
+            };
+
+            var discussionThread = new DiscussionThread
+            {
+                Id = id,
+                FirstPost = firstPost,
+                IsPrivate = isPrivate,
+                Attachments = attachments ?? new List<FileAttachment>()
+            };
+
+            return discussionThread;
+        }
+
+
+        //Add reply to discussion
+        public static void AddReply(int id, DiscussionThread thread, Person author, string comment)
+        {
+            if (thread == null)
+                throw new ArgumentNullException(nameof(thread), "Discussion thread cannot be null.");
 
             if (author == null)
                 throw new ArgumentNullException(nameof(author), "Author cannot be null.");
@@ -1653,46 +1689,23 @@ namespace FcmsPortal
             if (string.IsNullOrWhiteSpace(comment))
                 throw new ArgumentException("Comment cannot be empty.", nameof(comment));
 
-            var discussion = new DiscussionThread
+            var reply = new DiscussionPost
             {
-                Id = classSession.DiscussionThreads.Count + 1,
-                Author = author,
-                Comment = comment,
-                Timestamp = DateTime.Now,
-                IsPrivate = isPrivate
-            };
-
-            classSession.DiscussionThreads.Add(discussion);
-        }
-
-        //Add reply to discussion
-        public static void AddReply(DiscussionThread parentThread, Person author, string comment)
-        {
-            if (parentThread == null)
-                throw new ArgumentNullException(nameof(parentThread), "Parent thread cannot be null.");
-
-            if (author == null)
-                throw new ArgumentNullException(nameof(author), "Author cannot be null.");
-
-            if (string.IsNullOrWhiteSpace(comment))
-                throw new ArgumentException("Comment cannot be null or empty.", nameof(comment));
-
-            var reply = new DiscussionThread
-            {
-                Id = parentThread.Replies.Count + 1,
+                Id = id,
                 Author = author,
                 Comment = comment,
                 Timestamp = DateTime.Now
             };
 
-            parentThread.Replies.Add(reply);
+            thread.Replies.Add(reply);
         }
+
 
         //Upload attachment
         public static void AttachFile(List<FileAttachment> attachments, string fileName, string filePath, long fileSize)
         {
             if (attachments == null)
-                throw new ArgumentNullException(nameof(attachments), "Attachment list cannot be null.");
+                throw new ArgumentNullException(nameof(attachments), "FileAttachment list cannot be null.");
 
             if (string.IsNullOrWhiteSpace(fileName))
                 throw new ArgumentException("File name cannot be null or empty.", nameof(fileName));
@@ -1718,11 +1731,11 @@ namespace FcmsPortal
             attachments.Add(attachment);
         }
 
-        //Download Attachment
+        //Download FileAttachment
         public static string DownloadAttachment(FileAttachment attachment)
         {
             if (attachment == null)
-                throw new ArgumentNullException(nameof(attachment), "Attachment cannot be null.");
+                throw new ArgumentNullException(nameof(attachment), "FileAttachment cannot be null.");
 
             return attachment.FilePath;
         }
@@ -1731,7 +1744,7 @@ namespace FcmsPortal
         /// Methods for Class Session Collarboration
         /// </summary>
 
-        //Grade a test (Quiz or Exam or Homework) for a student
+        // Grade a test (Quiz, Exam, or Homework) for a student and add it to the appropriate course
         public static void AddTestGrade(Student student, string course, double score, GradeType gradeType, double weightPercentage, Staff teacher, Semester semester, string teacherRemark)
         {
             if (student == null)
@@ -1755,8 +1768,17 @@ namespace FcmsPortal
                 TeacherRemark = teacherRemark
             };
 
-            student.CourseGrade.TestGrades.Add(testGrade);
+            var courseGrade = student.CourseGrade.FirstOrDefault(cg => cg.Course == course);
+
+            if (courseGrade == null)
+            {
+                courseGrade = new CourseGrade { Course = course };
+                student.CourseGrade.Add(courseGrade);
+            }
+
+            courseGrade.TestGrades.Add(testGrade);
         }
+
 
         //Grade Homework
         public static void GradeHomework(HomeworkSubmission submission, double score, double weightPercentage, Staff teacher, Semester semester, Homework homework, ClassSession classSession)
@@ -1791,22 +1813,22 @@ namespace FcmsPortal
             submission.IsGraded = true;
         }
 
-        //Compute Total Grade for a course at the end of semester
+        // Compute Total Grade for a course at the end of the semester
         public static double ComputeTotalGrade(Student student, string course)
         {
             if (student == null || student.CourseGrade == null)
                 throw new ArgumentNullException(nameof(student), "Invalid student data.");
 
-            var testGrades = student.CourseGrade.TestGrades
-                .Where(tg => tg.Course == course)
-                .ToList();
+            var courseGrade = student.CourseGrade.FirstOrDefault(cg => cg.Course == course);
 
-            if (!testGrades.Any())
+            if (courseGrade == null || !courseGrade.TestGrades.Any())
                 return 0;
 
-            double weightedSum = testGrades.Sum(tg => tg.Score * (tg.WeightPercentage / FcmsConstants.TOTAL_SCORE));
+            double weightedSum = courseGrade.TestGrades.Sum(tg => tg.Score * (tg.WeightPercentage / FcmsConstants.TOTAL_SCORE));
+
             return Math.Round(weightedSum, FcmsConstants.GRADE_ROUNDING_DIGIT);
         }
+
 
         //Assign Grade Code
         public static string GetGradeCode(double totalGrade)
@@ -1822,7 +1844,7 @@ namespace FcmsPortal
             };
         }
 
-        //Compute final Semester grade for each student in learning path
+        // Compute final semester grade for each course for each student in a learning path
         public static void FinalizeSemesterGrades(LearningPath learningPath)
         {
             if (learningPath == null)
@@ -1835,24 +1857,39 @@ namespace FcmsPortal
                     double totalGrade = ComputeTotalGrade(student, course);
                     string gradeCode = GetGradeCode(totalGrade);
 
-                    student.CourseGrade.TotalGrade = totalGrade;
-                    student.CourseGrade.FinalGradeCode = gradeCode;
+                    var courseGrade = student.CourseGrade.FirstOrDefault(cg => cg.Course == course);
+
+                    if (courseGrade != null)
+                    {
+                        courseGrade.TotalGrade = totalGrade;
+                        courseGrade.FinalGradeCode = gradeCode;
+                    }
+                    else
+                    {
+                        student.CourseGrade.Add(new CourseGrade
+                        {
+                            Course = course,
+                            TotalGrade = totalGrade,
+                            FinalGradeCode = gradeCode
+                        });
+                    }
                 }
             }
         }
 
-        //Compute Semester overall grade average for a student
+
+        // Compute Semester overall grade average for a student
         public static double CalculateSemesterOverallGrade(Student student)
         {
             if (student == null)
                 throw new ArgumentNullException(nameof(student), "Student cannot be null.");
 
-            if (student.CourseGrade == null || student.CourseGrade.TestGrades.Count == 0)
+            if (student.CourseGrade == null || student.CourseGrade.Count == 0)
                 throw new InvalidOperationException($"No grades found for student {student.ID}.");
 
-            var courseGrades = student.CourseGrade.TestGrades
-                .GroupBy(g => g.Course)
-                .Select(group => group.Sum(g => (g.Score * g.WeightPercentage) / FcmsConstants.TOTAL_SCORE))
+            var courseGrades = student.CourseGrade
+                .Select(cg => ComputeTotalGrade(student, cg.Course))
+                .Where(totalGrade => totalGrade > 0)
                 .ToList();
 
             if (courseGrades.Count == 0)
@@ -1862,6 +1899,7 @@ namespace FcmsPortal
 
             return overallSemesterAverage;
         }
+
 
         //Compute promotion grade for student 
         public static double CalculatePromotionGrade(Student student, List<LearningPath> learningPaths)
@@ -1905,31 +1943,25 @@ namespace FcmsPortal
             return studentGrades;
         }
 
-        //To retrieve all Grades of all students for a particular course
+        // Retrieve all grades of all students for a particular course
         public static List<TestGrade> GetAllGradesForCourse(string courseName, List<Student> students)
         {
             if (string.IsNullOrWhiteSpace(courseName))
                 throw new ArgumentException("Course name cannot be null or empty.", nameof(courseName));
 
-            if (students == null || !students.Any())
+            if (students == null || students.Count == 0)
                 return new List<TestGrade>();
 
-            var allGrades = new List<TestGrade>();
-
-            foreach (var student in students)
-            {
-                var courseGrades = student.CourseGrade?.TestGrades
-                    .Where(grade => grade.Course == courseName)
-                    .ToList();
-
-                if (courseGrades != null)
-                    allGrades.AddRange(courseGrades);
-            }
-
-            return allGrades;
+            return students
+                .Where(student => student.CourseGrade != null)
+                .SelectMany(student => student.CourseGrade
+                    .Where(course => course.Course == courseName)
+                    .SelectMany(course => course.TestGrades))
+                .ToList();
         }
 
-        //To retrieve the homework Grades of a students for a particular course
+
+        // Retrieve the homework grades of a student for a particular course
         public static List<TestGrade> GetHomeworkScoresForCourse(Student student, string courseName)
         {
             if (student == null)
@@ -1938,10 +1970,12 @@ namespace FcmsPortal
             if (string.IsNullOrWhiteSpace(courseName))
                 throw new ArgumentException("Course name cannot be null or empty.", nameof(courseName));
 
-            // Filter for homework grades for the specified course
-            return student.CourseGrade?.TestGrades
-                .Where(grade => grade.Course == courseName && grade.GradeType == GradeType.Homework)
+            return student.CourseGrade?
+                .Where(course => course.Course == courseName)
+                .SelectMany(course => course.TestGrades
+                    .Where(grade => grade.GradeType == GradeType.Homework))
                 .ToList() ?? new List<TestGrade>();
         }
+
     }
 }

@@ -2,6 +2,7 @@
 {
     public class CourseGrade
     {
+        public string Course { get; set; }
         public List<TestGrade> TestGrades { get; set; } = new();
         public double? AttendancePercentage { get; set; }
         public double TotalGrade { get; set; }

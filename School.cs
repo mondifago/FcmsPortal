@@ -1,6 +1,4 @@
-﻿using FcmsPortal.ViewModel;
-
-namespace FcmsPortal
+﻿namespace FcmsPortal
 {
     public class School
     {

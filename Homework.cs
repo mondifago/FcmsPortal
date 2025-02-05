@@ -1,4 +1,4 @@
-﻿using System.Net.Mail;
+﻿
 
 namespace FcmsPortal
 {
@@ -10,7 +10,7 @@ namespace FcmsPortal
         public DateTime DueDate { get; set; }
         public ClassSession ClassSession { get; set; }
         public List<string> Questions { get; set; } = new();
-        public List<Attachment> Attachments { get; set; } = new List<Attachment>();
+        public List<FileAttachment> Attachments { get; set; } = new List<FileAttachment>();
         public List<HomeworkSubmission> Submissions { get; set; } = new List<HomeworkSubmission>();
         public List<DiscussionThread> Discussions { get; set; } = new();
     }

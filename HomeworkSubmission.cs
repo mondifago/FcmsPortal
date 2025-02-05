@@ -1,4 +1,4 @@
-﻿using System.Net.Mail;
+﻿
 
 namespace FcmsPortal
 {
@@ -11,6 +11,6 @@ namespace FcmsPortal
         public bool IsGraded { get; set; }
         public string FeedbackComment { get; set; }
         public TestGrade HomeworkGrade { get; set; }
-        public List<Attachment> Attachments { get; set; } = new List<Attachment>();
+        public List<FileAttachment> Attachments { get; set; } = new List<FileAttachment>();
     }
 }

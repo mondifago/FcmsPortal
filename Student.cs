@@ -36,7 +36,7 @@ public class Student
         get { return _dateOfEnrollment; }
         set { _dateOfEnrollment = value; }
     }
-    
+
     public int? GuardianId { get; set; }
 
     private Guardian _guardian;
@@ -46,5 +46,5 @@ public class Student
         set { _guardian = value; }
     }
 
-    public CourseGrade CourseGrade { get; set; }
+    public List<CourseGrade> CourseGrade { get; set; }
 }
