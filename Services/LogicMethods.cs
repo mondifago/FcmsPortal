@@ -1,8 +1,9 @@
 ﻿using FcmsPortal.Constants;
 using FcmsPortal.Enums;
+using FcmsPortal.Models;
 using System.Text.Json;
 
-namespace FcmsPortal
+namespace FcmsPortal.Services
 {
     internal static class LogicMethods
     {
@@ -842,7 +843,7 @@ namespace FcmsPortal
             }
 
             double totalPayments = student.Person.SchoolFees.Payments.Sum(p => p.Amount);
-            return totalPayments >= (student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR);
+            return totalPayments >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR;
         }
 
         //get student's outstanding balance
@@ -1034,11 +1035,11 @@ namespace FcmsPortal
 
                 schoolFees.TotalAmount = newTotalFeeAmount;
 
-                if (schoolFees.TotalPaid >= (FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount) && !learningPath.StudentsPaymentSuccessful.Contains(student))
+                if (schoolFees.TotalPaid >= FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount && !learningPath.StudentsPaymentSuccessful.Contains(student))
                 {
                     GrantStudentAccess(student, learningPath);
                 }
-                else if (schoolFees.TotalPaid < (FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount) && learningPath.StudentsPaymentSuccessful.Contains(student))
+                else if (schoolFees.TotalPaid < FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount && learningPath.StudentsPaymentSuccessful.Contains(student))
                 {
                     RevokeStudentAccess(student, learningPath);
                 }
@@ -1090,7 +1091,7 @@ namespace FcmsPortal
         /// Methods for Enrollment
         /// </summary>
 
-        public static LearningPath? GetNextLearningPath(LearningPath currentLearningPath, School school)
+        public static LearningPath GetNextLearningPath(LearningPath currentLearningPath, School school)
         {
             if (currentLearningPath == null)
             {

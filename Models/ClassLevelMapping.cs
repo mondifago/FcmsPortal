@@ -1,6 +1,6 @@
 using FcmsPortal.Enums;
 
-namespace FcmsPortal;
+namespace FcmsPortal.Models;
 
 public class ClassLevelMapping
 {
