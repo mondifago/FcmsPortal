@@ -47,7 +47,7 @@ namespace FcmsPortal
 
             //create student 1
             Student student1 = new Student();
-            student1.ID = 301;
+            student1.Id = 301;
             student1.GuardianId = 3011;
             // Initialize Person
             student1.Person = new Person();
@@ -71,7 +71,7 @@ namespace FcmsPortal
 
             //create student 2
             Student student2 = new Student();
-            student2.ID = 302;
+            student2.Id = 302;
             student2.GuardianId = 3021;
             student2.Person = new Person();
             student2.Person.FirstName = "Dan";
@@ -97,7 +97,7 @@ namespace FcmsPortal
 
             //create student 3
             Student student3 = new Student();
-            student3.ID = 303;
+            student3.Id = 303;
             student3.GuardianId = 3031;
             student3.Person = new Person();
             student3.Person.FirstName = "Zac";
@@ -165,7 +165,7 @@ namespace FcmsPortal
             foreach (var student in sc3Students)
             {
                 Console.WriteLine(
-                    $"ID: {student.ID}, Name: {student.Person.FirstName} {student.Person.MiddleName} {student.Person.LastName}");
+                    $"Id: {student.Id}, Name: {student.Person.FirstName} {student.Person.MiddleName} {student.Person.LastName}");
             }
 
             //retrieving teachers who are specialized for handling senior college courses
@@ -174,7 +174,7 @@ namespace FcmsPortal
             foreach (var staff in sCStaff)
             {
                 Console.WriteLine(
-                    $"ID: {staff.Id}, Name: {staff.Person.FirstName} {staff.Person.MiddleName} {staff.Person.LastName} Area of specialization: {staff.AreaOfSpecialization}");
+                    $"Id: {staff.Id}, Name: {staff.Person.FirstName} {staff.Person.MiddleName} {staff.Person.LastName} Area of specialization: {staff.AreaOfSpecialization}");
             }
 
             //retrieving All the teachers in the school
@@ -182,7 +182,7 @@ namespace FcmsPortal
             foreach (var teacher in allTeachers)
             {
                 Console.WriteLine(
-                    $"ID: {teacher.Id}, Name: {teacher.Person.FirstName} {teacher.Person.LastName} ........ {teacher.AreaOfSpecialization}");
+                    $"Id: {teacher.Id}, Name: {teacher.Person.FirstName} {teacher.Person.LastName} ........ {teacher.AreaOfSpecialization}");
             }
 
             //create a biology class session and assign a teacher to it
@@ -310,7 +310,7 @@ namespace FcmsPortal
             Console.WriteLine("Updated Schedules:");
             foreach (var schedule in learningPath1.Schedule)
             {
-                Console.WriteLine($"ID: {schedule.Id}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
+                Console.WriteLine($"Id: {schedule.Id}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
             }
 
             var learningPath2 = new LearningPath
@@ -338,7 +338,7 @@ namespace FcmsPortal
             Console.WriteLine("Updated Schedules:");
             foreach (var schedule in learningPath2.Schedule)
             {
-                Console.WriteLine($"ID: {schedule.Id}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
+                Console.WriteLine($"Id: {schedule.Id}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
             }
 
             //testing add learning path to school: adding learning path2 which has not been added - success
@@ -429,7 +429,7 @@ namespace FcmsPortal
             foreach (var schedule in schedulesInLearning1)
             {
                 Console.WriteLine(
-                    $"ID: {schedule.Id}, Title: {schedule.Title}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
+                    $"Id: {schedule.Id}, Title: {schedule.Title}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
             }
 
             //Get all the schedules in a learning path for a particular day (today)
@@ -437,14 +437,14 @@ namespace FcmsPortal
             foreach (var schedule in schedulesForToday)
             {
                 Console.WriteLine(
-                    $"ID: {schedule.Id}, Title: {schedule.Title}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
+                    $"Id: {schedule.Id}, Title: {schedule.Title}, Date: {schedule.DateTime}, Duration: {schedule.Duration}");
             }
 
             //Get all class sessions in a learning path
             var classSessionInLp1 = LogicMethods.GetClassSessionsInLearningPath(learningPath1);
             foreach (var session in classSessionInLp1)
             {
-                Console.WriteLine($"ID: {session.Id}, Topic: {session.Topic}, Description: {session.Description}");
+                Console.WriteLine($"Id: {session.Id}, Topic: {session.Topic}, Description: {session.Description}");
             }
 
             //Get meetings for a particular day from any calendar
@@ -452,7 +452,7 @@ namespace FcmsPortal
             Console.WriteLine($"Meetings on {DateTime.Today.ToShortDateString()} in {allCalendar.Name}:");
             foreach (var meeting in myMeetings)
             {
-                Console.WriteLine($"  ID: {meeting.Id}, Title: {meeting.Meeting}, " +
+                Console.WriteLine($"  Id: {meeting.Id}, Title: {meeting.Meeting}, " +
                                   $"Start: {meeting.DateTime.ToShortTimeString()}, " +
                                   $"Duration: {meeting.Duration}");
             }
@@ -462,7 +462,7 @@ namespace FcmsPortal
             Console.WriteLine($"Events on {DateTime.Today.ToShortDateString()} in {allCalendar.Name}:");
             foreach (var evt in myEvents)
             {
-                Console.WriteLine($"  ID: {evt.Id}, Title: {evt.Event}, " +
+                Console.WriteLine($"  Id: {evt.Id}, Title: {evt.Event}, " +
                                   $"Start: {evt.DateTime.ToShortTimeString()}, " +
                                   $"Duration: {evt.Duration}");
             }
@@ -470,13 +470,13 @@ namespace FcmsPortal
             foreach (var guardian in fcmSchool.Guardians)
             {
                 Console.WriteLine(
-                    $"ID: {guardian.Id}, Name: {guardian.Person.LastName}, Occupation: {guardian.Occupation}, Relationship to student: {guardian.RelationshipToStudent}");
+                    $"Id: {guardian.Id}, Name: {guardian.Person.LastName}, Occupation: {guardian.Occupation}, Relationship to student: {guardian.RelationshipToStudent}");
             }
 
             foreach (var student in fcmSchool.Students)
             {
                 Console.WriteLine(
-                    $"ID: {student.ID}, Name: {student.Person.FirstName}, guardian: {student.GuardianId}, Nane of Guardian: {student.Guardian.Person.LastName}");
+                    $"Id: {student.Id}, Name: {student.Person.FirstName}, guardian: {student.GuardianId}, Nane of Guardian: {student.Guardian.Person.LastName}");
             }
 
             //Testing post meeting to all staff
@@ -507,7 +507,7 @@ namespace FcmsPortal
 
             foreach (var curriculum in fcmSchool.Curricula)
             {
-                Console.WriteLine($"Curriculum ID: {curriculum.Id}");
+                Console.WriteLine($"Curriculum Id: {curriculum.Id}");
                 Console.WriteLine($"Year: {curriculum.Year}");
                 Console.WriteLine($"Education Level: {curriculum.EducationLevel}");
                 Console.WriteLine($"Class Level: {curriculum.ClassLevel}");
@@ -528,7 +528,7 @@ namespace FcmsPortal
                 {
                     var curriculumForClass = LogicMethods.GetCurriculumForClass(fcmSchool, EducationLevel.SeniorCollege, ClassLevel.SC_3, 2026);
 
-                    Console.WriteLine($"Curriculum ID: {curriculum.Id}");
+                    Console.WriteLine($"Curriculum Id: {curriculum.Id}");
                     Console.WriteLine($"Year: {curriculum.Year}");
                     Console.WriteLine($"Education Level: {curriculum.EducationLevel}");
                     Console.WriteLine($"Class Level: {curriculum.ClassLevel}");
@@ -586,7 +586,7 @@ namespace FcmsPortal
 
                 foreach (var student in studentsWithAccess)
                 {
-                    Console.WriteLine($"Student ID: {student.ID}, Name: {student.Person.FirstName} {student.Person.LastName}");
+                    Console.WriteLine($"Student Id: {student.Id}, Name: {student.Person.FirstName} {student.Person.LastName}");
                 }
 
                 //generate payment report for learning path
@@ -633,7 +633,7 @@ namespace FcmsPortal
 
                 foreach (var student in learningPath1.Students)
                 {
-                    Console.WriteLine($"{student.ID}");
+                    Console.WriteLine($"{student.Id}");
                 }
 
                 foreach (var entry in student1.Person.PersonalCalendar.ScheduleEntries)
@@ -660,12 +660,12 @@ namespace FcmsPortal
 
                 foreach (var student in learningPath1.Students)
                 {
-                    Console.WriteLine($"{student.ID}");
+                    Console.WriteLine($"{student.Id}");
                 }
 
                 foreach (var student in learningPath2.Students)
                 {
-                    Console.WriteLine($"{student.ID}");
+                    Console.WriteLine($"{student.Id}");
                 }
                 //put class session 2 and 3 into schedule entry 2 and 3
                 scheduleEntry2.ClassSession = classSession2;
@@ -725,7 +725,7 @@ namespace FcmsPortal
                 var expectedStudents = LogicMethods.GetExpectedStudentsForClassSession(fcmSchool, classSession2);
                 foreach (var student in expectedStudents)
                 {
-                    Console.WriteLine($"{student.ID}, {student.Person.FirstName} {student.Person.LastName}");
+                    Console.WriteLine($"{student.Id}, {student.Person.FirstName} {student.Person.LastName}");
                 }
 
                 List<Student> presenStudents = new List<Student>() { student1, student2 };
@@ -734,14 +734,14 @@ namespace FcmsPortal
                 var absent = LogicMethods.GetStudentsAbsentForClassSession(classSession2);
                 foreach (var student in absent)
                 {
-                    Console.WriteLine($"Absentees from math class: {student.ID}: {student.Person.FirstName} {student.Person.LastName}");
+                    Console.WriteLine($"Absentees from math class: {student.Id}: {student.Person.FirstName} {student.Person.LastName}");
                 }
 
                 List<Student> presentStudents = LogicMethods.GetStudentsPresentForClassSession(classSession2);
 
                 foreach (var student in presenStudents)
                 {
-                    Console.WriteLine($" Student present for math class: {student.ID}: {student.Person.FirstName} {student.Person.LastName}");
+                    Console.WriteLine($" Student present for math class: {student.Id}: {student.Person.FirstName} {student.Person.LastName}");
                 }
 
                 var attLog = LogicMethods.GetAttendanceForLearningPath(learningPath1);
@@ -749,7 +749,7 @@ namespace FcmsPortal
                 Console.WriteLine($"Attendance Records for {learningPath1.Semester} Semester:");
                 foreach (var log in attLog)
                 {
-                    Console.WriteLine($"Class Session ID: {log.ClassSession.Id}, Course: {log.ClassSession.Course}, Topic: {log.ClassSession.Topic}");
+                    Console.WriteLine($"Class Session Id: {log.ClassSession.Id}, Course: {log.ClassSession.Course}, Topic: {log.ClassSession.Topic}");
                     Console.WriteLine($"Teacher: {log.Teacher.Person.FirstName}");
                     Console.WriteLine("Present Students:");
                     foreach (var student in log.Attendees)
@@ -764,87 +764,9 @@ namespace FcmsPortal
                     Console.WriteLine("--------------------------------------------------");
                 }
 
-                //Test session collarboration
-                Homework homework1 = new Homework();
-                homework1.Id = 22222;
-                homework1.Title = "Algebra Homework";
-                homework1.AssignedDate = DateTime.Now;
-                homework1.DueDate = DateTime.Now.AddMonths(1);
-                homework1.ClassSession = classSession2;
-                homework1.Attachments = new List<FileAttachment>();
-                homework1.Discussions = new List<DiscussionThread> { new DiscussionThread() };
-                homework1.Submissions = new List<HomeworkSubmission>();
-                homework1.Questions = new List<string> { "1, what is x?", "2, what is the lenght of a square", "3, what is algebra?" };
-
-                classSession2.HomeworkDetails = homework1;
-
-                Console.WriteLine($"Homework Title: {classSession2.HomeworkDetails.Title}");
-                Console.WriteLine($"Due Date: {classSession2.HomeworkDetails.DueDate}");
-                Console.WriteLine("Questions:");
-                foreach (var question in classSession2.HomeworkDetails.Questions)
-                {
-                    Console.WriteLine($"- {question}");
-                }
-
-                try
-                {
-                    // Student 1 submits their homework
-                    LogicMethods.SubmitHomework(
-                        homework1,
-                        student1,
-                        "1. x = -2 or x = -3\n2. x = 3 or x = 0.5"
-                    );
-                    Console.WriteLine($"Homework submitted successfully by {student1.Person.FirstName} {student1.Person.LastName}");
-
-                    // Student 2 submits their homework
-                    LogicMethods.SubmitHomework(
-                        homework1,
-                        student2,
-                        "1. x = -2 or x = -3\n2. x = 3 or x = 0.5"
-                    );
-                    Console.WriteLine($"Homework submitted successfully by {student2.Person.FirstName} {student2.Person.LastName}");
-
-                    // Display all submissions
-                    Console.WriteLine("\nAll Submissions:");
-                    foreach (var submission in homework1.Submissions)
-                    {
-                        Console.WriteLine($"\nStudent: {submission.Student.Person.FirstName} {submission.Student.Person.LastName}");
-                        Console.WriteLine($"Submission Date: {submission.SubmissionDate}");
-                        Console.WriteLine($"Answer:\n{submission.Answer}");
-                        Console.WriteLine($"Graded: {submission.IsGraded}");
-                    }
-
-                    LogicMethods.SubmitHomework(homework1, student1, "   ");
-                }
-                catch (ArgumentNullException ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                }
-                catch (ArgumentException ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Unexpected error: {ex.Message}");
-                }
-
-                var student1Homework = LogicMethods.GetSubmissionsByStudent(homework1, student1);
-
-                foreach (var submission in student1Homework)
-                {
-                    Console.WriteLine($"\nStudent: {submission.Student.Person.FirstName} {submission.Student.Person.LastName}");
-                    Console.WriteLine($"Submission Date: {submission.SubmissionDate}");
-                    Console.WriteLine($"Answer:\n{submission.Answer}");
-                    Console.WriteLine($"Graded: {submission.IsGraded}");
-                }
-
-                //Testing Grading
 
             }
         }
-
-
 
     }
 }

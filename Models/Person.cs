@@ -4,6 +4,7 @@ namespace FcmsPortal.Models
 {
     public class Person
     {
+        public int Id { get; set; }
         public string ProfilePictureUrl { get; set; }
 
         private string _firstName;

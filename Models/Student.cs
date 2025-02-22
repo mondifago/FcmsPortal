@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace FcmsPortal.Models;
 
 public class Student
@@ -10,7 +12,7 @@ public class Student
     }
 
     private int _id;
-    public int ID
+    public int Id
     {
         get { return _id; }
         set { _id = value; }
@@ -39,12 +41,14 @@ public class Student
 
     public int? GuardianId { get; set; }
 
-    private Guardian _guardian;
-    public Guardian Guardian
-    {
-        get { return _guardian; }
-        set { _guardian = value; }
-    }
+    public Guardian? Guardian { get; set; }
 
-    public List<CourseGrade> CourseGrade { get; set; }
+    public List<CourseGrade> CourseGrades { get; set; } = new();
+    public List<ClassAttendanceLogEntry> AttendedSessions { get; set; } = new();
+
+    public List<ClassAttendanceLogEntry> AbsentSessions { get; set; } = new();
+    public int CurrentLearningPathId { get; set; }
+    [ForeignKey(nameof(CurrentLearningPathId))]
+    public LearningPath CurrentLearningPath { get; set; }
+    public List<LearningPath> CompletedLearningPaths { get; set; } = new();
 }

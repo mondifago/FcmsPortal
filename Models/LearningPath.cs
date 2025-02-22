@@ -1,4 +1,5 @@
 ﻿using FcmsPortal.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
 {
@@ -9,6 +10,7 @@ namespace FcmsPortal.Models
         public ClassLevel ClassLevel { get; set; }
         public Semester Semester { get; set; }
         public double FeePerSemester { get; set; }
+        [NotMapped]
         public Dictionary<Student, CourseGrade> GradesList { get; set; } = new();
         public List<ScheduleEntry> Schedule { get; set; } = new List<ScheduleEntry>();
         public List<Student> Students { get; set; } = new List<Student>();

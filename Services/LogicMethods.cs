@@ -75,7 +75,7 @@ namespace FcmsPortal.Services
             }
             if (learningPath.Schedule.Any(s => s.Id == scheduleEntry.Id))
             {
-                throw new ArgumentException($"A schedule with ID {scheduleEntry.Id} already exists in the learning path.");
+                throw new ArgumentException($"A schedule with Id {scheduleEntry.Id} already exists in the learning path.");
             }
             bool hasOverlap = learningPath.Schedule.Any(existing =>
                 existing.DateTime < scheduleEntry.DateTime.Add(scheduleEntry.Duration) &&
@@ -94,7 +94,7 @@ namespace FcmsPortal.Services
                 throw new InvalidOperationException("A schedule with the same time period already exists.");
             }
             learningPath.Schedule.Add(scheduleEntry);
-            Console.WriteLine($"Schedule with ID {scheduleEntry.Id} has been successfully added to Learning Path ID {learningPath.Id}.");
+            Console.WriteLine($"Schedule with Id {scheduleEntry.Id} has been successfully added to Learning Path Id {learningPath.Id}.");
         }
 
         //Adding multiple schedules to a learning path
@@ -123,7 +123,7 @@ namespace FcmsPortal.Services
 
                 if (learningPath.Schedule.Any(s => s.Id == scheduleEntry.Id))
                 {
-                    throw new ArgumentException($"A schedule with ID {scheduleEntry.Id} already exists in the learning path.");
+                    throw new ArgumentException($"A schedule with Id {scheduleEntry.Id} already exists in the learning path.");
                 }
 
                 bool hasOverlap = learningPath.Schedule.Any(existing =>
@@ -132,7 +132,7 @@ namespace FcmsPortal.Services
 
                 if (hasOverlap)
                 {
-                    throw new InvalidOperationException($"Schedule ID {scheduleEntry.Id} overlaps with an existing class session.");
+                    throw new InvalidOperationException($"Schedule Id {scheduleEntry.Id} overlaps with an existing class session.");
                 }
 
                 bool sameTimePeriod = learningPath.Schedule.Any(existing =>
@@ -141,12 +141,12 @@ namespace FcmsPortal.Services
 
                 if (sameTimePeriod)
                 {
-                    throw new InvalidOperationException($"A schedule with the same time period as ID {scheduleEntry.Id} already exists.");
+                    throw new InvalidOperationException($"A schedule with the same time period as Id {scheduleEntry.Id} already exists.");
                 }
             }
 
             learningPath.Schedule.AddRange(scheduleEntries);
-            Console.WriteLine($"{scheduleEntries.Count} schedules have been successfully added to Learning Path ID {learningPath.Id}.");
+            Console.WriteLine($"{scheduleEntries.Count} schedules have been successfully added to Learning Path Id {learningPath.Id}.");
         }
 
         //Add learning path to school
@@ -175,11 +175,11 @@ namespace FcmsPortal.Services
             foreach (var student in learningPath.Students)
             {
                 bool isStudentInAnotherPath = school.LearningPath.Any(existingPath =>
-                    existingPath.Students.Any(s => s.ID == student.ID));
+                    existingPath.Students.Any(s => s.Id == student.Id));
 
                 if (isStudentInAnotherPath)
                 {
-                    throw new InvalidOperationException($"Student ID {student.ID} already belongs to another learning path.");
+                    throw new InvalidOperationException($"Student Id {student.Id} already belongs to another learning path.");
                 }
             }
             school.LearningPath.Add(learningPath);
@@ -198,14 +198,14 @@ namespace FcmsPortal.Services
                 throw new ArgumentNullException(nameof(student), "Student cannot be null.");
             }
 
-            if (school.Students.Any(s => s.ID == student.ID))
+            if (school.Students.Any(s => s.Id == student.Id))
             {
-                throw new ArgumentException($"Student with ID {student.ID} is already registered in the school.");
+                throw new ArgumentException($"Student with Id {student.Id} is already registered in the school.");
             }
 
-            if (school.LearningPath.Any(lp => lp.Students.Any(s => s.ID == student.ID)))
+            if (school.LearningPath.Any(lp => lp.Students.Any(s => s.Id == student.Id)))
             {
-                throw new ArgumentException($"Student with ID {student.ID} is already enrolled in a learning path.");
+                throw new ArgumentException($"Student with Id {student.Id} is already enrolled in a learning path.");
             }
 
             if (student.Guardian != null && !school.Guardians.Any(g => g.Id == student.Guardian.Id))
@@ -274,7 +274,7 @@ namespace FcmsPortal.Services
                 // Create a new schedule entry for each recurrence
                 var newEntry = new ScheduleEntry
                 {
-                    Id = baseEntry.Id, // Assign new ID if necessary
+                    Id = baseEntry.Id, // Assign new Id if necessary
                     DateTime = currentDate,
                     Duration = baseEntry.Duration,
                     Venue = baseEntry.Venue,
@@ -316,7 +316,7 @@ namespace FcmsPortal.Services
             // Iterate through each calendar in the school calendar
             foreach (var calendar in fcmSchool.SchoolCalendar)
             {
-                Console.WriteLine($"\nCalendar: {calendar.Name} (ID: {calendar.Id})");
+                Console.WriteLine($"\nCalendar: {calendar.Name} (Id: {calendar.Id})");
 
                 // Check if the calendar has schedule entries
                 if (calendar.ScheduleEntries == null || !calendar.ScheduleEntries.Any())
@@ -331,7 +331,7 @@ namespace FcmsPortal.Services
                     string entryType = entry.GetScheduleType().ToString();
                     DateTime endTime = entry.DateTime.Add(entry.Duration);
 
-                    Console.WriteLine($"  ID: {entry.Id}, Date: {entry.DateTime.ToShortDateString()}, " +
+                    Console.WriteLine($"  Id: {entry.Id}, Date: {entry.DateTime.ToShortDateString()}, " +
                                       $"Type: {entryType}, Start: {entry.DateTime.ToShortTimeString()}, " +
                                       $"End: {endTime.ToShortTimeString()}, Duration: {entry.Duration}, Recurrence: {entry.IsRecurring}, Recurring Type: {entry.RecurrencePattern}, Recurrence interval: {entry.RecurrenceInterval}");
                 }
@@ -534,7 +534,7 @@ namespace FcmsPortal.Services
                     {
                         student.Person.PersonalCalendar = new Calendar
                         {
-                            Id = student.ID,
+                            Id = student.Id,
                             Name = $"{student.Person.FirstName} {student.Person.LastName}'s Calendar"
                         };
                     }
@@ -590,7 +590,7 @@ namespace FcmsPortal.Services
                 {
                     foreach (var entry in student.Person.PersonalCalendar.ScheduleEntries)
                     {
-                        Console.WriteLine($" - Schedule Entry ID: {entry.Id}, Date: {entry.DateTime}, Duration: {entry.Duration}, Topic: {entry.ClassSession?.Topic ?? "N/A"}");
+                        Console.WriteLine($" - Schedule Entry Id: {entry.Id}, Date: {entry.DateTime}, Duration: {entry.Duration}, Topic: {entry.ClassSession?.Topic ?? "N/A"}");
                     }
                 }
                 else
@@ -708,7 +708,7 @@ namespace FcmsPortal.Services
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to update curriculum for Learning Path ID: {learningPath.Id}. Error: {ex.Message}");
+                    Console.WriteLine($"Failed to update curriculum for Learning Path Id: {learningPath.Id}. Error: {ex.Message}");
                 }
             }
         }
@@ -1158,7 +1158,7 @@ namespace FcmsPortal.Services
                 {
                     student.Person.PersonalCalendar = new Calendar
                     {
-                        Id = student.ID,
+                        Id = student.Id,
                         Name = $"{student.Person.FirstName} {student.Person.LastName}'s Calendar"
                     };
                 }
@@ -1242,7 +1242,7 @@ namespace FcmsPortal.Services
             }
             if (calendar.ScheduleEntries.Any(e => e.Id == entry.Id))
             {
-                throw new InvalidOperationException($"A schedule entry with ID {entry.Id} already exists.");
+                throw new InvalidOperationException($"A schedule entry with Id {entry.Id} already exists.");
             }
 
             calendar.ScheduleEntries.Add(entry);
@@ -1258,7 +1258,7 @@ namespace FcmsPortal.Services
             var entry = calendar.ScheduleEntries.FirstOrDefault(e => e.Id == entryId);
             if (entry == null)
             {
-                throw new InvalidOperationException($"Schedule entry with ID {entryId} not found.");
+                throw new InvalidOperationException($"Schedule entry with Id {entryId} not found.");
             }
 
             calendar.ScheduleEntries.Remove(entry);
@@ -1434,7 +1434,7 @@ namespace FcmsPortal.Services
             foreach (var student in presentStudents)
             {
                 if (!expectedStudents.Contains(student))
-                    throw new InvalidOperationException($"Student {student.ID} is not expected in this class session.");
+                    throw new InvalidOperationException($"Student {student.Id} is not expected in this class session.");
             }
 
             List<Student> absentStudents = expectedStudents.Except(presentStudents).ToList();
@@ -1562,7 +1562,7 @@ namespace FcmsPortal.Services
         /// </summary>
 
         //Assign Homework for class session
-        public static void AssignHomework(ClassSession classSession, string title, DateTime dueDate, List<string> questions, List<FileAttachment> attachments = null)
+        /*public static void AssignHomework(ClassSession classSession, string title, DateTime dueDate, List<string> questions, List<FileAttachment> attachments = null)
         {
             if (classSession == null)
                 throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
@@ -1590,7 +1590,7 @@ namespace FcmsPortal.Services
             };
 
             classSession.HomeworkDetails = homework;
-        }
+        }*/
 
         //Submit homework
         public static void SubmitHomework(Homework homework, Student student, string answer)
@@ -1625,7 +1625,7 @@ namespace FcmsPortal.Services
             if (student == null)
                 throw new ArgumentNullException(nameof(student), "Student cannot be null.");
 
-            return homework.Submissions.Where(s => s.Student.ID == student.ID).ToList();
+            return homework.Submissions.Where(s => s.Student.Id == student.Id).ToList();
         }
 
         // Add a student's graded homework to their cumulative course grade
@@ -1640,10 +1640,10 @@ namespace FcmsPortal.Services
             if (submission.HomeworkGrade == null)
                 throw new ArgumentException("Homework grade is missing.");
 
-            var courseGrade = student.CourseGrade.FirstOrDefault(cg => cg.Course == submission.HomeworkGrade.Course);
+            var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == submission.HomeworkGrade.Course);
 
             if (courseGrade == null)
-                throw new InvalidOperationException($"Student has no recorded CourseGrade for {submission.HomeworkGrade.Course}.");
+                throw new InvalidOperationException($"Student has no recorded CourseGrades for {submission.HomeworkGrade.Course}.");
 
             courseGrade.TestGrades.Add(submission.HomeworkGrade);
         }
@@ -1769,12 +1769,12 @@ namespace FcmsPortal.Services
                 TeacherRemark = teacherRemark
             };
 
-            var courseGrade = student.CourseGrade.FirstOrDefault(cg => cg.Course == course);
+            var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == course);
 
             if (courseGrade == null)
             {
                 courseGrade = new CourseGrade { Course = course };
-                student.CourseGrade.Add(courseGrade);
+                student.CourseGrades.Add(courseGrade);
             }
 
             courseGrade.TestGrades.Add(testGrade);
@@ -1817,10 +1817,10 @@ namespace FcmsPortal.Services
         // Compute Total Grade for a course at the end of the semester
         public static double ComputeTotalGrade(Student student, string course)
         {
-            if (student == null || student.CourseGrade == null)
+            if (student == null || student.CourseGrades == null)
                 throw new ArgumentNullException(nameof(student), "Invalid student data.");
 
-            var courseGrade = student.CourseGrade.FirstOrDefault(cg => cg.Course == course);
+            var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == course);
 
             if (courseGrade == null || !courseGrade.TestGrades.Any())
                 return 0;
@@ -1858,7 +1858,7 @@ namespace FcmsPortal.Services
                     double totalGrade = ComputeTotalGrade(student, course);
                     string gradeCode = GetGradeCode(totalGrade);
 
-                    var courseGrade = student.CourseGrade.FirstOrDefault(cg => cg.Course == course);
+                    var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == course);
 
                     if (courseGrade != null)
                     {
@@ -1867,7 +1867,7 @@ namespace FcmsPortal.Services
                     }
                     else
                     {
-                        student.CourseGrade.Add(new CourseGrade
+                        student.CourseGrades.Add(new CourseGrade
                         {
                             Course = course,
                             TotalGrade = totalGrade,
@@ -1885,16 +1885,16 @@ namespace FcmsPortal.Services
             if (student == null)
                 throw new ArgumentNullException(nameof(student), "Student cannot be null.");
 
-            if (student.CourseGrade == null || student.CourseGrade.Count == 0)
-                throw new InvalidOperationException($"No grades found for student {student.ID}.");
+            if (student.CourseGrades == null || student.CourseGrades.Count == 0)
+                throw new InvalidOperationException($"No grades found for student {student.Id}.");
 
-            var courseGrades = student.CourseGrade
+            var courseGrades = student.CourseGrades
                 .Select(cg => ComputeTotalGrade(student, cg.Course))
                 .Where(totalGrade => totalGrade > 0)
                 .ToList();
 
             if (courseGrades.Count == 0)
-                throw new InvalidOperationException($"Student {student.ID} has no valid course grades.");
+                throw new InvalidOperationException($"Student {student.Id} has no valid course grades.");
 
             double overallSemesterAverage = courseGrades.Sum() / courseGrades.Count;
 
@@ -1918,7 +1918,7 @@ namespace FcmsPortal.Services
                 .ToList();
 
             if (relevantLearningPaths.Count < FcmsConstants.NUMBER_OF_SEMESTERS)
-                throw new InvalidOperationException($"Student {student.ID} has fewer than 3 semesters recorded for promotion.");
+                throw new InvalidOperationException($"Student {student.Id} has fewer than 3 semesters recorded for promotion.");
 
             var semesterGrades = relevantLearningPaths
                 .Select(lp => CalculateSemesterOverallGrade(student))
@@ -1954,8 +1954,8 @@ namespace FcmsPortal.Services
                 return new List<TestGrade>();
 
             return students
-                .Where(student => student.CourseGrade != null)
-                .SelectMany(student => student.CourseGrade
+                .Where(student => student.CourseGrades != null)
+                .SelectMany(student => student.CourseGrades
                     .Where(course => course.Course == courseName)
                     .SelectMany(course => course.TestGrades))
                 .ToList();
@@ -1971,7 +1971,7 @@ namespace FcmsPortal.Services
             if (string.IsNullOrWhiteSpace(courseName))
                 throw new ArgumentException("Course name cannot be null or empty.", nameof(courseName));
 
-            return student.CourseGrade?
+            return student.CourseGrades?
                 .Where(course => course.Course == courseName)
                 .SelectMany(course => course.TestGrades
                     .Where(grade => grade.GradeType == GradeType.Homework))
