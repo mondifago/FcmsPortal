@@ -7,7 +7,6 @@ namespace FcmsPortal.Services
     {
         private List<Address> _addresses = new List<Address>
         {
-            // Sample data for testing
             new Address { Id = 1, Street = "123 Main St", City = "Springfield", State = "IL", PostalCode = "62701", Country = "USA", AddressType = AddressType.Home },
             new Address { Id = 2, Street = "456 Oak Ave", City = "Boston", State = "MA", PostalCode = "02108", Country = "USA", AddressType = AddressType.Office }
         };
@@ -26,6 +25,20 @@ namespace FcmsPortal.Services
             if (address != null)
             {
                 _addresses.Remove(address);
+            }
+        }
+
+        public void UpdateAddress(Address updatedAddress)
+        {
+            var existingAddress = _addresses.FirstOrDefault(a => a.Id == updatedAddress.Id);
+            if (existingAddress != null)
+            {
+                existingAddress.Street = updatedAddress.Street;
+                existingAddress.City = updatedAddress.City;
+                existingAddress.State = updatedAddress.State;
+                existingAddress.PostalCode = updatedAddress.PostalCode;
+                existingAddress.Country = updatedAddress.Country;
+                existingAddress.AddressType = updatedAddress.AddressType;
             }
         }
     }
