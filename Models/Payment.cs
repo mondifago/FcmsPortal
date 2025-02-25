@@ -19,5 +19,7 @@ namespace FcmsPortal.Models
         [Required(ErrorMessage = "Reference is required.")]
         [Range(1, int.MaxValue, ErrorMessage = "Reference must be a positive number.")]
         public int Reference { get; set; }
+
+        public int SchoolFeesId { get; set; }
     }
 }
