@@ -1,30 +1,20 @@
 ﻿using FcmsPortal.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace FcmsPortal.Models
 {
     public class Guardian
     {
-        public int Id { get; set; } 
-        
-        private Person _person;
-        public Person Person
-        {
-            get { return _person; }
-            set { _person = value; }
-        }
+        public int Id { get; set; }
 
-        private Relationship _relationshipToStudent;
-        public Relationship RelationshipToStudent
-        {
-            get { return _relationshipToStudent; }
-            set { _relationshipToStudent = value; }
-        }
+        [Required(ErrorMessage = "Person details are required.")]
+        public Person Person { get; set; } = new Person();
 
-        private string _occupation;
-        public string Occupation
-        {
-            get { return _occupation; }
-            set { _occupation = value; }
-        }
+        [Required(ErrorMessage = "Relationship to student is required.")]
+        public Relationship RelationshipToStudent { get; set; }
+
+        [Required(ErrorMessage = "Occupation is required.")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Occupation must be between 2 and 50 characters.")]
+        public string Occupation { get; set; } = string.Empty;
     }
 }
