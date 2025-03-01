@@ -1,54 +1,41 @@
 ﻿using FcmsPortal.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
 {
     public class Person
     {
         public int Id { get; set; }
-        public string ProfilePictureUrl { get; set; }
 
-        private string _firstName;
-        public string FirstName
-        {
-            get { return _firstName; }
-            set { _firstName = value; }
-        }
+        [Url(ErrorMessage = "Invalid URL format.")]
+        public string? ProfilePictureUrl { get; set; }
 
-        private string _middleName;
-        public string MiddleName
-        {
-            get { return _middleName; }
-            set { _middleName = value; }
-        }
+        [Required(ErrorMessage = "First Name is required.")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "First Name must be between 2 and 50 characters.")]
+        public string FirstName { get; set; } = string.Empty;
 
-        private string _lastName;
-        public string LastName
-        {
-            get { return _lastName; }
-            set { _lastName = value; }
-        }
+        [StringLength(50, ErrorMessage = "Middle Name cannot exceed 50 characters.")]
+        public string? MiddleName { get; set; }
 
-        private Gender _sex;
-        public Gender Sex
-        {
-            get { return _sex; }
-            set { _sex = value; }
-        }
+        [Required(ErrorMessage = "Last Name is required.")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Last Name must be between 2 and 50 characters.")]
+        public string LastName { get; set; } = string.Empty;
 
-        private DateTime _dateOfBirth;
-        public DateTime DateOfBirth
-        {
-            get { return _dateOfBirth; }
-            set { _dateOfBirth = value; }
-        }
+        public Gender Sex { get; set; }
 
+        [DataType(DataType.Date)]
+        public DateTime DateOfBirth { get; set; }
+
+
+        [NotMapped]
         public int Age
         {
             get
             {
                 var today = DateTime.Today;
-                int age = today.Year - _dateOfBirth.Year;
-                if (today < _dateOfBirth.AddYears(age))
+                int age = today.Year - DateOfBirth.Year;
+                if (today < DateOfBirth.AddYears(age))
                 {
                     age--;
                 }
@@ -56,52 +43,29 @@ namespace FcmsPortal.Models
             }
         }
 
-        private string _stateOfOrigin;
-        public string StateOfOrigin
-        {
-            get { return _stateOfOrigin; }
-            set { _stateOfOrigin = value; }
-        }
+        [Required(ErrorMessage = "State of Origin is required.")]
+        [StringLength(50, ErrorMessage = "State of Origin cannot exceed 50 characters.")]
+        public string StateOfOrigin { get; set; } = string.Empty;
 
-        private string _lgaOfOrigin;
-        public string LgaOfOrigin
-        {
-            get { return _lgaOfOrigin; }
-            set { _lgaOfOrigin = value; }
-        }
+        [Required(ErrorMessage = "LGA of Origin is required.")]
+        [StringLength(50, ErrorMessage = "LGA of Origin cannot exceed 50 characters.")]
+        public string LgaOfOrigin { get; set; } = string.Empty;
 
-        private List<Address> _address;
-        public List<Address> Addresses
-        {
-            get { return _address; }
-            set { _address = value; }
-        }
+        public List<Address> Addresses { get; set; } = new List<Address>();
 
-        private string _email;
-        public string Email
-        {
-            get { return _email; }
-            set { _email = value; }
-        }
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
+        public string Email { get; set; } = string.Empty;
 
-        private List<string> _phoneNumber;
-        public List<string> PhoneNumber
-        {
-            get { return _phoneNumber; }
-            set { _phoneNumber = value; }
-        }
+        [Required(ErrorMessage = "Phone number is required.")]
+        [Phone(ErrorMessage = "Invalid phone number format.")]
+        public string PhoneNumber { get; set; } = string.Empty;
+
 
         public Calendar PersonalCalendar { get; set; } = new Calendar();
 
-        private EducationLevel _educationLevel;
+        public EducationLevel EducationLevel { get; set; }
 
-        public EducationLevel EducationLevel
-        {
-            get { return _educationLevel; }
-            set { _educationLevel = value; }
-        }
-
-        private ClassLevel _classLevel;
         public ClassLevel ClassLevel
         {
             get => _classLevel;
@@ -115,35 +79,12 @@ namespace FcmsPortal.Models
             }
         }
 
-        public SchoolFees SchoolFees { get; set; }
-
-        private string _nextOfKin;
-        public string NextOfKin
-        {
-            get { return _nextOfKin; }
-            set { _nextOfKin = value; }
-        }
-
-        private string _nextOfKinContactDetails;
-        public string NextOfKinContactDetails
-        {
-            get { return _nextOfKinContactDetails; }
-            set { _nextOfKinContactDetails = value; }
-        }
-
-        private bool _hasSystemAccess;
-        public bool HasSystemAccess
-        {
-            get { return _hasSystemAccess; }
-            set { _hasSystemAccess = value; }
-        }
-
-        private bool _isActive;
-        public bool IsActive
-        {
-            get { return _isActive; }
-            set { _isActive = value; }
-        }
+        public SchoolFees? SchoolFees { get; set; }
+        [StringLength(100, ErrorMessage = "Emergency contact details cannot exceed 100 characters.")]
+        public string? EmergencyContact { get; set; }
+        public List<Student> Wards { get; set; } = new List<Student>();
+        public bool IsActive { get; set; }
+        private ClassLevel _classLevel;
 
         private bool IsValidClassLevelForEducationLevel(EducationLevel educationLevel, ClassLevel classLevel)
         {
@@ -153,7 +94,7 @@ namespace FcmsPortal.Models
                 EducationLevel.Primary => classLevel is ClassLevel.PRI_1 or ClassLevel.PRI_2 or ClassLevel.PRI_3 or ClassLevel.PRI_4 or ClassLevel.PRI_5 or ClassLevel.PRI_6,
                 EducationLevel.JuniorCollege => classLevel is ClassLevel.JC_1 or ClassLevel.JC_2 or ClassLevel.JC_3,
                 EducationLevel.SeniorCollege => classLevel is ClassLevel.SC_1 or ClassLevel.SC_2 or ClassLevel.SC_3,
-                _ => false // Default case for unhandled EducationLevels
+                _ => false
             };
         }
     }
