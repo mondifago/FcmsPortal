@@ -7,10 +7,9 @@ namespace FcmsPortal.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Person details are required.")]
+        [Required]
         public Person Person { get; set; } = new Person();
 
-        [Required(ErrorMessage = "Relationship to student is required.")]
         public Relationship RelationshipToStudent { get; set; }
 
         [Required(ErrorMessage = "Occupation is required.")]

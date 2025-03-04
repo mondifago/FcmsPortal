@@ -50,7 +50,7 @@ namespace FcmsPortal.Models
         [Required(ErrorMessage = "LGA of Origin is required.")]
         [StringLength(50, ErrorMessage = "LGA of Origin cannot exceed 50 characters.")]
         public string LgaOfOrigin { get; set; } = string.Empty;
-
+        [Required]
         public List<Address> Addresses { get; set; } = new List<Address>();
 
         [Required(ErrorMessage = "Email is required.")]
