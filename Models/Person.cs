@@ -82,7 +82,6 @@ namespace FcmsPortal.Models
         public SchoolFees? SchoolFees { get; set; }
         [StringLength(100, ErrorMessage = "Emergency contact details cannot exceed 100 characters.")]
         public string? EmergencyContact { get; set; }
-        public List<Student> Wards { get; set; } = new List<Student>();
         public bool IsActive { get; set; }
         private ClassLevel _classLevel;
 
