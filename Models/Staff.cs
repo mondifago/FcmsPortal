@@ -1,64 +1,29 @@
 using FcmsPortal.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models;
 
 public class Staff
 {
-    private int _id;
-    public int Id
-    {
-        get { return _id; }
-        set { _id = value; }
-    }
+    public int Id { get; set; }
 
-    private Person _person;
-    public Person Person
-    {
-        get { return _person; }
-        set { _person = value; }
-    }
+    [Required]
+    public Person Person { get; set; }
 
-    private JobRole _jobRole;
-    public JobRole JobRole
-    {
-        get { return _jobRole; }
-        set { _jobRole = value; }
-    }
-    
-    private string _jobDescription;
-    public string JobDescription
-    {
-        get { return _jobDescription; }
-        set { _jobDescription = value; }
-    }
+    public JobRole JobRole { get; set; }
 
-    private List<string> _qualifications;
-    public List<string> Qualifications
-    {
-        get { return _qualifications; }
-        set { _qualifications = value; }
-    }
+    [MaxLength(500)]
+    public string JobDescription { get; set; }
 
-    private List<string> _workExperience;
-    public List<string> WorkExperience
-    {
-        get { return _workExperience; }
-        set { _workExperience = value; }
-    }
+    public List<string> Qualifications { get; set; }
 
-    private DateOnly _dateOfEmployment;
-    public DateOnly DateOfEmployment
-    {
-        get { return _dateOfEmployment; }
-        set { _dateOfEmployment = value; }
-    }
+    public List<string> WorkExperience { get; set; }
 
-    private string _areaOfSpecialization;
-    public string AreaOfSpecialization
-    {
-        get { return _areaOfSpecialization; }
-        set { _areaOfSpecialization = value; }
-    }
+    [Required]
+    [Column(TypeName = "date")]
+    public DateOnly DateOfEmployment { get; set; }
+
+    [MaxLength(100)]
+    public string AreaOfSpecialization { get; set; }
 }
-
-
