@@ -9,12 +9,12 @@
                 Enums.EducationLevel.Kindergarten => new List<string>
                 {
                     "Mathematics",
-                    "EnglishLanguage",
-                    "GeneralScience",
-                    "SocialHabit",
-                    "CreativeArt",
-                    "PhysicalandHealthHabit",
-                    "Crs",
+                    "English Language",
+                    "General Science",
+                    "Social Habit",
+                    "Creative Art",
+                    "Physical and Health Habit",
+                    "CRS",
                     "Rhymes",
                     "Phonics",
                     "Handwriting"
@@ -22,26 +22,26 @@
                 Enums.EducationLevel.Primary => new List<string>
                 {
                    "Mathematics",
-                   "EnglishLanguage",
-                   "BasicScience",
-                   "NationalValues",
-                   "PreVocationalStudies",
-                   "VerbalReasoning",
-                   "QuantitativeReasoning",
-                   "CulturalAndCreativeArt",
+                   "English Language",
+                   "Basic Science",
+                   "National Values",
+                   "PreVocational Studies",
+                   "Verbal Reasoning",
+                   "Quantitative Reasoning",
+                   "Cultural And Creative Art",
                    "French",
-                   "Crs",
+                   "CRS",
                    "Phonics"
                 },
                 Enums.EducationLevel.JuniorCollege => new List<string>
                 {
                    "Mathematics",
-                   "EnglishLanguage",
-                   "PreVocationalStudies",
-                   "NationalValues",
-                   "CulturalAndCreativeArt",
-                   "BasicScienceAndTechnology",
-                   "BusinessStudies",
+                   "English Language",
+                   "PreVocational Studies",
+                   "National Values",
+                   "Cultural And Creative Art",
+                   "Basic Science And Technology",
+                   "Business Studies",
                    "Crs",
                    "History",
                    "French"
@@ -49,20 +49,20 @@
                 Enums.EducationLevel.SeniorCollege => new List<string>
                 {
                    "Mathematics",
-                   "EnglishLanguage",
-                   "LiteratureInEnglish",
+                   "English Language",
+                   "Literature In English",
                    "Biology",
                    "Chemistry",
                    "Physics",
                    "Economics",
                    "Commerce",
-                   "FinancialAccounting",
-                   "CivicEducation",
-                   "Crs",
-                   "DataProcessing",
+                   "Financial Accounting",
+                   "Civic Education",
+                   "CRS",
+                   "Data Processing",
                    "Geography",
                    "Government",
-                   "AgriculturalScience"
+                   "Agricultural Science"
                 },
                 _ => throw new ArgumentException("Invalid Class educationLevel", nameof(educationLevel))
             };
