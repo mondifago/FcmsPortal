@@ -1,54 +1,48 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models;
 
 public class Student
 {
-    private Person _person;
-    public Person Person
-    {
-        get { return _person; }
-        set { _person = value; }
-    }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
 
-    private int _id;
-    public int Id
-    {
-        get { return _id; }
-        set { _id = value; }
-    }
+    [Required]
+    [ForeignKey("PersonId")]
+    public Person Person { get; set; }
 
-    private string _positionAmongSiblings;
-    public string PositionAmongSiblings
-    {
-        get { return _positionAmongSiblings; }
-        set { _positionAmongSiblings = value; }
-    }
+    [MaxLength(50)]
+    public string PositionAmongSiblings { get; set; }
 
-    private string _lastSchoolAttended;
-    public string LastSchoolAttended
-    {
-        get { return _lastSchoolAttended; }
-        set { _lastSchoolAttended = value; }
-    }
+    [MaxLength(200)]
+    public string LastSchoolAttended { get; set; }
 
-    private DateOnly _dateOfEnrollment;
-    public DateOnly DateOfEnrollment
-    {
-        get { return _dateOfEnrollment; }
-        set { _dateOfEnrollment = value; }
-    }
+    [Required]
+    [Column(TypeName = "date")]
+    public DateOnly DateOfEnrollment { get; set; }
 
     public int? GuardianId { get; set; }
 
+    [ForeignKey("GuardianId")]
     public Guardian? Guardian { get; set; }
 
+    [InverseProperty("Student")]
     public List<CourseGrade> CourseGrades { get; set; } = new();
+
+    [InverseProperty("StudentsPresent")]
     public List<ClassAttendanceLogEntry> AttendedSessions { get; set; } = new();
 
+    [InverseProperty("StudentsAbsent")]
     public List<ClassAttendanceLogEntry> AbsentSessions { get; set; } = new();
+
+    [Required]
     public int CurrentLearningPathId { get; set; }
-    [ForeignKey(nameof(CurrentLearningPathId))]
+
+    [ForeignKey("CurrentLearningPathId")]
     public LearningPath CurrentLearningPath { get; set; }
+
+    [NotMapped]
     public List<LearningPath> CompletedLearningPaths { get; set; } = new();
 }
