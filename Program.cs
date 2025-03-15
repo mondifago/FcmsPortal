@@ -3,7 +3,7 @@ using FcmsPortal.Models;
 
 namespace FcmsPortal
 {
-    internal class Program
+    public class Program
     {
         /// <summary>
         /// create one school
@@ -18,6 +18,147 @@ namespace FcmsPortal
         /// </summary>
         /// <param name="args"></param>
         /// 
+
+        public static School CreateTestSchool()
+        {
+            // create a school with name and address
+            Address address = new Address();
+            School fcmSchool = new School();
+            fcmSchool.Name = "FCM School";
+            fcmSchool.Staff = new List<Staff>();
+            fcmSchool.Students = new List<Student>();
+            fcmSchool.LearningPath = new List<LearningPath>();
+            fcmSchool.SchoolCalendar = new List<Calendar>();
+            fcmSchool.Guardians = new List<Guardian>();
+            fcmSchool.Curricula = new List<Curriculum>();
+            fcmSchool.Address = address;
+            address.Street = "120 City Road";
+            address.City = "Asaba";
+            address.State = "Delta State";
+            address.PostalCode = "P.O.Box 150";
+            address.Country = "Nigeria";
+            Calendar allCalendar = new Calendar();
+            allCalendar.Id = 2024;
+            allCalendar.Name = "2024 Calendar";
+            allCalendar.ScheduleEntries = new List<ScheduleEntry>();
+            fcmSchool.SchoolCalendar.Add(allCalendar);
+
+            //create student 1
+            Student student1 = new Student();
+            student1.Id = 301;
+            student1.GuardianId = 3011;
+            // Initialize Person
+            student1.Person = new Person();
+            student1.Person.FirstName = "Joe";
+            student1.Person.MiddleName = "J";
+            student1.Person.LastName = "Jake";
+            student1.Person.EducationLevel = EducationLevel.SeniorCollege;
+            student1.Person.ClassLevel = ClassLevel.SC_3;
+            student1.Person.PersonalCalendar = new Calendar();
+            student1.Person.PersonalCalendar.Id = 177;
+            student1.Person.PersonalCalendar.Name = "Student1's Study Calendar";
+            student1.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
+            student1.Guardian = new Guardian();
+            student1.Guardian.Id = 3011;
+            student1.Guardian.RelationshipToStudent = Relationship.Father;
+            student1.Guardian.Occupation = "Engineer";
+            student1.Guardian.Person = new Person();
+            student1.Guardian.Person.LastName = "Mr. Jake";
+            // Add the student to the school's student list
+            LogicMethods.AddStudentToSchool(fcmSchool, student1);
+
+            //create student 2
+            Student student2 = new Student();
+            student2.Id = 302;
+            student2.GuardianId = 3021;
+            student2.Person = new Person();
+            student2.Person.FirstName = "Dan";
+            student2.Person.MiddleName = "D";
+            student2.Person.LastName = "Deen";
+            student2.Person.EducationLevel = EducationLevel.SeniorCollege;
+            student2.Person.ClassLevel = ClassLevel.SC_3;
+            student2.Person.PersonalCalendar = new Calendar();
+            student2.Person.PersonalCalendar.Id = 277;
+            student2.Person.PersonalCalendar.Name = "Student2's Study Calendar";
+            student2.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
+            student2.Guardian = new Guardian();
+            var guardian2 = student2.Guardian;
+            guardian2.Id = 3021;
+            guardian2.Occupation = "Doctor";
+            guardian2.RelationshipToStudent = Relationship.Mother;
+            guardian2.Person = new Person();
+            guardian2.Person.FirstName = "Diana";
+            guardian2.Person.MiddleName = "D";
+            guardian2.Person.LastName = "Mrs Deen";
+            LogicMethods.AddStudentToSchool(fcmSchool, student2);
+
+
+            //create student 3
+            Student student3 = new Student();
+            student3.Id = 303;
+            student3.GuardianId = 3031;
+            student3.Person = new Person();
+            student3.Person.FirstName = "Zac";
+            student3.Person.MiddleName = "Z";
+            student3.Person.LastName = "Zik";
+            student3.Person.EducationLevel = EducationLevel.SeniorCollege;
+            student3.Person.ClassLevel = ClassLevel.SC_3;
+            student3.Person.PersonalCalendar = new Calendar();
+            student3.Person.PersonalCalendar.Id = 377;
+            student3.Person.PersonalCalendar.Name = "Student3's Study Calendar";
+            student3.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
+            student3.Guardian = new Guardian();
+            var guardian3 = student3.Guardian;
+            guardian3.Id = 3031;
+            guardian3.Occupation = "professor";
+            guardian3.RelationshipToStudent = Relationship.Father;
+            guardian3.Person = new Person();
+            guardian3.Person.FirstName = "Zok";
+            guardian3.Person.MiddleName = "Z";
+            guardian3.Person.LastName = "Mr Zik";
+            LogicMethods.AddStudentToSchool(fcmSchool, student3);
+
+            //create admin staff
+            Staff staff1 = new Staff();
+            staff1.Id = 101;
+            staff1.Person = new Person();
+            staff1.Person.FirstName = "Mr. Fin";
+            staff1.Person.MiddleName = "F";
+            staff1.Person.LastName = "Fen";
+            staff1.JobRole = JobRole.Admin;
+            staff1.JobDescription = "Principal";
+            fcmSchool.Staff.Add(staff1);
+
+            //create Biology teacher
+            Staff staff2 = new Staff();
+            staff2.Id = 102;
+            staff2.Person = new Person();
+            staff2.Person.FirstName = "Mr Eric";
+            staff2.Person.MiddleName = "E";
+            staff2.Person.LastName = "Een";
+            staff2.Person.EducationLevel = EducationLevel.SeniorCollege;
+            staff2.Person.ClassLevel = ClassLevel.SC_3;
+            staff2.JobRole = JobRole.Teacher;
+            staff2.JobDescription = "Biology Teacher";
+            staff2.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
+            fcmSchool.Staff.Add(staff2);
+
+            //create Geography teacher
+            Staff staff3 = new Staff();
+            staff3.Id = 103;
+            staff3.Person = new Person();
+            staff3.Person.FirstName = "Mrs Qin";
+            staff3.Person.MiddleName = "Q";
+            staff3.Person.LastName = "Que";
+            staff3.Person.EducationLevel = EducationLevel.SeniorCollege;
+            staff3.Person.ClassLevel = ClassLevel.SC_3;
+            staff3.JobRole = JobRole.Teacher;
+            staff3.JobDescription = "Geography Teacher";
+            staff3.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
+            fcmSchool.Staff.Add(staff3);
+
+            return fcmSchool;
+        }
 
         static void Main(string[] args)
         {
