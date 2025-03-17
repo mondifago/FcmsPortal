@@ -24,13 +24,17 @@ namespace FcmsPortal
             // create a school with name and address
             Address address = new Address();
             School fcmSchool = new School();
-            fcmSchool.Name = "FCM School";
+            fcmSchool.Name = "Future Champions Model School";
             fcmSchool.Staff = new List<Staff>();
             fcmSchool.Students = new List<Student>();
             fcmSchool.LearningPath = new List<LearningPath>();
             fcmSchool.SchoolCalendar = new List<Calendar>();
             fcmSchool.Guardians = new List<Guardian>();
             fcmSchool.Curricula = new List<Curriculum>();
+            fcmSchool.LogoUrl = "";
+            fcmSchool.Email = "info@fcms.com";
+            fcmSchool.PhoneNumber = "08012345678";
+            fcmSchool.WebsiteUrl = "www.fcms.com";
             fcmSchool.Address = address;
             address.Street = "120 City Road";
             address.City = "Asaba";
