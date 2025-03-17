@@ -53,7 +53,7 @@ public static class LogicMethods
     /// </summary>
     /// <param name="school">The school to analyze</param>
     /// <returns>List of distinct ClassLevels</returns>
-    public static List<ClassLevel> GetExistingClassLevels(School school)
+    public static List<ClassLevel> GetExistingClassLevels(this School school)
     {
         if (school?.LearningPath == null || !school.LearningPath.Any())
             return new List<ClassLevel>();
@@ -71,7 +71,7 @@ public static class LogicMethods
     /// <param name="school">The school to analyze</param>
     /// <param name="educationLevel">The education level to filter by</param>
     /// <returns>List of distinct ClassLevels for the specified EducationLevel</returns>
-    public static List<ClassLevel> GetClassLevelsByEducationLevel(School school, EducationLevel educationLevel)
+    public static List<ClassLevel> GetClassLevelsByEducationLevel(this School school, EducationLevel educationLevel)
     {
         if (school?.LearningPath == null || !school.LearningPath.Any())
             return new List<ClassLevel>();

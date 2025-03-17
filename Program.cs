@@ -161,6 +161,96 @@ namespace FcmsPortal
             staff3.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
             fcmSchool.Staff.Add(staff3);
 
+            //create a biology class session and assign a teacher to it
+            var classSession1 = new ClassSession();
+            classSession1.Id = 1;
+            classSession1.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
+            classSession1.Topic = "Digestive System";
+            classSession1.Description = "Function of Organs in Digestive System";
+            classSession1.LessonNote =
+                "Make the students understand the function of every organ within the Digestive system";
+            classSession1.Teacher = staff2;
+
+            //create the second biology class session
+            var classSession2 = new ClassSession();
+            classSession2.Id = 2;
+            classSession2.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
+            classSession2.Topic = "Digestive System";
+            classSession2.Description = "Function of Enzymes in Digestive System";
+            classSession2.LessonNote =
+                "Make the students understand the function of every Enzyme within the Digestive system";
+            classSession2.Teacher = staff2;
+
+            //create a geography class session
+            var classSession3 = new ClassSession();
+            classSession3.Id = 3;
+            classSession3.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
+            classSession3.Topic = "The Solar System";
+            classSession3.Description = "Planets of the solar System";
+            classSession3.LessonNote = "Make the students know the name of the nine planets";
+            classSession3.Teacher = staff3;
+
+            //create another geography class session
+            var classSession4 = new ClassSession();
+            classSession4.Id = 4;
+            classSession4.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
+            classSession4.Topic = "Map of the earth";
+            classSession4.Description = "Introduction to Continents";
+            classSession4.LessonNote = "Make the students know the name and location of the all the continents";
+            classSession4.Teacher = staff3;
+
+            //create schedule for all existing class sessions
+            ScheduleEntry scheduleEntry1 = new ScheduleEntry();
+            scheduleEntry1.Id = 11;
+            scheduleEntry1.DateTime = new DateTime(2026, 04, 15, 10, 00, 00);
+            scheduleEntry1.Duration = TimeSpan.FromMinutes(30);
+            scheduleEntry1.ClassSession = classSession1;
+            scheduleEntry1.Title = "Biology Class";
+            scheduleEntry1.Venue = "SSS3A Classroom";
+
+            ScheduleEntry scheduleEntry2 = new ScheduleEntry();
+            scheduleEntry2.Id = 22;
+            scheduleEntry2.DateTime = new DateTime(2026, 04, 17, 10, 00, 00);
+            scheduleEntry2.Duration = TimeSpan.FromMinutes(30);
+            scheduleEntry2.ClassSession = classSession2;
+            scheduleEntry2.Title = "Biology Class";
+            scheduleEntry2.Venue = "SSS3A Classroom";
+
+            ScheduleEntry scheduleEntry3 = new ScheduleEntry();
+            scheduleEntry3.Id = 33;
+            scheduleEntry3.DateTime = new DateTime(2026, 04, 15, 11, 00, 00);
+            scheduleEntry3.Duration = TimeSpan.FromMinutes(30);
+            scheduleEntry3.ClassSession = classSession3;
+            scheduleEntry3.Title = "Geography Class";
+            scheduleEntry3.Venue = "SSS3A Classroom";
+
+            ScheduleEntry scheduleEntry4 = new ScheduleEntry();
+            scheduleEntry4.Id = 44;
+            scheduleEntry4.DateTime = new DateTime(2026, 04, 17, 09, 00, 00);
+            scheduleEntry4.Duration = TimeSpan.FromMinutes(30);
+            scheduleEntry4.ClassSession = classSession4;
+            scheduleEntry4.Title = "Geography Class";
+            scheduleEntry4.Venue = "SSS3A Classroom";
+
+            //put all the schedule in a learning path
+            LearningPath learningPath1 = new LearningPath();
+            learningPath1.Id = 1001;
+            learningPath1.EducationLevel = EducationLevel.SeniorCollege;
+            learningPath1.ClassLevel = ClassLevel.SC_3;
+            learningPath1.Semester = Semester.First;
+            learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
+            learningPath1.Students = new List<Student>() { student1, student2, student3 };
+            fcmSchool.LearningPath.Add(learningPath1);
+
+            LearningPath learningPath2 = new LearningPath();
+            learningPath2.Id = 1002;
+            learningPath2.EducationLevel = EducationLevel.Kindergarten;
+            learningPath2.ClassLevel = ClassLevel.KG_Nursery;
+            learningPath2.Semester = Semester.First;
+            learningPath2.Schedule = new List<ScheduleEntry> { };
+            learningPath2.Students = new List<Student>() { };
+            fcmSchool.LearningPath.Add(learningPath2);
+
             return fcmSchool;
         }
 
