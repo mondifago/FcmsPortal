@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace FcmsPortal;
 
-internal static class LogicMethods
+public static class LogicMethods
 {
     /// <summary>
     /// Methods involved in Initial Setup
@@ -30,6 +30,60 @@ internal static class LogicMethods
         return school.Staff
             .Where(staff => staff.Person.EducationLevel == educationLevel).ToList();
     }
+
+    /// <summary>
+    /// Gets a list of all distinct EducationLevels found in the school's LearningPaths
+    /// </summary>
+    /// <param name="school">The school to analyze</param>
+    /// <returns>List of distinct EducationLevels</returns>
+    public static List<EducationLevel> GetExistingEducationLevels(School school)
+    {
+        if (school?.LearningPath == null || !school.LearningPath.Any())
+            return new List<EducationLevel>();
+
+        return school.LearningPath
+            .Select(lp => lp.EducationLevel)
+            .Distinct()
+            .OrderBy(el => el)
+            .ToList();
+    }
+
+    /// <summary>
+    /// Gets a list of all distinct ClassLevels found in the school's LearningPaths
+    /// </summary>
+    /// <param name="school">The school to analyze</param>
+    /// <returns>List of distinct ClassLevels</returns>
+    public static List<ClassLevel> GetExistingClassLevels(School school)
+    {
+        if (school?.LearningPath == null || !school.LearningPath.Any())
+            return new List<ClassLevel>();
+
+        return school.LearningPath
+            .Select(lp => lp.ClassLevel)
+            .Distinct()
+            .OrderBy(cl => cl)
+            .ToList();
+    }
+
+    /// <summary>
+    /// Gets a list of all distinct ClassLevels for a specific EducationLevel
+    /// </summary>
+    /// <param name="school">The school to analyze</param>
+    /// <param name="educationLevel">The education level to filter by</param>
+    /// <returns>List of distinct ClassLevels for the specified EducationLevel</returns>
+    public static List<ClassLevel> GetClassLevelsByEducationLevel(School school, EducationLevel educationLevel)
+    {
+        if (school?.LearningPath == null || !school.LearningPath.Any())
+            return new List<ClassLevel>();
+
+        return school.LearningPath
+            .Where(lp => lp.EducationLevel == educationLevel)
+            .Select(lp => lp.ClassLevel)
+            .Distinct()
+            .OrderBy(cl => cl)
+            .ToList();
+    }
+
 
     //Get all teachers from school list of staff
     public static List<Staff> GetAllTeachers(School school)
