@@ -56,6 +56,7 @@ namespace FcmsPortal
             student1.Person.FirstName = "Joe";
             student1.Person.MiddleName = "J";
             student1.Person.LastName = "Jake";
+            student1.Person.DateOfBirth = new DateTime(2009, 01, 01);
             student1.Person.EducationLevel = EducationLevel.SeniorCollege;
             student1.Person.ClassLevel = ClassLevel.SC_3;
             student1.Person.PersonalCalendar = new Calendar();
@@ -79,6 +80,7 @@ namespace FcmsPortal
             student2.Person.FirstName = "Dan";
             student2.Person.MiddleName = "D";
             student2.Person.LastName = "Deen";
+            student2.Person.DateOfBirth = new DateTime(2011, 06, 13);
             student2.Person.EducationLevel = EducationLevel.SeniorCollege;
             student2.Person.ClassLevel = ClassLevel.SC_3;
             student2.Person.PersonalCalendar = new Calendar();
@@ -105,6 +107,7 @@ namespace FcmsPortal
             student3.Person.FirstName = "Zac";
             student3.Person.MiddleName = "Z";
             student3.Person.LastName = "Zik";
+            student3.Person.DateOfBirth = new DateTime(2010, 08, 23);
             student3.Person.EducationLevel = EducationLevel.SeniorCollege;
             student3.Person.ClassLevel = ClassLevel.SC_3;
             student3.Person.PersonalCalendar = new Calendar();
