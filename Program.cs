@@ -68,7 +68,9 @@ namespace FcmsPortal
             student1.Guardian.RelationshipToStudent = Relationship.Father;
             student1.Guardian.Occupation = "Engineer";
             student1.Guardian.Person = new Person();
-            student1.Guardian.Person.LastName = "Mr. Jake";
+            student1.Guardian.Person.FirstName = "Jason";
+            student1.Guardian.Person.MiddleName = "C";
+            student1.Guardian.Person.LastName = "Jake";
             // Add the student to the school's student list
             LogicMethods.AddStudentToSchool(fcmSchool, student1);
 
@@ -95,7 +97,7 @@ namespace FcmsPortal
             guardian2.Person = new Person();
             guardian2.Person.FirstName = "Diana";
             guardian2.Person.MiddleName = "D";
-            guardian2.Person.LastName = "Mrs Deen";
+            guardian2.Person.LastName = "Deen";
             LogicMethods.AddStudentToSchool(fcmSchool, student2);
 
 
@@ -122,7 +124,7 @@ namespace FcmsPortal
             guardian3.Person = new Person();
             guardian3.Person.FirstName = "Zok";
             guardian3.Person.MiddleName = "Z";
-            guardian3.Person.LastName = "Mr Zik";
+            guardian3.Person.LastName = "Zik";
             LogicMethods.AddStudentToSchool(fcmSchool, student3);
 
             //create admin staff
