@@ -15,15 +15,16 @@ namespace FcmsPortal.Services
         void UpdateGuardian(Guardian guardian);
         Task<bool> DeleteStudent(int studentId, bool isHardDelete = false);
         Task<bool> DeleteStaff(int staffId, bool isHardDelete = false);
+        Task<bool> DeleteGuardian(int guardianId, bool isHardDelete = false);
     }
 
     public class SchoolDataService : ISchoolDataService
     {
         private readonly School _school;
 
-        public SchoolDataService(School school)
+        public SchoolDataService()
         {
-            _school = school;
+            _school = FcmsPortal.Program.CreateTestSchool();
         }
 
         public School GetSchool() => _school;
@@ -93,13 +94,11 @@ namespace FcmsPortal.Services
 
         public async Task<Staff> AddStaff(Staff staff)
         {
-            // Generate a new ID if not provided
             if (staff.Id <= 0)
             {
                 staff.Id = _school.Staff.Any() ? _school.Staff.Max(s => s.Id) + 1 : 1;
             }
 
-            // Add the new staff member to the collection
             var staffList = _school.Staff.ToList();
             staffList.Add(staff);
             _school.Staff = staffList;
@@ -112,7 +111,6 @@ namespace FcmsPortal.Services
             var existingStaff = _school.Staff.FirstOrDefault(s => s.Id == staff.Id);
             if (existingStaff != null)
             {
-                // Update staff properties
                 existingStaff.Person.FirstName = staff.Person.FirstName;
                 existingStaff.Person.MiddleName = staff.Person.MiddleName;
                 existingStaff.Person.LastName = staff.Person.LastName;
@@ -139,14 +137,12 @@ namespace FcmsPortal.Services
 
             if (isHardDelete)
             {
-                // Hard delete - remove from collection
                 var staffList = _school.Staff.ToList();
                 staffList.Remove(staff);
                 _school.Staff = staffList;
             }
             else
             {
-                // Soft delete - mark as inactive
                 staff.Person.IsActive = false;
             }
 
@@ -169,8 +165,29 @@ namespace FcmsPortal.Services
             }
             else
             {
-                // Soft delete - mark as inactive
                 student.Person.IsActive = false;
+            }
+
+            return await Task.FromResult(true);
+        }
+
+        public async Task<bool> DeleteGuardian(int guardianId, bool isHardDelete = false)
+        {
+            var guardian = _school.Guardians.FirstOrDefault(g => g.Id == guardianId);
+            if (guardian == null)
+            {
+                return await Task.FromResult(false);
+            }
+
+            if (isHardDelete)
+            {
+                var guardianList = _school.Guardians.ToList();
+                guardianList.Remove(guardian);
+                _school.Guardians = guardianList;
+            }
+            else
+            {
+                guardian.Person.IsActive = false;
             }
 
             return await Task.FromResult(true);
