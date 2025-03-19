@@ -115,16 +115,25 @@ namespace FcmsPortal.Services
             var existingStaff = _school.Staff.FirstOrDefault(s => s.Id == staff.Id);
             if (existingStaff != null)
             {
+                existingStaff.JobRole = staff.JobRole;
+                existingStaff.DateOfEmployment = staff.DateOfEmployment;
+                existingStaff.JobDescription = staff.JobDescription;
+                existingStaff.WorkExperience = staff.WorkExperience;
+                existingStaff.AreaOfSpecialization = staff.AreaOfSpecialization;
+                existingStaff.Qualifications = staff.Qualifications;
+                existingStaff.Person.ProfilePictureUrl = staff.Person.ProfilePictureUrl;
                 existingStaff.Person.FirstName = staff.Person.FirstName;
                 existingStaff.Person.MiddleName = staff.Person.MiddleName;
                 existingStaff.Person.LastName = staff.Person.LastName;
-                existingStaff.Person.DateOfBirth = staff.Person.DateOfBirth;
                 existingStaff.Person.Sex = staff.Person.Sex;
+                existingStaff.Person.StateOfOrigin = staff.Person.StateOfOrigin;
+                existingStaff.Person.LgaOfOrigin = staff.Person.LgaOfOrigin;
+                existingStaff.Person.Email = staff.Person.Email;
+                existingStaff.Person.PhoneNumber = staff.Person.PhoneNumber;
+                existingStaff.Person.DateOfBirth = staff.Person.DateOfBirth;
+                existingStaff.Person.EmergencyContact = staff.Person.EmergencyContact;
                 existingStaff.Person.EducationLevel = staff.Person.EducationLevel;
-                existingStaff.JobRole = staff.JobRole;
-                existingStaff.DateOfEmployment = staff.DateOfEmployment;
                 existingStaff.Person.IsActive = staff.Person.IsActive;
-                // Update other properties as needed
             }
         }
 
