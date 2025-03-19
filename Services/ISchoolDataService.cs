@@ -18,7 +18,7 @@ namespace FcmsPortal.Services
         void UpdateStaff(Staff staff);
         Task<bool> DeleteStudent(int studentId, bool isHardDelete = false);
         bool DeleteStaff(int staffId);
-        Task<bool> DeleteGuardian(int guardianId, bool isHardDelete = false);
+        bool DeleteGuardian(int guardianId);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -174,26 +174,19 @@ namespace FcmsPortal.Services
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> DeleteGuardian(int guardianId, bool isHardDelete = false)
+        public bool DeleteGuardian(int guardianId)
         {
             var guardian = _school.Guardians.FirstOrDefault(g => g.Id == guardianId);
             if (guardian == null)
             {
-                return await Task.FromResult(false);
+                return false;
             }
 
-            if (isHardDelete)
-            {
-                var guardianList = _school.Guardians.ToList();
-                guardianList.Remove(guardian);
-                _school.Guardians = guardianList;
-            }
-            else
-            {
-                guardian.Person.IsActive = false;
-            }
+            var guardianList = _school.Guardians.ToList();
+            guardianList.Remove(guardian);
+            _school.Guardians = guardianList;
 
-            return await Task.FromResult(true);
+            return true;
         }
     }
 }
