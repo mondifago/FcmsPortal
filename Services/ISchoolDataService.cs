@@ -12,7 +12,9 @@ namespace FcmsPortal.Services
         IEnumerable<Student> GetStudentsByClassLevel(ClassLevel classLevel);
         IEnumerable<Staff> GetTeachersByEducationLevel(EducationLevel educationLevel);
         Guardian GetGuardianById(int id);
+        Staff GetStaffById(int id);
         void UpdateGuardian(Guardian guardian);
+        //void UpdateStaff(Staff staff);
         Task<bool> DeleteStudent(int studentId, bool isHardDelete = false);
         Task<bool> DeleteStaff(int staffId, bool isHardDelete = false);
         Task<bool> DeleteGuardian(int guardianId, bool isHardDelete = false);
@@ -52,6 +54,11 @@ namespace FcmsPortal.Services
             return _school.Guardians.FirstOrDefault(g => g.Id == id);
         }
 
+        public Staff GetStaffById(int id)
+        {
+            return _school.Staff.FirstOrDefault(s => s.Id == id);
+        }
+
         public void UpdateGuardian(Guardian guardian)
         {
             var existingGuardian = _school.Guardians.FirstOrDefault(g => g.Id == guardian.Id);
@@ -87,10 +94,6 @@ namespace FcmsPortal.Services
             }
         }
 
-        public async Task<Staff> GetStaffById(int staffId)
-        {
-            return await Task.FromResult(_school.Staff.FirstOrDefault(s => s.Id == staffId));
-        }
 
         public async Task<Staff> AddStaff(Staff staff)
         {
