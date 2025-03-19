@@ -14,7 +14,7 @@ namespace FcmsPortal.Services
         Guardian GetGuardianById(int id);
         Staff GetStaffById(int id);
         void UpdateGuardian(Guardian guardian);
-        //void UpdateStaff(Staff staff);
+        void UpdateStaff(Staff staff);
         Task<bool> DeleteStudent(int studentId, bool isHardDelete = false);
         Task<bool> DeleteStaff(int staffId, bool isHardDelete = false);
         Task<bool> DeleteGuardian(int guardianId, bool isHardDelete = false);
@@ -109,7 +109,7 @@ namespace FcmsPortal.Services
             return await Task.FromResult(staff);
         }
 
-        public async Task<Staff> UpdateStaff(Staff staff)
+        public void UpdateStaff(Staff staff)
         {
             var existingStaff = _school.Staff.FirstOrDefault(s => s.Id == staff.Id);
             if (existingStaff != null)
@@ -122,12 +122,9 @@ namespace FcmsPortal.Services
                 existingStaff.Person.EducationLevel = staff.Person.EducationLevel;
                 existingStaff.JobRole = staff.JobRole;
                 existingStaff.DateOfEmployment = staff.DateOfEmployment;
-                //existingStaff.Salary = staff.Salary;
                 existingStaff.Person.IsActive = staff.Person.IsActive;
                 // Update other properties as needed
             }
-
-            return await Task.FromResult(existingStaff);
         }
 
         public async Task<bool> DeleteStaff(int staffId, bool isHardDelete = false)
