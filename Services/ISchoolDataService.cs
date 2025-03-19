@@ -6,6 +6,7 @@ namespace FcmsPortal.Services
     public interface ISchoolDataService
     {
         School GetSchool();
+        Staff AddStaff(Staff staff);
         IEnumerable<Student> GetStudents();
         IEnumerable<Staff> GetStaff();
         IEnumerable<Guardian> GetGuardians();
@@ -95,7 +96,7 @@ namespace FcmsPortal.Services
         }
 
 
-        public async Task<Staff> AddStaff(Staff staff)
+        public Staff AddStaff(Staff staff)
         {
             if (staff.Id <= 0)
             {
@@ -106,7 +107,7 @@ namespace FcmsPortal.Services
             staffList.Add(staff);
             _school.Staff = staffList;
 
-            return await Task.FromResult(staff);
+            return staff;
         }
 
         public void UpdateStaff(Staff staff)
