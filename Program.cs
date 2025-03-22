@@ -71,8 +71,22 @@ namespace FcmsPortal
             student1.Guardian.Person.FirstName = "Jason";
             student1.Guardian.Person.MiddleName = "C";
             student1.Guardian.Person.LastName = "Jake";
+            student1.Guardian.Person.IsActive = true;
             // Add the student to the school's student list
             LogicMethods.AddStudentToSchool(fcmSchool, student1);
+
+            //create student 4
+            Student student4 = new Student();
+            student4.Id = 304;
+            student4.GuardianId = 3011;
+            student4.Person = new Person();
+            student4.Person.FirstName = "John";
+            student4.Person.MiddleName = "C";
+            student4.Person.LastName = "Jake";
+            student4.Person.DateOfBirth = new DateTime(2020, 07, 20);
+            student4.Person.EducationLevel = EducationLevel.Kindergarten;
+            student4.Person.ClassLevel = ClassLevel.KG_Nursery;
+            LogicMethods.AddStudentToSchool(fcmSchool, student4);
 
             //create student 2
             Student student2 = new Student();
@@ -98,6 +112,7 @@ namespace FcmsPortal
             guardian2.Person.FirstName = "Diana";
             guardian2.Person.MiddleName = "D";
             guardian2.Person.LastName = "Deen";
+            guardian2.Person.IsActive = true;
             LogicMethods.AddStudentToSchool(fcmSchool, student2);
 
 
@@ -125,48 +140,76 @@ namespace FcmsPortal
             guardian3.Person.FirstName = "Zok";
             guardian3.Person.MiddleName = "Z";
             guardian3.Person.LastName = "Zik";
+            guardian3.Person.IsActive = true;
             LogicMethods.AddStudentToSchool(fcmSchool, student3);
 
             //create admin staff
             Staff staff1 = new Staff();
             staff1.Id = 101;
-            staff1.Person = new Person();
-            staff1.Person.FirstName = "Mr. Fin";
-            staff1.Person.MiddleName = "F";
-            staff1.Person.LastName = "Fen";
             staff1.JobRole = JobRole.Admin;
             staff1.JobDescription = "Principal";
             staff1.Qualifications = new() { "B.Edu", "PhD" };
             staff1.WorkExperience = new() { "Glender High School 2000-2007", "Fountain School 2007-2024" };
             staff1.DateOfEmployment = new DateOnly(2024, 04, 27);
+            staff1.Person = new Person();
+            staff1.Person.FirstName = "Fin";
+            staff1.Person.MiddleName = "F";
+            staff1.Person.LastName = "Fen";
+            staff1.Person.Email = "fin.fen@fcms.com";
+            staff1.Person.PhoneNumber = "0804883344";
+            staff1.Person.DateOfBirth = new DateTime(1980, 05, 23);
+            staff1.Person.Sex = Gender.Male;
+            staff1.Person.StateOfOrigin = "Anambra State";
+            staff1.Person.LgaOfOrigin = "Ihiala";
+            staff1.Person.IsActive = true;
             fcmSchool.Staff.Add(staff1);
 
             //create Biology teacher
             Staff staff2 = new Staff();
             staff2.Id = 102;
-            staff2.Person = new Person();
-            staff2.Person.FirstName = "Mr Eric";
-            staff2.Person.MiddleName = "E";
-            staff2.Person.LastName = "Een";
-            staff2.Person.EducationLevel = EducationLevel.SeniorCollege;
-            staff2.Person.ClassLevel = ClassLevel.SC_3;
             staff2.JobRole = JobRole.Teacher;
             staff2.JobDescription = "Biology Teacher";
             staff2.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
+            staff2.Qualifications = new() { "B.Edu", "TTc" };
+            staff2.WorkExperience = new() { "Sloke High School 2003-2010", "Novel School 2010-2024" };
+            staff2.DateOfEmployment = new DateOnly(2024, 07, 05);
+            staff2.Person = new Person();
+            staff2.Person.FirstName = "Eric";
+            staff2.Person.MiddleName = "E";
+            staff2.Person.LastName = "Een";
+            staff2.Person.Email = "eric.een@fcms.com";
+            staff2.Person.PhoneNumber = "0803003344";
+            staff2.Person.DateOfBirth = new DateTime(1980, 05, 23);
+            staff2.Person.Sex = Gender.Male;
+            staff2.Person.StateOfOrigin = "Anambra State";
+            staff2.Person.LgaOfOrigin = "Nnewi";
+            staff2.Person.EducationLevel = EducationLevel.SeniorCollege;
+            staff2.Person.ClassLevel = ClassLevel.SC_3;
+            staff2.Person.IsActive = true;
             fcmSchool.Staff.Add(staff2);
 
             //create Geography teacher
             Staff staff3 = new Staff();
             staff3.Id = 103;
-            staff3.Person = new Person();
-            staff3.Person.FirstName = "Mrs Qin";
-            staff3.Person.MiddleName = "Q";
-            staff3.Person.LastName = "Que";
-            staff3.Person.EducationLevel = EducationLevel.SeniorCollege;
-            staff3.Person.ClassLevel = ClassLevel.SC_3;
             staff3.JobRole = JobRole.Teacher;
             staff3.JobDescription = "Geography Teacher";
             staff3.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
+            staff3.Qualifications = new() { "B.Edu", "TTc" };
+            staff3.WorkExperience = new() { "Sloke High School 2003-2010", "Novel School 2010-2024" };
+            staff3.DateOfEmployment = new DateOnly(2024, 07, 05);
+            staff3.Person = new Person();
+            staff3.Person.FirstName = "Qin";
+            staff3.Person.MiddleName = "Q";
+            staff3.Person.LastName = "Que";
+            staff3.Person.Email = "qin.que@fcms.com";
+            staff3.Person.PhoneNumber = "0801993311";
+            staff3.Person.DateOfBirth = new DateTime(1985, 07, 23);
+            staff3.Person.Sex = Gender.Female;
+            staff3.Person.StateOfOrigin = "Anambra State";
+            staff3.Person.LgaOfOrigin = "Nnewi";
+            staff3.Person.EducationLevel = EducationLevel.SeniorCollege;
+            staff3.Person.ClassLevel = ClassLevel.SC_3;
+            staff3.Person.IsActive = true;
             fcmSchool.Staff.Add(staff3);
 
             //create a biology class session and assign a teacher to it

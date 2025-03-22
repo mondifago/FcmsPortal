@@ -22,6 +22,17 @@ public static class LogicMethods
             .ToList();
     }
 
+    //Get Students by GuardianID
+    public static List<Student> GetStudentsByGuardianId(School school, int guardianId)
+    {
+        if (school == null)
+            throw new ArgumentNullException(nameof(school), "School cannot be null.");
+
+        return school.Students
+            .Where(student => student.GuardianId == guardianId)
+            .ToList();
+    }
+
     //filter staff based on specified education level
     public static List<Staff> GetStaffByEducationLevel(School school, EducationLevel educationLevel)
     {
