@@ -136,6 +136,9 @@ namespace FcmsPortal
             staff1.Person.LastName = "Fen";
             staff1.JobRole = JobRole.Admin;
             staff1.JobDescription = "Principal";
+            staff1.Qualifications = new() { "B.Edu", "PhD" };
+            staff1.WorkExperience = new() { "Glender High School 2000-2007", "Fountain School 2007-2024" };
+            staff1.DateOfEmployment = new DateOnly(2024, 04, 27);
             fcmSchool.Staff.Add(staff1);
 
             //create Biology teacher
