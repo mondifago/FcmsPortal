@@ -23,6 +23,9 @@ namespace FcmsPortal.Models
         public string LastName { get; set; } = string.Empty;
 
         public Gender Sex { get; set; }
+        [Required]
+        [Column(TypeName = "date")]
+        public DateOnly DateOfEnrollment { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }

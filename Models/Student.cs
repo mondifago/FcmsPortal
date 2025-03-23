@@ -19,10 +19,6 @@ public class Student
     [MaxLength(200)]
     public string LastSchoolAttended { get; set; }
 
-    [Required]
-    [Column(TypeName = "date")]
-    public DateOnly DateOfEnrollment { get; set; }
-
     public int? GuardianId { get; set; }
 
     [ForeignKey("GuardianId")]
