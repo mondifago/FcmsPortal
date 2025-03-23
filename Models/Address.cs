@@ -8,7 +8,7 @@ namespace FcmsPortal.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Street is required.")]
-        [RegularExpression(@"^[A-Za-z0-9 .-]+$", ErrorMessage = "Postal Address can only contain letters, numbers, spaces, periods, and dashes.")]
+        [RegularExpression(@"^[A-Za-z0-9 .,-]+$", ErrorMessage = "Postal Address can only contain letters, numbers, spaces, periods, commas and dashes.")]
         public string Street { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "City is required.")]
