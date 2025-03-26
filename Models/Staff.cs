@@ -22,7 +22,7 @@ public class Staff
 
     [Required]
     [Column(TypeName = "date")]
-    public DateOnly DateOfEmployment { get; set; }
+    public DateTime DateOfEmployment { get; set; }
 
     [MaxLength(100)]
     public string? AreaOfSpecialization { get; set; }

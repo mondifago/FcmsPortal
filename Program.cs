@@ -180,7 +180,7 @@ namespace FcmsPortal
             staff1.JobDescription = "Principal";
             staff1.Qualifications = new() { "B.Edu", "PhD" };
             staff1.WorkExperience = new() { "Glender High School 2000-2007", "Fountain School 2007-2024" };
-            staff1.DateOfEmployment = new DateOnly(2024, 04, 27);
+            staff1.DateOfEmployment = DateTime.Today;
             staff1.Person = new Person();
             staff1.Person.FirstName = "Fin";
             staff1.Person.MiddleName = "F";
@@ -202,7 +202,7 @@ namespace FcmsPortal
             staff2.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
             staff2.Qualifications = new() { "B.Edu", "TTc" };
             staff2.WorkExperience = new() { "Sloke High School 2003-2010", "Novel School 2010-2024" };
-            staff2.DateOfEmployment = new DateOnly(2024, 07, 05);
+            staff2.DateOfEmployment = DateTime.Today;
             staff2.Person = new Person();
             staff2.Person.FirstName = "Eric";
             staff2.Person.MiddleName = "E";
@@ -226,7 +226,7 @@ namespace FcmsPortal
             staff3.AreaOfSpecialization = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
             staff3.Qualifications = new() { "B.Edu", "TTc" };
             staff3.WorkExperience = new() { "Sloke High School 2003-2010", "Novel School 2010-2024" };
-            staff3.DateOfEmployment = new DateOnly(2024, 07, 05);
+            staff3.DateOfEmployment = DateTime.Today;
             staff3.Person = new Person();
             staff3.Person.FirstName = "Qin";
             staff3.Person.MiddleName = "Q";

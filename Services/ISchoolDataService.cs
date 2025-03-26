@@ -15,8 +15,10 @@ namespace FcmsPortal.Services
         IEnumerable<Staff> GetTeachersByEducationLevel(EducationLevel educationLevel);
         Guardian GetGuardianById(int id);
         Staff GetStaffById(int id);
+        Student GetStudentById(int id);
         void UpdateGuardian(Guardian guardian);
         void UpdateStaff(Staff staff);
+        void UpdateStudent(Student student);
         bool DeleteStudent(int studentId);
         bool DeleteStaff(int staffId);
         bool DeleteGuardian(int guardianId);
@@ -59,6 +61,11 @@ namespace FcmsPortal.Services
         public Staff GetStaffById(int id)
         {
             return _school.Staff.FirstOrDefault(s => s.Id == id);
+        }
+
+        public Student GetStudentById(int id)
+        {
+            return _school.Students.FirstOrDefault(s => s.Id == id);
         }
 
         public void UpdateGuardian(Guardian guardian)
