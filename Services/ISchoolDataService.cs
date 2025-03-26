@@ -8,6 +8,7 @@ namespace FcmsPortal.Services
         School GetSchool();
         Staff AddStaff(Staff staff);
         Guardian AddGuardian(Guardian guardian);
+        Student AddStudent(Student student);
         IEnumerable<Student> GetStudents();
         IEnumerable<Staff> GetStaff();
         IEnumerable<Guardian> GetGuardians();
@@ -146,6 +147,18 @@ namespace FcmsPortal.Services
             _school.Staff = staffList;
 
             return staff;
+        }
+
+        public Student AddStudent(Student student)
+        {
+            if (student.Id <= 0)
+            {
+                student.Id = _school.Students.Any() ? _school.Students.Max(s => s.Id) + 1 : 1;
+            }
+            var students = _school.Students.ToList();
+            students.Add(student);
+            _school.Students = students;
+            return student;
         }
 
         public Guardian AddGuardian(Guardian guardian)
