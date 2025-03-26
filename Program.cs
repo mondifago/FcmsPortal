@@ -47,6 +47,25 @@ namespace FcmsPortal
             allCalendar.ScheduleEntries = new List<ScheduleEntry>();
             fcmSchool.SchoolCalendar.Add(allCalendar);
 
+            //create guardian 1
+            Guardian guardian1 = new Guardian();
+            guardian1.Id = 3011;
+            guardian1.RelationshipToStudent = Relationship.Father;
+            guardian1.Occupation = "Engineer";
+            guardian1.Wards = new List<Student>();
+            guardian1.Person = new Person();
+            guardian1.Person.FirstName = "Jason";
+            guardian1.Person.MiddleName = "C";
+            guardian1.Person.LastName = "Jake";
+            guardian1.Person.IsActive = true;
+            guardian1.Person.Sex = Gender.Male;
+            guardian1.Person.StateOfOrigin = "Anambra State";
+            guardian1.Person.LgaOfOrigin = "Ihiala";
+            guardian1.Person.Email = "cjake@fcms.com";
+            guardian1.Person.PhoneNumber = "08012345558";
+            guardian1.Person.DateOfEnrollment = DateTime.Today;
+            fcmSchool.Guardians.Add(guardian1);
+
             //create student 1
             Student student1 = new Student();
             student1.Id = 301;
@@ -63,16 +82,7 @@ namespace FcmsPortal
             student1.Person.PersonalCalendar.Id = 177;
             student1.Person.PersonalCalendar.Name = "Student1's Study Calendar";
             student1.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
-            student1.Guardian = new Guardian();
-            student1.Guardian.Id = 3011;
-            student1.Guardian.RelationshipToStudent = Relationship.Father;
-            student1.Guardian.Occupation = "Engineer";
-            student1.Guardian.Person = new Person();
-            student1.Guardian.Person.FirstName = "Jason";
-            student1.Guardian.Person.MiddleName = "C";
-            student1.Guardian.Person.LastName = "Jake";
-            student1.Guardian.Person.IsActive = true;
-            // Add the student to the school's student list
+            LogicMethods.AddStudentToGuardianWards(guardian1, student1);
             LogicMethods.AddStudentToSchool(fcmSchool, student1);
 
             //create student 4
@@ -86,7 +96,27 @@ namespace FcmsPortal
             student4.Person.DateOfBirth = new DateTime(2020, 07, 20);
             student4.Person.EducationLevel = EducationLevel.Kindergarten;
             student4.Person.ClassLevel = ClassLevel.KG_Nursery;
+            LogicMethods.AddStudentToGuardianWards(guardian1, student4);
             LogicMethods.AddStudentToSchool(fcmSchool, student4);
+
+            //create guardian 2
+            Guardian guardian2 = new Guardian();
+            guardian2.Id = 3021;
+            guardian2.Occupation = "Doctor";
+            guardian2.RelationshipToStudent = Relationship.Mother;
+            guardian2.Wards = new List<Student>();
+            guardian2.Person = new Person();
+            guardian2.Person.FirstName = "Diana";
+            guardian2.Person.MiddleName = "D";
+            guardian2.Person.LastName = "Deen";
+            guardian2.Person.IsActive = true;
+            guardian2.Person.Sex = Gender.Female;
+            guardian2.Person.StateOfOrigin = "Anambra State";
+            guardian2.Person.LgaOfOrigin = "Nnewi";
+            guardian2.Person.Email = "ddeen@fcms.com";
+            guardian2.Person.PhoneNumber = "08033345559";
+            guardian2.Person.DateOfEnrollment = DateTime.Today;
+            fcmSchool.Guardians.Add(guardian2);
 
             //create student 2
             Student student2 = new Student();
@@ -103,18 +133,27 @@ namespace FcmsPortal
             student2.Person.PersonalCalendar.Id = 277;
             student2.Person.PersonalCalendar.Name = "Student2's Study Calendar";
             student2.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
-            student2.Guardian = new Guardian();
-            var guardian2 = student2.Guardian;
-            guardian2.Id = 3021;
-            guardian2.Occupation = "Doctor";
-            guardian2.RelationshipToStudent = Relationship.Mother;
-            guardian2.Person = new Person();
-            guardian2.Person.FirstName = "Diana";
-            guardian2.Person.MiddleName = "D";
-            guardian2.Person.LastName = "Deen";
-            guardian2.Person.IsActive = true;
+            LogicMethods.AddStudentToGuardianWards(guardian2, student2);
             LogicMethods.AddStudentToSchool(fcmSchool, student2);
 
+            //create guardian 3
+            Guardian guardian3 = new Guardian();
+            guardian3.Id = 3031;
+            guardian3.Occupation = "professor";
+            guardian3.RelationshipToStudent = Relationship.Father;
+            guardian3.Wards = new List<Student>();
+            guardian3.Person = new Person();
+            guardian3.Person.FirstName = "Zok";
+            guardian3.Person.MiddleName = "Z";
+            guardian3.Person.LastName = "Zik";
+            guardian3.Person.IsActive = true;
+            guardian3.Person.Sex = Gender.Male;
+            guardian3.Person.StateOfOrigin = "Anambra State";
+            guardian3.Person.LgaOfOrigin = "Awka";
+            guardian3.Person.Email = "zikzok@fcms.com";
+            guardian3.Person.PhoneNumber = "08033348811";
+            guardian3.Person.DateOfEnrollment = DateTime.Today;
+            fcmSchool.Guardians.Add(guardian3);
 
             //create student 3
             Student student3 = new Student();
@@ -131,16 +170,7 @@ namespace FcmsPortal
             student3.Person.PersonalCalendar.Id = 377;
             student3.Person.PersonalCalendar.Name = "Student3's Study Calendar";
             student3.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
-            student3.Guardian = new Guardian();
-            var guardian3 = student3.Guardian;
-            guardian3.Id = 3031;
-            guardian3.Occupation = "professor";
-            guardian3.RelationshipToStudent = Relationship.Father;
-            guardian3.Person = new Person();
-            guardian3.Person.FirstName = "Zok";
-            guardian3.Person.MiddleName = "Z";
-            guardian3.Person.LastName = "Zik";
-            guardian3.Person.IsActive = true;
+            LogicMethods.AddStudentToGuardianWards(guardian3, student3);
             LogicMethods.AddStudentToSchool(fcmSchool, student3);
 
             //create admin staff

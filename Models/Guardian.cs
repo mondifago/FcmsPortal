@@ -22,6 +22,6 @@ namespace FcmsPortal.Models
         public string Occupation { get; set; } = string.Empty;
 
         [InverseProperty("Guardian")]
-        public List<Student> Students { get; set; } = new();
+        public List<Student> Wards { get; set; } = new();
     }
 }
