@@ -73,13 +73,43 @@ namespace FcmsPortal.Services
             var existingGuardian = _school.Guardians.FirstOrDefault(g => g.Id == guardian.Id);
             if (existingGuardian != null)
             {
-                // Copy properties from updated guardian to existing one
                 existingGuardian.Person.FirstName = guardian.Person.FirstName;
                 existingGuardian.Person.MiddleName = guardian.Person.MiddleName;
                 existingGuardian.Person.LastName = guardian.Person.LastName;
+                existingGuardian.Person.Sex = guardian.Person.Sex;
+                existingGuardian.Person.StateOfOrigin = guardian.Person.StateOfOrigin;
+                existingGuardian.Person.LgaOfOrigin = guardian.Person.LgaOfOrigin;
+                existingGuardian.Person.Email = guardian.Person.Email;
+                existingGuardian.Person.PhoneNumber = guardian.Person.PhoneNumber;
+                existingGuardian.Person.DateOfEnrollment = guardian.Person.DateOfEnrollment;
                 existingGuardian.Occupation = guardian.Occupation;
                 existingGuardian.RelationshipToStudent = guardian.RelationshipToStudent;
-                // Copy other properties as needed
+                existingGuardian.Person.ProfilePictureUrl = guardian.Person.ProfilePictureUrl;
+                existingGuardian.Person.IsActive = guardian.Person.IsActive;
+            }
+        }
+
+        public void UpdateStudent(Student student)
+        {
+            var existingStudent = _school.Students.FirstOrDefault(s => s.Id == student.Id);
+            if (existingStudent != null)
+            {
+                existingStudent.Person.FirstName = student.Person.FirstName;
+                existingStudent.Person.MiddleName = student.Person.MiddleName;
+                existingStudent.Person.LastName = student.Person.LastName;
+                existingStudent.Person.ProfilePictureUrl = student.Person.ProfilePictureUrl;
+                existingStudent.Person.DateOfBirth = student.Person.DateOfBirth;
+                existingStudent.Person.EducationLevel = student.Person.EducationLevel;
+                existingStudent.Person.ClassLevel = student.Person.ClassLevel;
+                existingStudent.Person.Sex = student.Person.Sex;
+                existingStudent.Person.StateOfOrigin = student.Person.StateOfOrigin;
+                existingStudent.Person.LgaOfOrigin = student.Person.LgaOfOrigin;
+                existingStudent.Person.DateOfEnrollment = student.Person.DateOfEnrollment;
+                existingStudent.Person.EmergencyContact = student.Person.EmergencyContact;
+                existingStudent.Person.IsActive = student.Person.IsActive;
+                existingStudent.PositionAmongSiblings = student.PositionAmongSiblings;
+                existingStudent.LastSchoolAttended = student.LastSchoolAttended;
+                existingStudent.GuardianId = student.GuardianId;
             }
         }
 

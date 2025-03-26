@@ -14,10 +14,10 @@ public class Student
     public Person Person { get; set; }
 
     [MaxLength(50)]
-    public string PositionAmongSiblings { get; set; }
+    public string? PositionAmongSiblings { get; set; }
 
     [MaxLength(200)]
-    public string LastSchoolAttended { get; set; }
+    public string? LastSchoolAttended { get; set; }
 
     public int? GuardianId { get; set; }
 
