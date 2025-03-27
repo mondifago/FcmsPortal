@@ -1052,7 +1052,7 @@ public static class LogicMethods
     }
 
     //send notification of outstanding 
-    public static void NotifyStudentsOfPaymentStatus(LearningPath learningPath)
+    /*public static void NotifyStudentsOfPaymentStatus(LearningPath learningPath)
     {
         if (learningPath == null)
         {
@@ -1071,7 +1071,7 @@ public static class LogicMethods
                     $"you have an outstanding balance of {outstandingBalance:C}. " +
                     "Please ensure payment is made to retain access to your classes.";
 
-                string guardianMessage = student.GuardianId.HasValue
+                string guardianMessage = student.GuardianId != 0
                     ? $"Dear Guardian of {student.Person.FirstName}, " +
                       $"your ward has an outstanding balance of {outstandingBalance:C}. " +
                       "Please ensure payment is made promptly."
@@ -1085,7 +1085,7 @@ public static class LogicMethods
                 }
             }
         }
-    }
+    }*/
 
     private static void SendNotification(string email, string message, string subject)
     {

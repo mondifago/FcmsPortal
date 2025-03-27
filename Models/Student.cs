@@ -19,7 +19,7 @@ public class Student
     [MaxLength(200)]
     public string? LastSchoolAttended { get; set; }
 
-    public int? GuardianId { get; set; }
+    public int GuardianId { get; set; }
 
     [ForeignKey("GuardianId")]
     public Guardian? Guardian { get; set; }

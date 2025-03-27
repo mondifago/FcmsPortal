@@ -922,7 +922,7 @@ namespace FcmsPortal
                     Console.WriteLine();
                 }
 
-                LogicMethods.NotifyStudentsOfPaymentStatus(learningPath1);
+                //LogicMethods.NotifyStudentsOfPaymentStatus(learningPath1);
 
                 var currentLearningPath = learningPath1;
 
