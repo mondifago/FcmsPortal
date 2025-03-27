@@ -17,6 +17,7 @@ namespace FcmsPortal.Services
         Guardian GetGuardianById(int id);
         Staff GetStaffById(int id);
         Student GetStudentById(int id);
+        Guardian GetGuardianByStudentId(int studentId);
         void UpdateGuardian(Guardian guardian);
         void UpdateStaff(Staff staff);
         void UpdateStudent(Student student);
@@ -67,6 +68,11 @@ namespace FcmsPortal.Services
         public Student GetStudentById(int id)
         {
             return _school.Students.FirstOrDefault(s => s.Id == id);
+        }
+
+        public Guardian GetGuardianByStudentId(int studentId)
+        {
+            return _school.Guardians.FirstOrDefault(g => g.Wards.Any(w => w.Id == studentId));
         }
 
         public void UpdateGuardian(Guardian guardian)

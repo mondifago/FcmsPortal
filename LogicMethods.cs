@@ -298,6 +298,25 @@ public static class LogicMethods
         guardian.Wards.Add(student);
     }
 
+    //Remove student from Guardian Wards list
+    public static void RemoveStudentFromGuardianWards(Guardian guardian, Student student)
+    {
+        if (guardian == null)
+        {
+            throw new ArgumentNullException(nameof(guardian), "Guardian cannot be null.");
+        }
+        if (student == null)
+        {
+            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+        }
+        if (!guardian.Wards.Any(s => s.Id == student.Id))
+        {
+            throw new ArgumentException($"Student with Id {student.Id} is not a ward of the guardian.");
+        }
+        guardian.Wards.Remove(student);
+    }
+
+
     //retrieve all guardians registered to school
     public static List<Guardian> GetAllGuardians(School school)
     {
