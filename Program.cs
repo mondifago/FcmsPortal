@@ -78,6 +78,7 @@ namespace FcmsPortal
             student1.Person.DateOfBirth = new DateTime(2009, 01, 01);
             student1.Person.EducationLevel = EducationLevel.SeniorCollege;
             student1.Person.ClassLevel = ClassLevel.SC_3;
+            student1.Person.IsActive = true;
             student1.Person.PersonalCalendar = new Calendar();
             student1.Person.PersonalCalendar.Id = 177;
             student1.Person.PersonalCalendar.Name = "Student1's Study Calendar";
@@ -96,6 +97,7 @@ namespace FcmsPortal
             student4.Person.DateOfBirth = new DateTime(2020, 07, 20);
             student4.Person.EducationLevel = EducationLevel.Kindergarten;
             student4.Person.ClassLevel = ClassLevel.KG_Nursery;
+            student4.Person.IsActive = true;
             LogicMethods.AddStudentToGuardianWards(guardian1, student4);
             LogicMethods.AddStudentToSchool(fcmSchool, student4);
 
@@ -129,6 +131,7 @@ namespace FcmsPortal
             student2.Person.DateOfBirth = new DateTime(2011, 06, 13);
             student2.Person.EducationLevel = EducationLevel.SeniorCollege;
             student2.Person.ClassLevel = ClassLevel.SC_3;
+            student2.Person.IsActive = true;
             student2.Person.PersonalCalendar = new Calendar();
             student2.Person.PersonalCalendar.Id = 277;
             student2.Person.PersonalCalendar.Name = "Student2's Study Calendar";
@@ -166,6 +169,7 @@ namespace FcmsPortal
             student3.Person.DateOfBirth = new DateTime(2010, 08, 23);
             student3.Person.EducationLevel = EducationLevel.SeniorCollege;
             student3.Person.ClassLevel = ClassLevel.SC_3;
+            student3.Person.IsActive = true;
             student3.Person.PersonalCalendar = new Calendar();
             student3.Person.PersonalCalendar.Id = 377;
             student3.Person.PersonalCalendar.Name = "Student3's Study Calendar";
