@@ -64,6 +64,25 @@ namespace FcmsPortal
             guardian1.Person.Email = "cjake@fcms.com";
             guardian1.Person.PhoneNumber = "08012345558";
             guardian1.Person.DateOfEnrollment = DateTime.Today;
+            guardian1.Person.Addresses = new List<Address>();
+            guardian1.Person.Addresses.Add(new Address
+            {
+                Street = "12, City Road",
+                City = "Asaba",
+                State = "Delta State",
+                PostalCode = "P.O.Box 150",
+                Country = "Nigeria",
+                AddressType = AddressType.Home
+            });
+            guardian1.Person.Addresses.Add(new Address
+            {
+                Street = "45, Market Street",
+                City = "Benin City",
+                State = "Edo State",
+                PostalCode = "P.O.Box 200",
+                Country = "Nigeria",
+                AddressType = AddressType.Office
+            });
             fcmSchool.Guardians.Add(guardian1);
 
             //create student 1
@@ -118,6 +137,16 @@ namespace FcmsPortal
             guardian2.Person.Email = "ddeen@fcms.com";
             guardian2.Person.PhoneNumber = "08033345559";
             guardian2.Person.DateOfEnrollment = DateTime.Today;
+            guardian2.Person.Addresses = new List<Address>();
+            guardian2.Person.Addresses.Add(new Address
+            {
+                Street = "34, Green Avenue",
+                City = "Lagos",
+                State = "Lagos State",
+                PostalCode = "P.O.Box 200",
+                Country = "Nigeria",
+                AddressType = AddressType.Home
+            });
             fcmSchool.Guardians.Add(guardian2);
 
             //create student 2
@@ -156,6 +185,16 @@ namespace FcmsPortal
             guardian3.Person.Email = "zikzok@fcms.com";
             guardian3.Person.PhoneNumber = "08033348811";
             guardian3.Person.DateOfEnrollment = DateTime.Today;
+            guardian3.Person.Addresses = new List<Address>();
+            guardian3.Person.Addresses.Add(new Address
+            {
+                Street = "56, Hospital Road",
+                City = "Abeokuta",
+                State = "Ogun State",
+                PostalCode = "P.O.Box 300",
+                Country = "Nigeria",
+                AddressType = AddressType.Home
+            });
             fcmSchool.Guardians.Add(guardian3);
 
             //create student 3
@@ -196,6 +235,16 @@ namespace FcmsPortal
             staff1.Person.StateOfOrigin = "Anambra State";
             staff1.Person.LgaOfOrigin = "Ihiala";
             staff1.Person.IsActive = true;
+            staff1.Person.Addresses = new List<Address>();
+            staff1.Person.Addresses.Add(new Address
+            {
+                Street = "123, Corporate Drive",
+                City = "Lagos",
+                State = "Lagos State",
+                PostalCode = "P.O.Box 101",
+                Country = "Nigeria",
+                AddressType = AddressType.HomeTown
+            });
             fcmSchool.Staff.Add(staff1);
 
             //create Biology teacher
@@ -220,6 +269,16 @@ namespace FcmsPortal
             staff2.Person.EducationLevel = EducationLevel.SeniorCollege;
             staff2.Person.ClassLevel = ClassLevel.SC_3;
             staff2.Person.IsActive = true;
+            staff2.Person.Addresses = new List<Address>();
+            staff2.Person.Addresses.Add(new Address
+            {
+                Street = "456, Business Center",
+                City = "Abuja",
+                State = "FCT",
+                PostalCode = "P.O.Box 102",
+                Country = "Nigeria",
+                AddressType = AddressType.Office
+            });
             fcmSchool.Staff.Add(staff2);
 
             //create Geography teacher
@@ -244,6 +303,16 @@ namespace FcmsPortal
             staff3.Person.EducationLevel = EducationLevel.SeniorCollege;
             staff3.Person.ClassLevel = ClassLevel.SC_3;
             staff3.Person.IsActive = true;
+            staff3.Person.Addresses = new List<Address>();
+            staff3.Person.Addresses.Add(new Address
+            {
+                Street = "789, Market Square",
+                City = "Port Harcourt",
+                State = "Rivers State",
+                PostalCode = "P.O.Box 103",
+                Country = "Nigeria",
+                AddressType = AddressType.Office
+            });
             fcmSchool.Staff.Add(staff3);
 
             //create a biology class session and assign a teacher to it

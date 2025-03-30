@@ -17,7 +17,7 @@ namespace FcmsPortal.Models
         [Required(ErrorMessage = "State is required.")]
         public string State { get; set; } = string.Empty;
 
-        [StringLength(10, MinimumLength = 4, ErrorMessage = "Postal Code must be between 4 and 10 characters.")]
+        [StringLength(30, MinimumLength = 4, ErrorMessage = "Postal Code must be between 4 and 30 characters.")]
         public string? PostalCode { get; set; }
 
         [Required(ErrorMessage = "Country is required.")]
