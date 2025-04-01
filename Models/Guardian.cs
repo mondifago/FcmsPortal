@@ -9,14 +9,12 @@ namespace FcmsPortal.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [Required]
         public Person Person { get; set; } = new Person();
-
         public Relationship RelationshipToStudent { get; set; }
-
         [Required(ErrorMessage = "Occupation is required.")]
         [StringLength(15, MinimumLength = 2, ErrorMessage = "Occupation must be between 2 and 15 characters.")]
         public string Occupation { get; set; } = string.Empty;
-
         public List<Student> Wards { get; set; } = new();
     }
 }

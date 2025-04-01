@@ -8,6 +8,8 @@
         public double? AttendancePercentage { get; set; }
         public double TotalGrade { get; set; }
         public string FinalGradeCode { get; set; }
+        public int StudentId { get; set; }
+        public Student Student { get; set; }
         public List<FileAttachment> FinalResultAttachments { get; set; } = new();
     }
 }
