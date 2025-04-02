@@ -113,6 +113,8 @@ namespace FcmsPortal.Services
                 existingStudent.Person.LgaOfOrigin = student.Person.LgaOfOrigin;
                 existingStudent.Person.DateOfEnrollment = student.Person.DateOfEnrollment;
                 existingStudent.Person.EmergencyContact = student.Person.EmergencyContact;
+                existingStudent.Person.Email = student.Person.Email;
+                existingStudent.Person.PhoneNumber = student.Person.PhoneNumber;
                 existingStudent.Person.IsActive = student.Person.IsActive;
                 existingStudent.PositionAmongSiblings = student.PositionAmongSiblings;
                 existingStudent.LastSchoolAttended = student.LastSchoolAttended;
