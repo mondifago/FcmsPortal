@@ -12,7 +12,7 @@ namespace FcmsPortal.Models
         [Required]
         public Person Person { get; set; } = new Person();
         public Relationship RelationshipToStudent { get; set; }
-        [Required(ErrorMessage = "Occupation is required.")]
+        [Required]
         [StringLength(15, MinimumLength = 2, ErrorMessage = "Occupation must be between 2 and 15 characters.")]
         public string Occupation { get; set; } = string.Empty;
         public List<Student> Wards { get; set; } = new();
