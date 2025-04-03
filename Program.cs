@@ -19,11 +19,12 @@ namespace FcmsPortal
         /// <param name="args"></param>
         /// 
 
-        public static School CreateTestSchool()
+        public static School CreateSchool()
         {
             // create a school with name and address
             Address address = new Address();
             School fcmSchool = new School();
+            fcmSchool.Id = 1;
             fcmSchool.Name = "Future Champions Model School";
             fcmSchool.Staff = new List<Staff>();
             fcmSchool.Students = new List<Student>();
