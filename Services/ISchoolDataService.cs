@@ -6,7 +6,6 @@ namespace FcmsPortal.Services
     public interface ISchoolDataService
     {
         School GetSchool();
-        List<School> GetSchools();
         Staff AddStaff(Staff staff);
         Guardian AddGuardian(Guardian guardian);
         Student AddStudent(Student student);
@@ -23,7 +22,6 @@ namespace FcmsPortal.Services
         void UpdateGuardian(Guardian guardian);
         void UpdateStaff(Staff staff);
         void UpdateStudent(Student student);
-        bool DeleteSchool(int schoolId);
         bool DeleteStudent(int studentId);
         bool DeleteStaff(int staffId);
         bool DeleteGuardian(int guardianId);
@@ -32,17 +30,13 @@ namespace FcmsPortal.Services
     public class SchoolDataService : ISchoolDataService
     {
         private readonly School _school;
-        private readonly List<School> _schools;
 
         public SchoolDataService()
         {
             _school = FcmsPortal.Program.CreateSchool();
-            _schools = new List<School> { _school };
         }
 
         public School GetSchool() => _school;
-
-        public List<School> GetSchools() => _schools;
 
         public IEnumerable<Student> GetStudents() => _school.Students;
 
@@ -60,29 +54,6 @@ namespace FcmsPortal.Services
             return _school.Staff.Where(s =>
                 s.JobRole == JobRole.Teacher &&
                 s.Person.EducationLevel == educationLevel);
-        }
-
-        public bool DeleteSchool(int schoolId)
-        {
-            var school = _schools.FirstOrDefault(s => s.Id == schoolId);
-            if (school == null)
-            {
-                return false;
-            }
-
-            // Remove the school from the list
-            _schools.Remove(school);
-
-            // If we're deleting the currently active school, set a new active one if available
-            if (_school.Id == schoolId && _schools.Any())
-            {
-                // Use a local variable to hold the new active school
-                var newActiveSchool = _schools.First();
-                // Update the readonly field in the constructor
-                typeof(SchoolDataService).GetField("_school", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(this, newActiveSchool);
-            }
-
-            return true;
         }
 
         public Guardian GetGuardianById(int id)
@@ -169,12 +140,6 @@ namespace FcmsPortal.Services
                 _school.Address.State = updatedSchool.Address.State;
                 _school.Address.PostalCode = updatedSchool.Address.PostalCode;
                 _school.Address.Country = updatedSchool.Address.Country;
-            }
-
-            var schoolIndex = _schools.FindIndex(s => s.Id == updatedSchool.Id);
-            if (schoolIndex >= 0)
-            {
-                _schools[schoolIndex] = updatedSchool;
             }
         }
 

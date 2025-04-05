@@ -7,23 +7,19 @@ namespace FcmsPortal.Models;
 public class Staff
 {
     public int Id { get; set; }
-
     [Required]
-    public Person Person { get; set; }
-
+    public Person Person { get; set; } = new Person();
+    [MaxLength(30)]
     public JobRole JobRole { get; set; }
-
-    [MaxLength(500)]
+    [MaxLength(100)]
     public string? JobDescription { get; set; }
-
+    [MaxLength(50)]
     public List<string>? Qualifications { get; set; }
-
+    [MaxLength(50)]
     public List<string>? WorkExperience { get; set; }
-
     [Required]
     [Column(TypeName = "date")]
     public DateTime DateOfEmployment { get; set; }
-
-    [MaxLength(100)]
+    [MaxLength(50)]
     public string? AreaOfSpecialization { get; set; }
 }
