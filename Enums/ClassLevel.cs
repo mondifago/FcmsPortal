@@ -2,6 +2,7 @@
 {
     public enum ClassLevel
     {
+        None,
         KG_Daycare,
         KG_PlayGroup,
         KG_PreNursery,

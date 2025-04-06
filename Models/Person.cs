@@ -56,8 +56,8 @@ namespace FcmsPortal.Models
         public Calendar PersonalCalendar { get; set; } = new Calendar();
         public EducationLevel EducationLevel { get; set; }
 
-        public ClassLevel ClassLevel
-        {
+        public ClassLevel ClassLevel { get; set; }
+        /*{
             get => _classLevel;
             set
             {
@@ -67,7 +67,7 @@ namespace FcmsPortal.Models
                 }
                 _classLevel = value;
             }
-        }
+        }*/
         public SchoolFees? SchoolFees { get; set; }
         [StringLength(100, ErrorMessage = "Emergency contact details cannot exceed 100 characters.")]
         [Required(ErrorMessage = "Emergency contact number is required")]
@@ -75,7 +75,7 @@ namespace FcmsPortal.Models
         public string EmergencyContact { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
 
-        private ClassLevel _classLevel;
+        /*private ClassLevel _classLevel;
         private bool IsValidClassLevelForEducationLevel(EducationLevel educationLevel, ClassLevel classLevel)
         {
             return educationLevel switch
@@ -86,6 +86,6 @@ namespace FcmsPortal.Models
                 EducationLevel.SeniorCollege => classLevel is ClassLevel.SC_1 or ClassLevel.SC_2 or ClassLevel.SC_3,
                 _ => false
             };
-        }
+        }*/
     }
 }
