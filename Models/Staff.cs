@@ -9,7 +9,6 @@ public class Staff
     public int Id { get; set; }
     [Required]
     public Person Person { get; set; } = new Person();
-    [MaxLength(30)]
     public JobRole JobRole { get; set; }
     [MaxLength(100)]
     public string? JobDescription { get; set; }
