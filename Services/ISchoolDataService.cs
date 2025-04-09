@@ -25,6 +25,13 @@ namespace FcmsPortal.Services
         bool DeleteStudent(int studentId);
         bool DeleteStaff(int staffId);
         bool DeleteGuardian(int guardianId);
+
+        Task<int> GetNextThreadId();
+        Task<int> GetNextPostId();
+        Task<int> GetNextAttachmentId();
+        Task AddDiscussionThread(DiscussionThread thread);
+        Task UpdateDiscussionThread(DiscussionThread thread);
+        Task<DiscussionThread> GetDiscussionThread(int id);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -254,6 +261,63 @@ namespace FcmsPortal.Services
             _school.Guardians = guardianList;
 
             return true;
+        }
+
+        public Task<int> GetNextThreadId()
+        {
+            int nextId = _school.DiscussionThreads.Any() ? _school.DiscussionThreads.Max(t => t.Id) + 1 : 1;
+            return Task.FromResult(nextId);
+        }
+
+        public Task<int> GetNextPostId()
+        {
+            int nextId = 1;
+            if (_school.DiscussionThreads.Any())
+            {
+                var allPosts = _school.DiscussionThreads.Select(t => t.FirstPost)
+                    .Concat(_school.DiscussionThreads.SelectMany(t => t.Replies));
+                nextId = allPosts.Any() ? allPosts.Max(p => p.Id) + 1 : 1;
+            }
+            return Task.FromResult(nextId);
+        }
+
+        public Task<int> GetNextAttachmentId()
+        {
+            int nextId = 1;
+            if (_school.DiscussionThreads.Any())
+            {
+                var allAttachments = _school.DiscussionThreads.SelectMany(t => t.Attachments);
+                nextId = allAttachments.Any() ? allAttachments.Max(a => a.Id) + 1 : 1;
+            }
+            return Task.FromResult(nextId);
+        }
+
+        public Task AddDiscussionThread(DiscussionThread thread)
+        {
+            var threads = _school.DiscussionThreads;
+            if (!threads.Any(t => t.Id == thread.Id))
+            {
+                threads.Add(thread);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task UpdateDiscussionThread(DiscussionThread thread)
+        {
+            var existingThread = _school.DiscussionThreads.FirstOrDefault(t => t.Id == thread.Id);
+            if (existingThread != null)
+            {
+                // Replace the entire thread object (simpler for in-memory)
+                int index = _school.DiscussionThreads.IndexOf(existingThread);
+                _school.DiscussionThreads[index] = thread;
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task<DiscussionThread> GetDiscussionThread(int id)
+        {
+            var thread = _school.DiscussionThreads.FirstOrDefault(t => t.Id == id);
+            return Task.FromResult(thread);
         }
     }
 }

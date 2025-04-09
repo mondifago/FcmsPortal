@@ -1752,55 +1752,58 @@ public static class LogicMethods
 
 
     //Start discussion open or private
-    public static DiscussionThread StartDiscussion(int id, Person author, string comment, bool isPrivate, List<FileAttachment> attachments = null)
+    public static DiscussionThread StartDiscussion(int threadId, int firstPostId, Person author, string comment, List<FileAttachment> attachments = null)
     {
         if (author == null)
             throw new ArgumentNullException(nameof(author), "Author cannot be null.");
-
         if (string.IsNullOrWhiteSpace(comment))
             throw new ArgumentException("Comment cannot be empty.", nameof(comment));
 
+        var now = DateTime.UtcNow;
         var firstPost = new DiscussionPost
         {
-            Id = id,
+            Id = firstPostId,
+            DiscussionThreadId = threadId,
             Author = author,
             Comment = comment,
-            Timestamp = DateTime.Now
+            CreatedAt = now
         };
 
         var discussionThread = new DiscussionThread
         {
-            Id = id,
+            Id = threadId,
             FirstPost = firstPost,
-            IsPrivate = isPrivate,
-            Attachments = attachments ?? new List<FileAttachment>()
+            Replies = new List<DiscussionPost>(),
+            Attachments = attachments ?? new List<FileAttachment>(),
+            CreatedAt = now,
+            LastUpdatedAt = now
         };
 
         return discussionThread;
     }
 
-
     //Add reply to discussion
-    public static void AddReply(int id, DiscussionThread thread, Person author, string comment)
+    public static void AddReply(DiscussionThread thread, int replyId, Person author, string comment)
     {
         if (thread == null)
             throw new ArgumentNullException(nameof(thread), "Discussion thread cannot be null.");
-
         if (author == null)
             throw new ArgumentNullException(nameof(author), "Author cannot be null.");
-
         if (string.IsNullOrWhiteSpace(comment))
             throw new ArgumentException("Comment cannot be empty.", nameof(comment));
 
+        var now = DateTime.UtcNow;
         var reply = new DiscussionPost
         {
-            Id = id,
+            Id = replyId,
+            DiscussionThreadId = thread.Id,
             Author = author,
             Comment = comment,
-            Timestamp = DateTime.Now
+            CreatedAt = now
         };
 
         thread.Replies.Add(reply);
+        thread.UpdateLastUpdated();
     }
 
 

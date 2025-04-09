@@ -15,5 +15,6 @@
         public List<LearningPath> LearningPath { get; set; } = new();
         public List<Calendar> SchoolCalendar { get; set; }
         public List<Curriculum> Curricula { get; set; }
+        public List<DiscussionThread> DiscussionThreads { get; set; } = new List<DiscussionThread>();
     }
 }
