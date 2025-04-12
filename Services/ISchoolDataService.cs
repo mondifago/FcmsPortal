@@ -1,6 +1,7 @@
-﻿using FcmsPortal.Enums;
+﻿using FcmsPortal.Constants;
+using FcmsPortal.Enums;
 using FcmsPortal.Models;
-
+using Microsoft.AspNetCore.Components.Forms;
 namespace FcmsPortal.Services
 {
     public interface ISchoolDataService
@@ -32,15 +33,24 @@ namespace FcmsPortal.Services
         Task AddDiscussionThread(DiscussionThread thread);
         Task UpdateDiscussionThread(DiscussionThread thread);
         Task<DiscussionThread> GetDiscussionThread(int id);
+        Task<FileAttachment> UploadFileAsync(IBrowserFile file, string category);
+        Task DeleteFileAsync(FileAttachment attachment);
+        Task<List<FileAttachment>> GetAttachmentsAsync(string category, int referenceId);
+        Task SaveAttachmentReferenceAsync(FileAttachment attachment, string category, int referenceId);
+        string GetFileUrl(FileAttachment attachment);
     }
 
     public class SchoolDataService : ISchoolDataService
     {
         private readonly School _school;
+        private readonly IWebHostEnvironment _environment;
+        private readonly Dictionary<string, List<(int referenceId, FileAttachment attachment)>> _attachmentReferences = new();
+        private int _nextAttachmentId = 1;
 
-        public SchoolDataService()
+        public SchoolDataService(IWebHostEnvironment environment)
         {
             _school = FcmsPortal.Program.CreateSchool();
+            _environment = environment;
         }
 
         public School GetSchool() => _school;
@@ -281,7 +291,7 @@ namespace FcmsPortal.Services
             return Task.FromResult(nextId);
         }
 
-        public Task<int> GetNextAttachmentId()
+        /*public Task<int> GetNextAttachmentId()
         {
             int nextId = 1;
             if (_school.DiscussionThreads.Any())
@@ -290,7 +300,7 @@ namespace FcmsPortal.Services
                 nextId = allAttachments.Any() ? allAttachments.Max(a => a.Id) + 1 : 1;
             }
             return Task.FromResult(nextId);
-        }
+        }*/
 
         public Task AddDiscussionThread(DiscussionThread thread)
         {
@@ -318,6 +328,109 @@ namespace FcmsPortal.Services
         {
             var thread = _school.DiscussionThreads.FirstOrDefault(t => t.Id == id);
             return Task.FromResult(thread);
+        }
+
+        public async Task<FileAttachment> UploadFileAsync(IBrowserFile file, string category)
+        {
+            if (file == null)
+                throw new ArgumentNullException(nameof(file));
+
+            if (string.IsNullOrWhiteSpace(category))
+                throw new ArgumentException("Category cannot be null or empty.", nameof(category));
+
+            // Sanitize category name for folder path (remove invalid chars)
+            var folderName = Path.GetInvalidFileNameChars()
+                .Aggregate(category, (current, c) => current.Replace(c, '_'));
+
+            // Create destination folder within wwwroot
+            var targetFolder = Path.Combine(_environment.WebRootPath, folderName);
+            if (!Directory.Exists(targetFolder))
+            {
+                Directory.CreateDirectory(targetFolder);
+            }
+
+            // Generate unique filename to prevent overwrites
+            var extension = Path.GetExtension(file.Name);
+            var uniqueFileName = $"{Guid.NewGuid()}{extension}";
+            var filePath = Path.Combine(targetFolder, uniqueFileName);
+
+            // Save the file
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.OpenReadStream(FcmsConstants.MAX_FILE_SIZE).CopyToAsync(stream);
+            }
+
+            // Create public URL path
+            var publicUrl = $"/{folderName}/{uniqueFileName}";
+
+            // Create file attachment record
+            var attachment = new FileAttachment
+            {
+                Id = await GetNextAttachmentId(),
+                FileName = file.Name,
+                FilePath = publicUrl,
+                FileSize = file.Size,
+                UploadDate = DateTime.Now
+            };
+
+            return attachment;
+        }
+
+        public Task DeleteFileAsync(FileAttachment attachment)
+        {
+            if (attachment == null)
+                throw new ArgumentNullException(nameof(attachment));
+
+            var filePath = Path.Combine(_environment.WebRootPath, attachment.FilePath.TrimStart('/'));
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            // Remove from attachment references
+            foreach (var categoryDict in _attachmentReferences)
+            {
+                categoryDict.Value.RemoveAll(x => x.attachment.Id == attachment.Id);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task<List<FileAttachment>> GetAttachmentsAsync(string category, int referenceId)
+        {
+            if (_attachmentReferences.TryGetValue(category, out var references))
+            {
+                var attachments = references
+                    .Where(x => x.referenceId == referenceId)
+                    .Select(x => x.attachment)
+                    .ToList();
+
+                return Task.FromResult(attachments);
+            }
+
+            return Task.FromResult(new List<FileAttachment>());
+        }
+
+        public Task SaveAttachmentReferenceAsync(FileAttachment attachment, string category, int referenceId)
+        {
+            if (!_attachmentReferences.ContainsKey(category))
+            {
+                _attachmentReferences[category] = new List<(int, FileAttachment)>();
+            }
+
+            _attachmentReferences[category].Add((referenceId, attachment));
+            return Task.CompletedTask;
+        }
+
+        public string GetFileUrl(FileAttachment attachment)
+        {
+            return attachment?.FilePath;
+        }
+
+        public Task<int> GetNextAttachmentId()
+        {
+            return Task.FromResult(_nextAttachmentId++);
         }
     }
 }
