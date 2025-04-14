@@ -10,6 +10,7 @@ namespace FcmsPortal.Services
         Staff AddStaff(Staff staff);
         Guardian AddGuardian(Guardian guardian);
         Student AddStudent(Student student);
+        LearningPath AddLearningPath(LearningPath learningPath);
         IEnumerable<Student> GetStudents();
         IEnumerable<Staff> GetStaff();
         IEnumerable<Guardian> GetGuardians();
@@ -460,6 +461,18 @@ namespace FcmsPortal.Services
             learningPaths.Remove(learningPath);
             _school.LearningPath = learningPaths;
             return true;
+        }
+
+        public LearningPath AddLearningPath(LearningPath learningPath)
+        {
+            if (learningPath.Id <= 0)
+            {
+                learningPath.Id = _school.LearningPath.Any() ? _school.LearningPath.Max(lp => lp.Id) + 1 : 1;
+            }
+            var learningPaths = _school.LearningPath.ToList();
+            learningPaths.Add(learningPath);
+            _school.LearningPath = learningPaths;
+            return learningPath;
         }
     }
 }
