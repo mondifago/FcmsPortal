@@ -38,6 +38,10 @@ namespace FcmsPortal.Services
         Task<List<FileAttachment>> GetAttachmentsAsync(string category, int referenceId);
         Task SaveAttachmentReferenceAsync(FileAttachment attachment, string category, int referenceId);
         string GetFileUrl(FileAttachment attachment);
+        IEnumerable<LearningPath> GetAllLearningPaths();
+        LearningPath GetLearningPathById(int id);
+        bool DeleteLearningPath(int id);
+
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -431,6 +435,31 @@ namespace FcmsPortal.Services
         public Task<int> GetNextAttachmentId()
         {
             return Task.FromResult(_nextAttachmentId++);
+        }
+
+        public IEnumerable<LearningPath> GetLearningPaths() => _school.LearningPath;
+
+        public LearningPath GetLearningPathById(int id)
+        {
+            return _school.LearningPath.FirstOrDefault(lp => lp.Id == id);
+        }
+
+        public IEnumerable<LearningPath> GetAllLearningPaths()
+        {
+            return _school.LearningPath;
+        }
+
+        public bool DeleteLearningPath(int id)
+        {
+            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == id);
+            if (learningPath == null)
+            {
+                return false;
+            }
+            var learningPaths = _school.LearningPath.ToList();
+            learningPaths.Remove(learningPath);
+            _school.LearningPath = learningPaths;
+            return true;
         }
     }
 }
