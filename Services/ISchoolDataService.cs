@@ -24,6 +24,7 @@ namespace FcmsPortal.Services
         void UpdateGuardian(Guardian guardian);
         void UpdateStaff(Staff staff);
         void UpdateStudent(Student student);
+        void UpdateLearningPath(LearningPath learningPath);
         bool DeleteStudent(int studentId);
         bool DeleteStaff(int staffId);
         bool DeleteGuardian(int guardianId);
@@ -473,6 +474,21 @@ namespace FcmsPortal.Services
             learningPaths.Add(learningPath);
             _school.LearningPath = learningPaths;
             return learningPath;
+        }
+
+        public void UpdateLearningPath(LearningPath learningPath)
+        {
+            var existingLearningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPath.Id);
+            if (existingLearningPath != null)
+            {
+                existingLearningPath.EducationLevel = learningPath.EducationLevel;
+                existingLearningPath.ClassLevel = learningPath.ClassLevel;
+                existingLearningPath.Semester = learningPath.Semester;
+                existingLearningPath.FeePerSemester = learningPath.FeePerSemester;
+                existingLearningPath.ApprovalStatus = learningPath.ApprovalStatus;
+                existingLearningPath.Students = learningPath.Students;
+                existingLearningPath.StudentsPaymentSuccessful = learningPath.StudentsPaymentSuccessful;
+            }
         }
     }
 }
