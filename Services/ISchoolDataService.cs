@@ -485,6 +485,7 @@ namespace FcmsPortal.Services
                 existingLearningPath.ClassLevel = learningPath.ClassLevel;
                 existingLearningPath.Semester = learningPath.Semester;
                 existingLearningPath.FeePerSemester = learningPath.FeePerSemester;
+                existingLearningPath.AcademicYearStart = learningPath.AcademicYearStart;
                 existingLearningPath.ApprovalStatus = learningPath.ApprovalStatus;
                 existingLearningPath.Students = learningPath.Students;
                 existingLearningPath.StudentsPaymentSuccessful = learningPath.StudentsPaymentSuccessful;

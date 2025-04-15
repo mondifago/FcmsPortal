@@ -9,6 +9,18 @@ namespace FcmsPortal.Models
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
         public Semester Semester { get; set; }
+        public DateTime AcademicYearStart { get; set; } = DateTime.Now;
+
+        [NotMapped]
+        public string AcademicYear
+        {
+            get
+            {
+                int startYear = AcademicYearStart.Year;
+                int endYear = startYear + 1;
+                return $"{startYear}-{endYear}";
+            }
+        }
         public double FeePerSemester { get; set; }
         [NotMapped]
         public Dictionary<Student, CourseGrade> GradesList { get; set; } = new();
