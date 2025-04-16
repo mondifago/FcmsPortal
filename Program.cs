@@ -394,8 +394,10 @@ namespace FcmsPortal
             learningPath1.EducationLevel = EducationLevel.SeniorCollege;
             learningPath1.ClassLevel = ClassLevel.SC_3;
             learningPath1.Semester = Semester.First;
+            learningPath1.FeePerSemester = 50000;
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
-            learningPath1.Students = new List<Student>() { student1, student2, student3 };
+            var learning1Students = LogicMethods.GetStudentsByLevel(fcmSchool, EducationLevel.SeniorCollege, ClassLevel.SC_3);
+            LogicMethods.AddMultipleStudentsToLearningPath(learningPath1, learning1Students);
             fcmSchool.LearningPath.Add(learningPath1);
 
             LearningPath learningPath2 = new LearningPath();
