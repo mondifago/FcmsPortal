@@ -2,6 +2,7 @@
 {
     public enum EducationLevel
     {
+        None,
         Kindergarten,
         Primary,
         JuniorCollege,
