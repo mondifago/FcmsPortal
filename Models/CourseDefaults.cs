@@ -6,6 +6,7 @@
         {
             return educationLevel switch
             {
+                Enums.EducationLevel.None => new List<string>(),
                 Enums.EducationLevel.Kindergarten => new List<string>
                 {
                     "Mathematics",
@@ -42,7 +43,7 @@
                    "Cultural And Creative Art",
                    "Basic Science And Technology",
                    "Business Studies",
-                   "Crs",
+                   "CRS",
                    "History",
                    "French"
                 },
