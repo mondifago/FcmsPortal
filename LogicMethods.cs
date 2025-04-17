@@ -76,6 +76,20 @@ public static class LogicMethods
             .ToList();
     }
 
+    //Get a list of all distinct ClassLevels for a specific EducationLevel
+    public static List<ClassLevel> GetAvailableClassLevels(EducationLevel educationLevel)
+    {
+        var classLevelMappingService = new ClassLevelMapping();
+        var classLevelMappings = classLevelMappingService.GetClassLevelsByEducationLevel();
+
+        if (educationLevel == EducationLevel.None)
+            return new List<ClassLevel>();
+
+        return classLevelMappings.TryGetValue(educationLevel, out var levels)
+            ? levels
+            : new List<ClassLevel>();
+    }
+
     /// <summary>
     /// Gets a list of all distinct ClassLevels for a specific EducationLevel
     /// </summary>
