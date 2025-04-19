@@ -394,6 +394,7 @@ namespace FcmsPortal
             learningPath1.EducationLevel = EducationLevel.SeniorCollege;
             learningPath1.ClassLevel = ClassLevel.SC_3;
             learningPath1.Semester = Semester.First;
+            learningPath1.AcademicYearStart = new DateTime(2026, 01, 01);
             learningPath1.FeePerSemester = 50000;
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
             var learning1Students = LogicMethods.GetStudentsByLevel(fcmSchool, EducationLevel.SeniorCollege, ClassLevel.SC_3);
@@ -405,6 +406,7 @@ namespace FcmsPortal
             learningPath2.EducationLevel = EducationLevel.Kindergarten;
             learningPath2.ClassLevel = ClassLevel.KG_Nursery;
             learningPath2.Semester = Semester.First;
+            learningPath2.AcademicYearStart = new DateTime(2026, 01, 01);
             learningPath2.Schedule = new List<ScheduleEntry> { };
             learningPath2.Students = new List<Student>() { };
             fcmSchool.LearningPath.Add(learningPath2);
