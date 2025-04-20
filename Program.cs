@@ -104,8 +104,10 @@ namespace FcmsPortal
             student1.Person.PersonalCalendar.Id = 177;
             student1.Person.PersonalCalendar.Name = "Student1's Study Calendar";
             student1.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
+            student1.Person.SchoolFees = new SchoolFees();
             LogicMethods.AddStudentToGuardianWards(guardian1, student1);
             LogicMethods.AddStudentToSchool(fcmSchool, student1);
+            LogicMethods.MakePaymentForStudent(student1, 30000, PaymentMethod.Cash);
 
             //create student 4
             Student student4 = new Student();

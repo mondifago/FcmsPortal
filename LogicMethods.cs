@@ -1034,16 +1034,6 @@ public static class LogicMethods
         return totalPayments >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR;
     }
 
-    //get student's outstanding balance
-    public static double GetStudentOutstandingBalance(Student student)
-    {
-        if (student?.Person?.SchoolFees == null)
-        {
-            throw new ArgumentException("Invalid student or school fees record.");
-        }
-        return student.Person.SchoolFees.Balance;
-    }
-
     //generate payment summery
     public static List<string> GeneratePaymentSummaryForStudent(Student student)
     {
