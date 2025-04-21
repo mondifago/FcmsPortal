@@ -360,7 +360,7 @@ namespace FcmsPortal
             //create schedule for all existing class sessions
             ScheduleEntry scheduleEntry1 = new ScheduleEntry();
             scheduleEntry1.Id = 11;
-            scheduleEntry1.DateTime = new DateTime(2026, 04, 15, 10, 00, 00);
+            scheduleEntry1.DateTime = new DateTime(2025, 04, 15, 10, 00, 00);
             scheduleEntry1.Duration = TimeSpan.FromMinutes(30);
             scheduleEntry1.ClassSession = classSession1;
             scheduleEntry1.Title = "Biology Class";
@@ -368,7 +368,7 @@ namespace FcmsPortal
 
             ScheduleEntry scheduleEntry2 = new ScheduleEntry();
             scheduleEntry2.Id = 22;
-            scheduleEntry2.DateTime = new DateTime(2026, 04, 17, 10, 00, 00);
+            scheduleEntry2.DateTime = new DateTime(2025, 04, 17, 10, 00, 00);
             scheduleEntry2.Duration = TimeSpan.FromMinutes(30);
             scheduleEntry2.ClassSession = classSession2;
             scheduleEntry2.Title = "Biology Class";
@@ -376,7 +376,7 @@ namespace FcmsPortal
 
             ScheduleEntry scheduleEntry3 = new ScheduleEntry();
             scheduleEntry3.Id = 33;
-            scheduleEntry3.DateTime = new DateTime(2026, 04, 15, 11, 00, 00);
+            scheduleEntry3.DateTime = new DateTime(2025, 04, 15, 11, 00, 00);
             scheduleEntry3.Duration = TimeSpan.FromMinutes(30);
             scheduleEntry3.ClassSession = classSession3;
             scheduleEntry3.Title = "Geography Class";
@@ -384,7 +384,7 @@ namespace FcmsPortal
 
             ScheduleEntry scheduleEntry4 = new ScheduleEntry();
             scheduleEntry4.Id = 44;
-            scheduleEntry4.DateTime = new DateTime(2026, 04, 17, 09, 00, 00);
+            scheduleEntry4.DateTime = new DateTime(2025, 04, 17, 11, 00, 00);
             scheduleEntry4.Duration = TimeSpan.FromMinutes(30);
             scheduleEntry4.ClassSession = classSession4;
             scheduleEntry4.Title = "Geography Class";

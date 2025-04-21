@@ -22,17 +22,6 @@ public static class LogicMethods
             .ToList();
     }
 
-    //Get Students by GuardianID
-    public static List<Student> GetStudentsByGuardianId(School school, int guardianId)
-    {
-        if (school == null)
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
-
-        return school.Students
-            .Where(student => student.GuardianId == guardianId)
-            .ToList();
-    }
-
     //filter staff based on specified education level
     public static List<Staff> GetStaffByEducationLevel(School school, EducationLevel educationLevel)
     {
@@ -42,11 +31,7 @@ public static class LogicMethods
             .Where(staff => staff.Person.EducationLevel == educationLevel).ToList();
     }
 
-    /// <summary>
-    /// Gets a list of all distinct EducationLevels found in the school's LearningPaths
-    /// </summary>
-    /// <param name="school">The school to analyze</param>
-    /// <returns>List of distinct EducationLevels</returns>
+    //Gets a list of all distinct EducationLevels found in the school's LearningPaths
     public static List<EducationLevel> GetExistingEducationLevels(School school)
     {
         if (school?.LearningPath == null || !school.LearningPath.Any())
@@ -59,11 +44,7 @@ public static class LogicMethods
             .ToList();
     }
 
-    /// <summary>
-    /// Gets a list of all distinct ClassLevels found in the school's LearningPaths
-    /// </summary>
-    /// <param name="school">The school to analyze</param>
-    /// <returns>List of distinct ClassLevels</returns>
+    //Gets a list of all distinct ClassLevels found in the school's LearningPaths
     public static List<ClassLevel> GetExistingClassLevels(this School school)
     {
         if (school?.LearningPath == null || !school.LearningPath.Any())
@@ -76,7 +57,7 @@ public static class LogicMethods
             .ToList();
     }
 
-    //Get a list of all distinct ClassLevels for a specific EducationLevel
+    //Get a list of all distinct ClassLevels for a specific EducationLevel from the ClassLevelMapping service 
     public static List<ClassLevel> GetAvailableClassLevels(EducationLevel educationLevel)
     {
         var classLevelMappingService = new ClassLevelMapping();
@@ -91,7 +72,7 @@ public static class LogicMethods
     }
 
     /// <summary>
-    /// Gets a list of all distinct ClassLevels for a specific EducationLevel
+    /// Gets a list of all distinct ClassLevels for a specific EducationLevel from the school's Existing LearningPath
     /// </summary>
     /// <param name="school">The school to analyze</param>
     /// <param name="educationLevel">The education level to filter by</param>
