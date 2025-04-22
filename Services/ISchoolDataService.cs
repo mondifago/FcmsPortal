@@ -43,7 +43,12 @@ namespace FcmsPortal.Services
         IEnumerable<LearningPath> GetAllLearningPaths();
         LearningPath GetLearningPathById(int id);
         bool DeleteLearningPath(int id);
-
+        ScheduleEntry AddScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry);
+        IEnumerable<ScheduleEntry> GetScheduleEntriesByLearningPath(int learningPathId);
+        IEnumerable<ScheduleEntry> GetScheduleEntriesByDate(int learningPathId, DateTime date);
+        ScheduleEntry GetScheduleEntryById(int learningPathId, int scheduleEntryId);
+        bool UpdateScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry);
+        bool DeleteScheduleEntry(int learningPathId, int scheduleEntryId);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -491,5 +496,88 @@ namespace FcmsPortal.Services
                 existingLearningPath.StudentsPaymentSuccessful = learningPath.StudentsPaymentSuccessful;
             }
         }
+
+        public ScheduleEntry AddScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry)
+        {
+            var learningPath = GetLearningPathById(learningPathId);
+            if (learningPath == null)
+                return null;
+
+            int nextId = 1;
+            if (learningPath.Schedule.Any())
+            {
+                nextId = learningPath.Schedule.Max(s => s.Id) + 1;
+            }
+            scheduleEntry.Id = nextId;
+
+            learningPath.Schedule.Add(scheduleEntry);
+            UpdateLearningPath(learningPath);
+
+            return scheduleEntry;
+        }
+
+        public IEnumerable<ScheduleEntry> GetScheduleEntriesByLearningPath(int learningPathId)
+        {
+            var learningPath = GetLearningPathById(learningPathId);
+            if (learningPath == null)
+                return Enumerable.Empty<ScheduleEntry>();
+
+            return learningPath.Schedule.ToList();
+        }
+
+        public IEnumerable<ScheduleEntry> GetScheduleEntriesByDate(int learningPathId, DateTime date)
+        {
+            var learningPath = GetLearningPathById(learningPathId);
+            if (learningPath == null)
+                return Enumerable.Empty<ScheduleEntry>();
+
+            return learningPath.Schedule
+                .Where(s => s.DateTime.Date == date.Date)
+                .OrderBy(s => s.DateTime.TimeOfDay)
+                .ToList();
+        }
+
+        public ScheduleEntry GetScheduleEntryById(int learningPathId, int scheduleEntryId)
+        {
+            var learningPath = GetLearningPathById(learningPathId);
+            if (learningPath == null)
+                return null;
+
+            return learningPath.Schedule.FirstOrDefault(s => s.Id == scheduleEntryId);
+        }
+
+        public bool UpdateScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry)
+        {
+            var learningPath = GetLearningPathById(learningPathId);
+            if (learningPath == null)
+                return false;
+
+            var existingEntry = learningPath.Schedule.FirstOrDefault(s => s.Id == scheduleEntry.Id);
+            if (existingEntry == null)
+                return false;
+
+            learningPath.Schedule.Remove(existingEntry);
+            learningPath.Schedule.Add(scheduleEntry);
+            UpdateLearningPath(learningPath);
+
+            return true;
+        }
+
+        public bool DeleteScheduleEntry(int learningPathId, int scheduleEntryId)
+        {
+            var learningPath = GetLearningPathById(learningPathId);
+            if (learningPath == null)
+                return false;
+
+            var entry = learningPath.Schedule.FirstOrDefault(s => s.Id == scheduleEntryId);
+            if (entry == null)
+                return false;
+
+            learningPath.Schedule.Remove(entry);
+            UpdateLearningPath(learningPath);
+
+            return true;
+        }
     }
+
 }
