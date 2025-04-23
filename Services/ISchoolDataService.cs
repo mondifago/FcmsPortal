@@ -28,6 +28,7 @@ namespace FcmsPortal.Services
         bool DeleteStudent(int studentId);
         bool DeleteStaff(int staffId);
         bool DeleteGuardian(int guardianId);
+        bool RemoveClassSessionFromScheduleEntry(int learningPathId, int scheduleEntryId);
 
         Task<int> GetNextThreadId();
         Task<int> GetNextPostId();
@@ -577,6 +578,20 @@ namespace FcmsPortal.Services
             UpdateLearningPath(learningPath);
 
             return true;
+        }
+
+        public bool RemoveClassSessionFromScheduleEntry(int learningPathId, int scheduleEntryId)
+        {
+            var learningPath = GetLearningPathById(learningPathId);
+            if (learningPath == null)
+                return false;
+
+            var scheduleEntry = learningPath.Schedule.FirstOrDefault(s => s.Id == scheduleEntryId);
+            if (scheduleEntry == null)
+                return false;
+
+            scheduleEntry.ClassSession = null;
+            return UpdateScheduleEntry(learningPathId, scheduleEntry);
         }
     }
 
