@@ -32,7 +32,6 @@ namespace FcmsPortal.Services
 
         Task<int> GetNextThreadId();
         Task<int> GetNextPostId();
-        Task<int> GetNextAttachmentId();
         Task AddDiscussionThread(DiscussionThread thread);
         Task UpdateDiscussionThread(DiscussionThread thread);
         Task<DiscussionThread> GetDiscussionThread(int id);
@@ -40,7 +39,6 @@ namespace FcmsPortal.Services
         Task DeleteFileAsync(FileAttachment attachment);
         Task<List<FileAttachment>> GetAttachmentsAsync(string category, int referenceId);
         Task SaveAttachmentReferenceAsync(FileAttachment attachment, string category, int referenceId);
-        string GetFileUrl(FileAttachment attachment);
         IEnumerable<LearningPath> GetAllLearningPaths();
         LearningPath GetLearningPathById(int id);
         bool DeleteLearningPath(int id);
@@ -50,6 +48,21 @@ namespace FcmsPortal.Services
         ScheduleEntry GetScheduleEntryById(int learningPathId, int scheduleEntryId);
         bool UpdateScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry);
         bool DeleteScheduleEntry(int learningPathId, int scheduleEntryId);
+
+        // Homework-related methods
+        Homework GetHomeworkById(int id);
+        List<Homework> GetHomeworksByClassSession(int classSessionId);
+        Homework AddHomework(Homework homework);
+        void UpdateHomework(Homework homework);
+        bool DeleteHomework(int id);
+
+        // Homework submission-related methods
+        HomeworkSubmission GetHomeworkSubmissionById(int id);
+        List<HomeworkSubmission> GetSubmissionsByHomework(int homeworkId);
+        List<HomeworkSubmission> GetSubmissionsByStudent(int studentId);
+        HomeworkSubmission AddHomeworkSubmission(HomeworkSubmission submission);
+        void UpdateHomeworkSubmission(HomeworkSubmission submission);
+        bool DeleteHomeworkSubmission(int id);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -303,17 +316,6 @@ namespace FcmsPortal.Services
             return Task.FromResult(nextId);
         }
 
-        /*public Task<int> GetNextAttachmentId()
-        {
-            int nextId = 1;
-            if (_school.DiscussionThreads.Any())
-            {
-                var allAttachments = _school.DiscussionThreads.SelectMany(t => t.Attachments);
-                nextId = allAttachments.Any() ? allAttachments.Max(a => a.Id) + 1 : 1;
-            }
-            return Task.FromResult(nextId);
-        }*/
-
         public Task AddDiscussionThread(DiscussionThread thread)
         {
             var threads = _school.DiscussionThreads;
@@ -346,39 +348,34 @@ namespace FcmsPortal.Services
         {
             if (file == null)
                 throw new ArgumentNullException(nameof(file));
-
             if (string.IsNullOrWhiteSpace(category))
                 throw new ArgumentException("Category cannot be null or empty.", nameof(category));
+            if (file.Size > FcmsConstants.MAX_FILE_SIZE)
+                throw new InvalidOperationException($"File size exceeds the {FcmsConstants.MAX_FILE_SIZE_MB}MB limit. File size: {file.Size / FcmsConstants.BYTES_IN_MEGABYTE:F2}MB");
 
-            // Sanitize category name for folder path (remove invalid chars)
             var folderName = Path.GetInvalidFileNameChars()
                 .Aggregate(category, (current, c) => current.Replace(c, '_'));
 
-            // Create destination folder within wwwroot
             var targetFolder = Path.Combine(_environment.WebRootPath, folderName);
             if (!Directory.Exists(targetFolder))
             {
                 Directory.CreateDirectory(targetFolder);
             }
 
-            // Generate unique filename to prevent overwrites
             var extension = Path.GetExtension(file.Name);
             var uniqueFileName = $"{Guid.NewGuid()}{extension}";
             var filePath = Path.Combine(targetFolder, uniqueFileName);
 
-            // Save the file
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.OpenReadStream(FcmsConstants.MAX_FILE_SIZE).CopyToAsync(stream);
             }
 
-            // Create public URL path
             var publicUrl = $"/{folderName}/{uniqueFileName}";
 
-            // Create file attachment record
             var attachment = new FileAttachment
             {
-                Id = await GetNextAttachmentId(),
+                Id = GetNextAttachmentId(),
                 FileName = file.Name,
                 FilePath = publicUrl,
                 FileSize = file.Size,
@@ -388,19 +385,22 @@ namespace FcmsPortal.Services
             return attachment;
         }
 
+        private int GetNextAttachmentId()
+        {
+            return _nextAttachmentId++;
+        }
+
         public Task DeleteFileAsync(FileAttachment attachment)
         {
             if (attachment == null)
                 throw new ArgumentNullException(nameof(attachment));
 
             var filePath = Path.Combine(_environment.WebRootPath, attachment.FilePath.TrimStart('/'));
-
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
             }
 
-            // Remove from attachment references
             foreach (var categoryDict in _attachmentReferences)
             {
                 categoryDict.Value.RemoveAll(x => x.attachment.Id == attachment.Id);
@@ -417,7 +417,6 @@ namespace FcmsPortal.Services
                     .Where(x => x.referenceId == referenceId)
                     .Select(x => x.attachment)
                     .ToList();
-
                 return Task.FromResult(attachments);
             }
 
@@ -426,6 +425,9 @@ namespace FcmsPortal.Services
 
         public Task SaveAttachmentReferenceAsync(FileAttachment attachment, string category, int referenceId)
         {
+            if (attachment == null)
+                throw new ArgumentNullException(nameof(attachment));
+
             if (!_attachmentReferences.ContainsKey(category))
             {
                 _attachmentReferences[category] = new List<(int, FileAttachment)>();
@@ -433,16 +435,6 @@ namespace FcmsPortal.Services
 
             _attachmentReferences[category].Add((referenceId, attachment));
             return Task.CompletedTask;
-        }
-
-        public string GetFileUrl(FileAttachment attachment)
-        {
-            return attachment?.FilePath;
-        }
-
-        public Task<int> GetNextAttachmentId()
-        {
-            return Task.FromResult(_nextAttachmentId++);
         }
 
         public IEnumerable<LearningPath> GetLearningPaths() => _school.LearningPath;
@@ -592,6 +584,245 @@ namespace FcmsPortal.Services
 
             scheduleEntry.ClassSession = null;
             return UpdateScheduleEntry(learningPathId, scheduleEntry);
+        }
+
+        // Homework-related method implementations
+        public Homework GetHomeworkById(int id)
+        {
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.HomeworkDetails != null)
+                    {
+                        foreach (var homework in schedule.ClassSession.HomeworkDetails)
+                        {
+                            if (homework.Id == id)
+                                return homework;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public List<Homework> GetHomeworksByClassSession(int classSessionId)
+        {
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.Id == classSessionId)
+                    {
+                        return schedule.ClassSession.HomeworkDetails.ToList();
+                    }
+                }
+            }
+            return new List<Homework>();
+        }
+
+        public Homework AddHomework(Homework homework)
+        {
+            if (homework == null)
+                return null;
+
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.Id == homework.ClassSessionId)
+                    {
+                        if (schedule.ClassSession.HomeworkDetails == null)
+                            schedule.ClassSession.HomeworkDetails = new List<Homework>();
+
+                        // Generate new ID if needed
+                        if (homework.Id <= 0)
+                        {
+                            int nextId = 1;
+                            if (schedule.ClassSession.HomeworkDetails.Any())
+                            {
+                                nextId = schedule.ClassSession.HomeworkDetails.Max(h => h.Id) + 1;
+                            }
+                            homework.Id = nextId;
+                        }
+
+                        schedule.ClassSession.HomeworkDetails.Add(homework);
+                        return homework;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public void UpdateHomework(Homework homework)
+        {
+            if (homework == null)
+                return;
+
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.HomeworkDetails != null)
+                    {
+                        var existingHomework = schedule.ClassSession.HomeworkDetails
+                            .FirstOrDefault(h => h.Id == homework.Id);
+
+                        if (existingHomework != null)
+                        {
+                            // Update properties
+                            existingHomework.Title = homework.Title;
+                            existingHomework.AssignedDate = homework.AssignedDate;
+                            existingHomework.DueDate = homework.DueDate;
+                            existingHomework.Question = homework.Question;
+                            existingHomework.Attachments = homework.Attachments;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        public bool DeleteHomework(int id)
+        {
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.HomeworkDetails != null)
+                    {
+                        var homework = schedule.ClassSession.HomeworkDetails
+                            .FirstOrDefault(h => h.Id == id);
+
+                        if (homework != null)
+                        {
+                            return schedule.ClassSession.HomeworkDetails.Remove(homework);
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        // Homework submission-related method implementations
+        public HomeworkSubmission GetHomeworkSubmissionById(int id)
+        {
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.HomeworkDetails != null)
+                    {
+                        foreach (var homework in schedule.ClassSession.HomeworkDetails)
+                        {
+                            var submission = homework.Submissions?.FirstOrDefault(s => s.Id == id);
+                            if (submission != null)
+                                return submission;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public List<HomeworkSubmission> GetSubmissionsByHomework(int homeworkId)
+        {
+            var homework = GetHomeworkById(homeworkId);
+            return homework?.Submissions?.ToList() ?? new List<HomeworkSubmission>();
+        }
+
+        public List<HomeworkSubmission> GetSubmissionsByStudent(int studentId)
+        {
+            var result = new List<HomeworkSubmission>();
+
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.HomeworkDetails != null)
+                    {
+                        foreach (var homework in schedule.ClassSession.HomeworkDetails)
+                        {
+                            var submissions = homework.Submissions?
+                                .Where(s => s.Student?.Id == studentId)
+                                .ToList();
+
+                            if (submissions != null && submissions.Any())
+                                result.AddRange(submissions);
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public HomeworkSubmission AddHomeworkSubmission(HomeworkSubmission submission)
+        {
+            if (submission == null)
+                return null;
+
+            var homework = GetHomeworkById(submission.Homework?.Id ?? 0);
+            if (homework == null)
+                return null;
+
+            if (homework.Submissions == null)
+                homework.Submissions = new List<HomeworkSubmission>();
+
+            // Generate new ID if needed
+            if (submission.Id <= 0)
+            {
+                int nextId = 1;
+                if (homework.Submissions.Any())
+                {
+                    nextId = homework.Submissions.Max(s => s.Id) + 1;
+                }
+                submission.Id = nextId;
+            }
+
+            homework.Submissions.Add(submission);
+            return submission;
+        }
+
+        public void UpdateHomeworkSubmission(HomeworkSubmission submission)
+        {
+            if (submission == null)
+                return;
+
+            var existingSubmission = GetHomeworkSubmissionById(submission.Id);
+            if (existingSubmission != null)
+            {
+                // Update properties
+                existingSubmission.Answer = submission.Answer;
+                existingSubmission.IsGraded = submission.IsGraded;
+                existingSubmission.FeedbackComment = submission.FeedbackComment;
+                existingSubmission.HomeworkGrade = submission.HomeworkGrade;
+            }
+        }
+
+        public bool DeleteHomeworkSubmission(int id)
+        {
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.HomeworkDetails != null)
+                    {
+                        foreach (var homework in schedule.ClassSession.HomeworkDetails)
+                        {
+                            if (homework.Submissions != null)
+                            {
+                                var submission = homework.Submissions.FirstOrDefault(s => s.Id == id);
+                                if (submission != null)
+                                {
+                                    return homework.Submissions.Remove(submission);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 

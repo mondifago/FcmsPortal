@@ -7,7 +7,11 @@
         public const int SEMESTER_3_ENDMONTH = 12;
         public const int GRADE_ROUNDING_DIGIT = 2;
         public const int NUMBER_OF_SEMESTERS = 3;
-        public const long MAX_FILE_SIZE = 10 * 1024 * 1024;
+        public const int BYTES_IN_KILOBYTE = 1024;
+        public const int KILOBYTES_IN_MEGABYTE = 1024;
+        public const int MAX_FILE_SIZE_MB = 5;
+        public const long MAX_FILE_SIZE = MAX_FILE_SIZE_MB * BYTES_IN_KILOBYTE * KILOBYTES_IN_MEGABYTE;
+        public const double BYTES_IN_MEGABYTE = BYTES_IN_KILOBYTE * KILOBYTES_IN_MEGABYTE;
         public const double TOTAL_SCORE = 100.0;
         public const double A_GRADE_MIN = 70.0;
         public const double B_GRADE_MIN = 60.0;

@@ -1742,7 +1742,7 @@ public static class LogicMethods
             AssignedDate = DateTime.Now,
             DueDate = dueDate,
             ClassSession = classSession,
-            Questions = new List<string>(questions),
+            Question = new List<string>(questions),
             Attachments = attachments ?? new List<FileAttachment>(),
             Submissions = new List<HomeworkSubmission>(),
             Discussions = new List<DiscussionThread>()
@@ -1861,46 +1861,6 @@ public static class LogicMethods
 
         thread.Replies.Add(reply);
         thread.UpdateLastUpdated();
-    }
-
-
-    //Upload attachment
-    public static void AttachFile(List<FileAttachment> attachments, string fileName, string filePath, long fileSize)
-    {
-        if (attachments == null)
-            throw new ArgumentNullException(nameof(attachments), "FileAttachment list cannot be null.");
-
-        if (string.IsNullOrWhiteSpace(fileName))
-            throw new ArgumentException("File name cannot be null or empty.", nameof(fileName));
-
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentException("File path cannot be null or empty.", nameof(filePath));
-
-        if (fileSize <= 0)
-            throw new ArgumentException("File size must be greater than zero.", nameof(fileSize));
-
-        if (fileSize > FcmsConstants.MAX_FILE_SIZE)
-            throw new InvalidOperationException($"File size exceeds the 10MB limit. File size: {fileSize / (1024.0 * 1024.0):F2}MB");
-
-        var attachment = new FileAttachment
-        {
-            Id = attachments.Count + 1,
-            FileName = fileName,
-            FilePath = filePath,
-            FileSize = fileSize,
-            UploadDate = DateTime.Now
-        };
-
-        attachments.Add(attachment);
-    }
-
-    //Download FileAttachment
-    public static string DownloadAttachment(FileAttachment attachment)
-    {
-        if (attachment == null)
-            throw new ArgumentNullException(nameof(attachment), "FileAttachment cannot be null.");
-
-        return attachment.FilePath;
     }
 
     /// <summary>
