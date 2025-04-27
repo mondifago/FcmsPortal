@@ -1808,8 +1808,8 @@ public static class LogicMethods
     }
 
 
-    //Start discussion open or private
-    public static DiscussionThread StartDiscussion(int threadId, int firstPostId, Person author, string comment, List<FileAttachment> attachments = null)
+    //Start discussion 
+    public static DiscussionThread StartDiscussion(int threadId, int firstPostId, Person author, string comment)
     {
         if (author == null)
             throw new ArgumentNullException(nameof(author), "Author cannot be null.");
@@ -1831,7 +1831,6 @@ public static class LogicMethods
             Id = threadId,
             FirstPost = firstPost,
             Replies = new List<DiscussionPost>(),
-            Attachments = attachments ?? new List<FileAttachment>(),
             CreatedAt = now,
             LastUpdatedAt = now
         };
