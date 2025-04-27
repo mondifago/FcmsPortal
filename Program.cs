@@ -325,7 +325,7 @@ namespace FcmsPortal
             classSession1.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
             classSession1.Topic = "Digestive System";
             classSession1.Description = "Function of Organs in Digestive System";
-            classSession1.LessonNote =
+            classSession1.LessonPlan =
                 "Make the students understand the function of every organ within the Digestive system";
             classSession1.Teacher = staff2;
 
@@ -335,7 +335,7 @@ namespace FcmsPortal
             classSession2.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
             classSession2.Topic = "Digestive System";
             classSession2.Description = "Function of Enzymes in Digestive System";
-            classSession2.LessonNote =
+            classSession2.LessonPlan =
                 "Make the students understand the function of every Enzyme within the Digestive system";
             classSession2.Teacher = staff2;
 
@@ -345,7 +345,7 @@ namespace FcmsPortal
             classSession3.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
             classSession3.Topic = "The Solar System";
             classSession3.Description = "Planets of the solar System";
-            classSession3.LessonNote = "Make the students know the name of the nine planets";
+            classSession3.LessonPlan = "Make the students know the name of the nine planets";
             classSession3.Teacher = staff3;
 
             //create another geography class session
@@ -354,7 +354,7 @@ namespace FcmsPortal
             classSession4.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
             classSession4.Topic = "Map of the earth";
             classSession4.Description = "Introduction to Continents";
-            classSession4.LessonNote = "Make the students know the name and location of the all the continents";
+            classSession4.LessonPlan = "Make the students know the name and location of the all the continents";
             classSession4.Teacher = staff3;
 
             //create schedule for all existing class sessions
@@ -761,7 +761,7 @@ namespace FcmsPortal
             classSession1.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
             classSession1.Topic = "Digestive System";
             classSession1.Description = "Function of Organs in Digestive System";
-            classSession1.LessonNote =
+            classSession1.LessonPlan =
                 "Make the students understand the function of every organ within the Digestive system";
             classSession1.Teacher = staff2;
 
@@ -771,7 +771,7 @@ namespace FcmsPortal
             classSession2.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
             classSession2.Topic = "Digestive System";
             classSession2.Description = "Function of Enzymes in Digestive System";
-            classSession2.LessonNote =
+            classSession2.LessonPlan =
                 "Make the students understand the function of every Enzyme within the Digestive system";
             classSession2.Teacher = staff2;
 
@@ -781,7 +781,7 @@ namespace FcmsPortal
             classSession3.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
             classSession3.Topic = "The Solar System";
             classSession3.Description = "Planets of the solar System";
-            classSession3.LessonNote = "Make the students know the name of the nine planets";
+            classSession3.LessonPlan = "Make the students know the name of the nine planets";
             classSession3.Teacher = staff3;
 
             //create another geography class session
@@ -790,7 +790,7 @@ namespace FcmsPortal
             classSession4.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[12];
             classSession4.Topic = "Map of the earth";
             classSession4.Description = "Introduction to Continents";
-            classSession4.LessonNote = "Make the students know the name and location of the all the continents";
+            classSession4.LessonPlan = "Make the students know the name and location of the all the continents";
             classSession4.Teacher = staff3;
 
             //create schedule for all existing class sessions
@@ -1089,7 +1089,7 @@ namespace FcmsPortal
                         Console.WriteLine($"    Course: {classSession.Course}");
                         Console.WriteLine($"    Topic: {classSession.Topic}");
                         Console.WriteLine($"    Description: {classSession.Description}");
-                        Console.WriteLine($"    Lesson Note: {classSession.LessonNote}");
+                        Console.WriteLine($"    Lesson Note: {classSession.LessonPlan}");
                     }
                 }
 
@@ -1110,7 +1110,7 @@ namespace FcmsPortal
                             Console.WriteLine($"    Course: {classSession.Course}");
                             Console.WriteLine($"    Topic: {classSession.Topic}");
                             Console.WriteLine($"    Description: {classSession.Description}");
-                            Console.WriteLine($"    Lesson Note: {classSession.LessonNote}");
+                            Console.WriteLine($"    Lesson Note: {classSession.LessonPlan}");
                         }
                     }
                 }

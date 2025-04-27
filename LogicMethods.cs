@@ -1720,37 +1720,6 @@ public static class LogicMethods
     /// Methods for Class Session Collarboration
     /// </summary>
 
-    //Assign Homework for class session
-    /*public static void AssignHomework(ClassSession classSession, string title, DateTime dueDate, List<string> questions, List<FileAttachment> attachments = null)
-    {
-        if (classSession == null)
-            throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
-
-        if (string.IsNullOrWhiteSpace(title))
-            throw new ArgumentException("Homework title cannot be null or empty.", nameof(title));
-
-        if (questions == null || !questions.Any())
-            throw new ArgumentException("Homework must have at least one question.", nameof(questions));
-
-        if (dueDate < DateTime.Now)
-            throw new ArgumentException("Due date cannot be in the past.", nameof(dueDate));
-
-        var homework = new Homework
-        {
-            Id = classSession.HomeworkDetails == null ? 1 : classSession.HomeworkDetails.Id + 1,
-            Title = title,
-            AssignedDate = DateTime.Now,
-            DueDate = dueDate,
-            ClassSession = classSession,
-            Question = new List<string>(questions),
-            Attachments = attachments ?? new List<FileAttachment>(),
-            Submissions = new List<HomeworkSubmission>(),
-            Discussions = new List<DiscussionThread>()
-        };
-
-        classSession.HomeworkDetails = homework;
-    }*/
-
     //Submit homework
     public static void SubmitHomework(Homework homework, Student student, string answer)
     {

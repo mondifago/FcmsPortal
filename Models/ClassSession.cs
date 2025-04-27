@@ -6,7 +6,7 @@
         public string Course { get; set; }
         public string Topic { get; set; }
         public string Description { get; set; }
-        public string LessonNote { get; set; }
+        public string LessonPlan { get; set; }
         public Staff Teacher { get; set; }
         public List<ClassAttendanceLogEntry> AttendanceLog { get; set; } = new List<ClassAttendanceLogEntry>();
         public List<Homework> HomeworkDetails { get; set; } = new();
