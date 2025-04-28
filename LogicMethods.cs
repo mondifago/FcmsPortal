@@ -919,6 +919,47 @@ public static class LogicMethods
         return curriculum;
     }
 
+    //Get or Create Curriculum for a Class Session
+    public static Curriculum GetOrCreateCurriculumForClassSession(School school, ClassSession session)
+    {
+        var educationLevel = session.Teacher?.Person?.EducationLevel ?? EducationLevel.None;
+        var classLevel = session.Teacher?.Person?.ClassLevel ?? ClassLevel.None;
+        var academicYear = DateTime.Now.Year;
+
+        var curriculum = school.Curricula
+            .FirstOrDefault(c =>
+                c.EducationLevel == educationLevel &&
+                c.ClassLevel == classLevel &&
+                c.Year == academicYear &&
+                c.Course == session.Course);
+
+        if (curriculum == null)
+        {
+            curriculum = new Curriculum
+            {
+                Id = school.Curricula.Any() ? school.Curricula.Max(c => c.Id) + 1 : 1,
+                Year = academicYear,
+                EducationLevel = educationLevel,
+                ClassLevel = classLevel,
+                Course = session.Course,
+                Topic = session.Topic,
+                Description = session.Description,
+                LessonNote = session.LessonPlan,
+                Semesters = new List<SemesterCurriculum>()
+            };
+
+            school.Curricula.Add(curriculum);
+        }
+        else
+        {
+            curriculum.Topic = session.Topic;
+            curriculum.Description = session.Description;
+            curriculum.LessonNote = session.LessonPlan;
+        }
+
+        return curriculum;
+    }
+
     /// <summary>
     /// Methods for Payment
     /// </summary>
