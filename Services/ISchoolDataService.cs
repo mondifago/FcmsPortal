@@ -63,6 +63,8 @@ namespace FcmsPortal.Services
         HomeworkSubmission AddHomeworkSubmission(HomeworkSubmission submission);
         void UpdateHomeworkSubmission(HomeworkSubmission submission);
         bool DeleteHomeworkSubmission(int id);
+        bool UpdateClassSession(ClassSession classSession);
+        bool UpdateCurriculum(Curriculum curriculum);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -823,6 +825,63 @@ namespace FcmsPortal.Services
                 }
             }
             return false;
+        }
+
+        public bool UpdateClassSession(ClassSession classSession)
+        {
+            try
+            {
+                var found = false;
+
+                foreach (var learningPath in _school.LearningPath)
+                {
+                    foreach (var schedule in learningPath.Schedule)
+                    {
+                        if (schedule.ClassSession?.Id == classSession.Id)
+                        {
+                            schedule.ClassSession = classSession;
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (found)
+                    {
+                        break;
+                    }
+                }
+
+                return found;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating class session: {ex.Message}");
+                return false;
+            }
+        }
+
+        public bool UpdateCurriculum(Curriculum curriculum)
+        {
+            try
+            {
+                var existingIndex = _school.Curricula.FindIndex(c => c.Id == curriculum.Id);
+
+                if (existingIndex >= 0)
+                {
+                    _school.Curricula[existingIndex] = curriculum;
+                }
+                else
+                {
+                    _school.Curricula.Add(curriculum);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating curriculum: {ex.Message}");
+                return false;
+            }
         }
     }
 
