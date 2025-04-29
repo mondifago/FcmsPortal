@@ -30,11 +30,11 @@ namespace FcmsPortal.Services
         bool DeleteGuardian(int guardianId);
         bool RemoveClassSessionFromScheduleEntry(int learningPathId, int scheduleEntryId);
 
-        Task<int> GetNextThreadId();
+        Task<int> GetNextThreadId(int classSessionId);
         Task<int> GetNextPostId();
-        Task AddDiscussionThread(DiscussionThread thread);
-        Task UpdateDiscussionThread(DiscussionThread thread);
-        Task<DiscussionThread> GetDiscussionThread(int id);
+        Task AddDiscussionThread(DiscussionThread thread, int classSessionId);
+        Task UpdateDiscussionThread(DiscussionThread thread, int classSessionId);
+        Task<DiscussionThread> GetDiscussionThread(int threadId, int classSessionId);
         Task<FileAttachment> UploadFileAsync(IBrowserFile file, string category);
         Task DeleteFileAsync(FileAttachment attachment);
         Task<List<FileAttachment>> GetAttachmentsAsync(string category, int referenceId);
@@ -65,6 +65,8 @@ namespace FcmsPortal.Services
         bool DeleteHomeworkSubmission(int id);
         bool UpdateClassSession(ClassSession classSession);
         bool UpdateCurriculum(Curriculum curriculum);
+        ClassSession GetClassSessionById(int classSessionId);
+
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -300,50 +302,104 @@ namespace FcmsPortal.Services
             return true;
         }
 
-        public Task<int> GetNextThreadId()
+        public async Task<int> GetNextThreadId(int classSessionId)
         {
-            int nextId = _school.DiscussionThreads.Any() ? _school.DiscussionThreads.Max(t => t.Id) + 1 : 1;
-            return Task.FromResult(nextId);
+            var classSession = GetClassSessionById(classSessionId);
+            if (classSession == null || classSession.DiscussionThreads == null || !classSession.DiscussionThreads.Any())
+                return 1;
+
+            return classSession.DiscussionThreads.Max(t => t.Id) + 1;
         }
 
-        public Task<int> GetNextPostId()
+        public async Task<int> GetNextPostId()
         {
-            int nextId = 1;
-            if (_school.DiscussionThreads.Any())
+            // This can remain global since post IDs can be unique across the entire system
+            int maxId = 0;
+
+            foreach (var learningPath in _school.LearningPath)
             {
-                var allPosts = _school.DiscussionThreads.Select(t => t.FirstPost)
-                    .Concat(_school.DiscussionThreads.SelectMany(t => t.Replies));
-                nextId = allPosts.Any() ? allPosts.Max(p => p.Id) + 1 : 1;
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.DiscussionThreads != null)
+                    {
+                        foreach (var thread in schedule.ClassSession.DiscussionThreads)
+                        {
+                            maxId = Math.Max(maxId, thread.FirstPost.Id);
+
+                            if (thread.Replies != null)
+                            {
+                                foreach (var reply in thread.Replies)
+                                {
+                                    maxId = Math.Max(maxId, reply.Id);
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            return Task.FromResult(nextId);
+
+            return maxId + 1;
         }
 
-        public Task AddDiscussionThread(DiscussionThread thread)
+        public async Task AddDiscussionThread(DiscussionThread thread, int classSessionId)
         {
-            var threads = _school.DiscussionThreads;
-            if (!threads.Any(t => t.Id == thread.Id))
+            var classSession = GetClassSessionById(classSessionId);
+            if (classSession == null)
+                throw new ArgumentException("Class session not found.");
+
+            if (classSession.DiscussionThreads == null)
+                classSession.DiscussionThreads = new List<DiscussionThread>();
+
+            classSession.DiscussionThreads.Add(thread);
+            await Task.CompletedTask;
+        }
+
+        public async Task UpdateDiscussionThread(DiscussionThread thread, int classSessionId)
+        {
+            var classSession = GetClassSessionById(classSessionId);
+            if (classSession == null || classSession.DiscussionThreads == null)
+                throw new ArgumentException("Class session or discussion threads not found.");
+
+            var existingIndex = classSession.DiscussionThreads.FindIndex(t => t.Id == thread.Id);
+            if (existingIndex >= 0)
             {
-                threads.Add(thread);
+                classSession.DiscussionThreads[existingIndex] = thread;
             }
-            return Task.CompletedTask;
-        }
-
-        public Task UpdateDiscussionThread(DiscussionThread thread)
-        {
-            var existingThread = _school.DiscussionThreads.FirstOrDefault(t => t.Id == thread.Id);
-            if (existingThread != null)
+            else
             {
-                // Replace the entire thread object (simpler for in-memory)
-                int index = _school.DiscussionThreads.IndexOf(existingThread);
-                _school.DiscussionThreads[index] = thread;
+                throw new ArgumentException("Discussion thread not found.");
             }
-            return Task.CompletedTask;
+
+            await Task.CompletedTask;
         }
 
-        public Task<DiscussionThread> GetDiscussionThread(int id)
+        public async Task<DiscussionThread> GetDiscussionThread(int threadId, int classSessionId)
         {
-            var thread = _school.DiscussionThreads.FirstOrDefault(t => t.Id == id);
-            return Task.FromResult(thread);
+            // Find the class session first
+            var classSession = GetClassSessionById(classSessionId);
+            if (classSession == null || classSession.DiscussionThreads == null)
+                return null;
+
+            // Find the thread in the class session
+            return classSession.DiscussionThreads.FirstOrDefault(t => t.Id == threadId);
+        }
+
+        public ClassSession GetClassSessionById(int classSessionId)
+        {
+            // Search through all learning paths and their schedules
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession != null && schedule.ClassSession.Id == classSessionId)
+                    {
+                        return schedule.ClassSession;
+                    }
+                }
+            }
+
+            // Not found
+            return null;
         }
 
         public async Task<FileAttachment> UploadFileAsync(IBrowserFile file, string category)
