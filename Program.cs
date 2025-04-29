@@ -32,7 +32,6 @@ namespace FcmsPortal
             fcmSchool.SchoolCalendar = new List<Calendar>();
             fcmSchool.Guardians = new List<Guardian>();
             fcmSchool.Curricula = new List<Curriculum>();
-            fcmSchool.DiscussionThreads = new List<DiscussionThread>();
             fcmSchool.LogoUrl = "";
             fcmSchool.Email = "info@fcms.com";
             fcmSchool.PhoneNumber = "08012345678";
@@ -328,6 +327,52 @@ namespace FcmsPortal
             classSession1.LessonPlan =
                 "Make the students understand the function of every organ within the Digestive system";
             classSession1.Teacher = staff2;
+            classSession1.AttendanceLog = new List<ClassAttendanceLogEntry>();
+            classSession1.HomeworkDetails = new List<Homework>();
+            classSession1.StudyMaterials = new List<FileAttachment>();
+            classSession1.DiscussionThreads = new List<DiscussionThread>();
+            classSession1.DiscussionThreads.Clear();
+            // Create a classroom discussion thread started by student1
+            var biologyClassThread = LogicMethods.StartDiscussion(
+                1,
+                1,
+                student1.Person,
+                "Can someone help explain the digestive enzymes we learned about in biology class today? I'm having trouble understanding the difference between amylase, protease, and lipase."
+            );
+
+            // Add replies from other students
+            LogicMethods.AddReply(
+                biologyClassThread,
+                2,
+                student2.Person,
+                "Sure, I can help! Amylase breaks down carbohydrates into sugars, protease breaks down proteins into amino acids, and lipase breaks down fats into fatty acids and glycerol. Each works at different parts of the digestive system."
+            );
+
+            LogicMethods.AddReply(
+                biologyClassThread,
+                3,
+                student3.Person,
+                "To add to what Dan said, amylase is found in saliva and starts working in the mouth. Protease works mainly in the stomach and small intestine (like pepsin and trypsin). Lipase is mostly in the small intestine and pancreas."
+            );
+
+            LogicMethods.AddReply(
+                biologyClassThread,
+                4,
+                student1.Person,
+                "Thanks for explaining! So different enzymes work in different parts of the digestive system. That makes sense now. Do we need to memorize which enzyme works where for the exam?"
+            );
+
+            LogicMethods.AddReply(
+                biologyClassThread,
+                5,
+                student2.Person,
+                "Yes, Mr. Een mentioned that we need to know the location and function of each enzyme for the test next week. I can share my study notes if you want."
+            );
+
+            // Update the thread timestamp
+            biologyClassThread.UpdateLastUpdated();
+            classSession1.DiscussionThreads.Add(biologyClassThread);
+
 
             //create the second biology class session
             var classSession2 = new ClassSession();
@@ -338,6 +383,44 @@ namespace FcmsPortal
             classSession2.LessonPlan =
                 "Make the students understand the function of every Enzyme within the Digestive system";
             classSession2.Teacher = staff2;
+            classSession2.AttendanceLog = new List<ClassAttendanceLogEntry>();
+            classSession2.HomeworkDetails = new List<Homework>();
+            classSession2.StudyMaterials = new List<FileAttachment>();
+            classSession2.DiscussionThreads = new List<DiscussionThread>();
+            classSession2.DiscussionThreads.Clear();
+            // Create a homework question thread started by student3
+            var homeworkThread = LogicMethods.StartDiscussion(
+                2,
+                6,
+                student3.Person,
+                "I'm stuck on question 5 of the geography homework about continental drift. Has anyone figured out how to explain the evidence for Pangaea?"
+            );
+
+            // Add replies
+            LogicMethods.AddReply(
+                homeworkThread,
+                7,
+                student2.Person,
+                "The main evidence includes matching fossils found on different continents, the shapes of continents that fit together like a puzzle, and similar rock formations across oceans. Ms. Que said we should focus on these three points."
+            );
+
+            LogicMethods.AddReply(
+                homeworkThread,
+                8,
+                student1.Person,
+                "Don't forget to mention the climate evidence too! There are coal deposits in Antarctica showing it once had forests, and glacial evidence in Africa showing it was once near the South Pole."
+            );
+
+            LogicMethods.AddReply(
+                homeworkThread,
+                9,
+                student3.Person,
+                "Thanks for the help! I think I can complete the assignment now. Geography isn't my strongest subject, but this makes more sense."
+            );
+
+            // Update the thread timestamp
+            homeworkThread.UpdateLastUpdated();
+            classSession2.DiscussionThreads.Add(homeworkThread);
 
             //create a geography class session
             var classSession3 = new ClassSession();
@@ -347,6 +430,51 @@ namespace FcmsPortal
             classSession3.Description = "Planets of the solar System";
             classSession3.LessonPlan = "Make the students know the name of the nine planets";
             classSession3.Teacher = staff3;
+            classSession3.AttendanceLog = new List<ClassAttendanceLogEntry>();
+            classSession3.HomeworkDetails = new List<Homework>();
+            classSession3.StudyMaterials = new List<FileAttachment>();
+            classSession3.DiscussionThreads = new List<DiscussionThread>();
+            classSession3.DiscussionThreads.Clear();
+            // Create an exam preparation thread
+            var examThread = LogicMethods.StartDiscussion(
+                3,
+                10,
+                student1.Person,
+                "Final exams are coming up next month. Should we create a study group for biology and geography? We could meet in the library after school."
+            );
+
+            // Add replies
+            LogicMethods.AddReply(
+                examThread,
+                11,
+                student2.Person,
+                "That's a great idea! I'm definitely interested. We could divide the topics and each prepare study materials for different sections."
+            );
+
+            LogicMethods.AddReply(
+                examThread,
+                12,
+                student3.Person,
+                "Count me in. I'm good with the ecosystem chapters in biology and world geography topics. I can prepare those sections for our study group."
+            );
+
+            LogicMethods.AddReply(
+                examThread,
+                13,
+                student4.Person, // Even the younger student wants to help!
+                "Can I join too? I know I'm in kindergarten but I like science and my brother can bring me!"
+            );
+
+            LogicMethods.AddReply(
+                examThread,
+                14,
+                student1.Person,
+                "Sorry John, these are senior college exams, but maybe we can help you with your studies another time! Let's meet this Friday at 3 PM in the library, everyone."
+            );
+
+            // Update the thread timestamp and add it to the school
+            examThread.UpdateLastUpdated();
+            classSession3.DiscussionThreads.Add(examThread);
 
             //create another geography class session
             var classSession4 = new ClassSession();
@@ -356,6 +484,65 @@ namespace FcmsPortal
             classSession4.Description = "Introduction to Continents";
             classSession4.LessonPlan = "Make the students know the name and location of the all the continents";
             classSession4.Teacher = staff3;
+            classSession4.AttendanceLog = new List<ClassAttendanceLogEntry>();
+            classSession4.HomeworkDetails = new List<Homework>();
+            classSession4.StudyMaterials = new List<FileAttachment>();
+            classSession4.DiscussionThreads = new List<DiscussionThread>();
+            classSession4.DiscussionThreads.Clear();
+            // Create a discussion about a school event
+            var eventThread = LogicMethods.StartDiscussion(
+                4,
+                15,
+                staff1.Person, // Started by the principal
+                "Attention students: We're planning a Science Fair for the end of the term. Please start thinking about project ideas and which teachers you want as advisors."
+            );
+
+            // Add replies
+            LogicMethods.AddReply(
+                eventThread,
+                16,
+                student1.Person,
+                "I'm thinking of doing a project on enzyme activity at different temperatures. Would Mr. Een be available to advise on this?"
+            );
+
+            LogicMethods.AddReply(
+                eventThread,
+                17,
+                staff2.Person, // Biology teacher responds
+                "Joe, that sounds like an excellent project idea. I'd be happy to be your advisor. Let's discuss the details after class tomorrow."
+            );
+
+            LogicMethods.AddReply(
+                eventThread,
+                18,
+                student2.Person,
+                "I'm interested in a project about weather patterns and climate change. Ms. Que, would you be willing to advise me?"
+            );
+
+            LogicMethods.AddReply(
+                eventThread,
+                19,
+                staff3.Person, // Geography teacher responds
+                "Of course, Dan. That's a very relevant topic. Stop by my office on Thursday and we can outline your project approach."
+            );
+
+            LogicMethods.AddReply(
+                eventThread,
+                20,
+                student3.Person,
+                "When is the submission deadline for project proposals? And will we be presenting to just our class or the whole school?"
+            );
+
+            LogicMethods.AddReply(
+                eventThread,
+                21,
+                staff1.Person, // Principal answers
+                "Project proposals are due by the end of next week. The best projects will be selected for presentation to the whole school during our Science Fair Day on the last Friday of term."
+            );
+
+            // Update the thread timestamp
+            eventThread.UpdateLastUpdated();
+            classSession4.DiscussionThreads.Add(eventThread);
 
             //create schedule for all existing class sessions
             ScheduleEntry scheduleEntry1 = new ScheduleEntry();
@@ -412,180 +599,6 @@ namespace FcmsPortal
             learningPath2.Schedule = new List<ScheduleEntry> { };
             learningPath2.Students = new List<Student>() { };
             fcmSchool.LearningPath.Add(learningPath2);
-
-            fcmSchool.DiscussionThreads.Clear();
-
-            // Create a classroom discussion thread started by student1
-            var classroomThread = LogicMethods.StartDiscussion(
-                1,
-                1,
-                student1.Person,
-                "Can someone help explain the digestive enzymes we learned about in biology class today? I'm having trouble understanding the difference between amylase, protease, and lipase."
-            );
-
-            // Add replies from other students
-            LogicMethods.AddReply(
-                classroomThread,
-                2,
-                student2.Person,
-                "Sure, I can help! Amylase breaks down carbohydrates into sugars, protease breaks down proteins into amino acids, and lipase breaks down fats into fatty acids and glycerol. Each works at different parts of the digestive system."
-            );
-
-            LogicMethods.AddReply(
-                classroomThread,
-                3,
-                student3.Person,
-                "To add to what Dan said, amylase is found in saliva and starts working in the mouth. Protease works mainly in the stomach and small intestine (like pepsin and trypsin). Lipase is mostly in the small intestine and pancreas."
-            );
-
-            LogicMethods.AddReply(
-                classroomThread,
-                4,
-                student1.Person,
-                "Thanks for explaining! So different enzymes work in different parts of the digestive system. That makes sense now. Do we need to memorize which enzyme works where for the exam?"
-            );
-
-            LogicMethods.AddReply(
-                classroomThread,
-                5,
-                student2.Person,
-                "Yes, Mr. Een mentioned that we need to know the location and function of each enzyme for the test next week. I can share my study notes if you want."
-            );
-
-            // Update the thread timestamp
-            classroomThread.UpdateLastUpdated();
-            fcmSchool.DiscussionThreads.Add(classroomThread);
-
-            // Create a homework question thread started by student3
-            var homeworkThread = LogicMethods.StartDiscussion(
-                2,
-                6,
-                student3.Person,
-                "I'm stuck on question 5 of the geography homework about continental drift. Has anyone figured out how to explain the evidence for Pangaea?"
-            );
-
-            // Add replies
-            LogicMethods.AddReply(
-                homeworkThread,
-                7,
-                student2.Person,
-                "The main evidence includes matching fossils found on different continents, the shapes of continents that fit together like a puzzle, and similar rock formations across oceans. Ms. Que said we should focus on these three points."
-            );
-
-            LogicMethods.AddReply(
-                homeworkThread,
-                8,
-                student1.Person,
-                "Don't forget to mention the climate evidence too! There are coal deposits in Antarctica showing it once had forests, and glacial evidence in Africa showing it was once near the South Pole."
-            );
-
-            LogicMethods.AddReply(
-                homeworkThread,
-                9,
-                student3.Person,
-                "Thanks for the help! I think I can complete the assignment now. Geography isn't my strongest subject, but this makes more sense."
-            );
-
-            // Update the thread timestamp
-            homeworkThread.UpdateLastUpdated();
-            fcmSchool.DiscussionThreads.Add(homeworkThread);
-
-            // Create an exam preparation thread
-            var examThread = LogicMethods.StartDiscussion(
-                3,
-                10,
-                student1.Person,
-                "Final exams are coming up next month. Should we create a study group for biology and geography? We could meet in the library after school."
-            );
-
-            // Add replies
-            LogicMethods.AddReply(
-                examThread,
-                11,
-                student2.Person,
-                "That's a great idea! I'm definitely interested. We could divide the topics and each prepare study materials for different sections."
-            );
-
-            LogicMethods.AddReply(
-                examThread,
-                12,
-                student3.Person,
-                "Count me in. I'm good with the ecosystem chapters in biology and world geography topics. I can prepare those sections for our study group."
-            );
-
-            LogicMethods.AddReply(
-                examThread,
-                13,
-                student4.Person, // Even the younger student wants to help!
-                "Can I join too? I know I'm in kindergarten but I like science and my brother can bring me!"
-            );
-
-            LogicMethods.AddReply(
-                examThread,
-                14,
-                student1.Person,
-                "Sorry John, these are senior college exams, but maybe we can help you with your studies another time! Let's meet this Friday at 3 PM in the library, everyone."
-            );
-
-            // Update the thread timestamp and add it to the school
-            examThread.UpdateLastUpdated();
-            fcmSchool.DiscussionThreads.Add(examThread);
-
-            // Create a discussion about a school event
-            var eventThread = LogicMethods.StartDiscussion(
-                4,
-                15,
-                staff1.Person, // Started by the principal
-                "Attention students: We're planning a Science Fair for the end of the term. Please start thinking about project ideas and which teachers you want as advisors."
-            );
-
-            // Add replies
-            LogicMethods.AddReply(
-                eventThread,
-                16,
-                student1.Person,
-                "I'm thinking of doing a project on enzyme activity at different temperatures. Would Mr. Een be available to advise on this?"
-            );
-
-            LogicMethods.AddReply(
-                eventThread,
-                17,
-                staff2.Person, // Biology teacher responds
-                "Joe, that sounds like an excellent project idea. I'd be happy to be your advisor. Let's discuss the details after class tomorrow."
-            );
-
-            LogicMethods.AddReply(
-                eventThread,
-                18,
-                student2.Person,
-                "I'm interested in a project about weather patterns and climate change. Ms. Que, would you be willing to advise me?"
-            );
-
-            LogicMethods.AddReply(
-                eventThread,
-                19,
-                staff3.Person, // Geography teacher responds
-                "Of course, Dan. That's a very relevant topic. Stop by my office on Thursday and we can outline your project approach."
-            );
-
-            LogicMethods.AddReply(
-                eventThread,
-                20,
-                student3.Person,
-                "When is the submission deadline for project proposals? And will we be presenting to just our class or the whole school?"
-            );
-
-            LogicMethods.AddReply(
-                eventThread,
-                21,
-                staff1.Person, // Principal answers
-                "Project proposals are due by the end of next week. The best projects will be selected for presentation to the whole school during our Science Fair Day on the last Friday of term."
-            );
-
-            // Update the thread timestamp
-            eventThread.UpdateLastUpdated();
-            fcmSchool.DiscussionThreads.Add(eventThread);
-
 
             return fcmSchool;
         }
