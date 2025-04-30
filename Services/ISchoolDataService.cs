@@ -693,7 +693,6 @@ namespace FcmsPortal.Services
                         if (schedule.ClassSession.HomeworkDetails == null)
                             schedule.ClassSession.HomeworkDetails = new List<Homework>();
 
-                        // Generate new ID if needed
                         if (homework.Id <= 0)
                         {
                             int nextId = 1;
@@ -728,12 +727,10 @@ namespace FcmsPortal.Services
 
                         if (existingHomework != null)
                         {
-                            // Update properties
                             existingHomework.Title = homework.Title;
                             existingHomework.AssignedDate = homework.AssignedDate;
                             existingHomework.DueDate = homework.DueDate;
                             existingHomework.Question = homework.Question;
-                            existingHomework.Attachments = homework.Attachments;
                             return;
                         }
                     }
@@ -827,7 +824,6 @@ namespace FcmsPortal.Services
             if (homework.Submissions == null)
                 homework.Submissions = new List<HomeworkSubmission>();
 
-            // Generate new ID if needed
             if (submission.Id <= 0)
             {
                 int nextId = 1;
@@ -850,7 +846,6 @@ namespace FcmsPortal.Services
             var existingSubmission = GetHomeworkSubmissionById(submission.Id);
             if (existingSubmission != null)
             {
-                // Update properties
                 existingSubmission.Answer = submission.Answer;
                 existingSubmission.IsGraded = submission.IsGraded;
                 existingSubmission.FeedbackComment = submission.FeedbackComment;
