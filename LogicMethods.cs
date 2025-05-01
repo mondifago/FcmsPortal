@@ -2109,4 +2109,12 @@ public static class LogicMethods
             .ToList() ?? new List<TestGrade>();
     }
 
+    // Find all course grades related to the specific learning path
+    public static List<CourseGrade> GetCourseGradesByLearningPathId(School school, int learningPathId)
+    {
+        return school.Students
+            .SelectMany(s => s.CourseGrades)
+            .Where(cg => cg.LearningPathId == learningPathId)
+            .ToList();
+    }
 }

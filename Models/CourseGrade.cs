@@ -10,6 +10,8 @@
         public string FinalGradeCode { get; set; }
         public int StudentId { get; set; }
         public Student Student { get; set; }
+        public int LearningPathId { get; set; }
+        public LearningPath LearningPath { get; set; }
         public List<FileAttachment> FinalResultAttachments { get; set; } = new();
     }
 }

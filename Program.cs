@@ -329,6 +329,25 @@ namespace FcmsPortal
             classSession1.Teacher = staff2;
             classSession1.AttendanceLog = new List<ClassAttendanceLogEntry>();
             classSession1.HomeworkDetails = new List<Homework>();
+            var homework1 = new Homework();
+            homework1.Id = 1;
+            homework1.Title = "Digestive System Homework";
+            homework1.AssignedDate = DateTime.Today;
+            homework1.DueDate = DateTime.Today.AddDays(7);
+            homework1.ClassSessionId = classSession1.Id;
+            homework1.Question = "Explain the function of the stomach in the digestive system.";
+            homework1.Submissions = new List<HomeworkSubmission>();
+            var homeworkSubmission1 = new HomeworkSubmission();
+            homeworkSubmission1.Id = 1;
+            homeworkSubmission1.Homework = homework1;
+            homeworkSubmission1.Student = student1;
+            //homeworkSubmission1.Student.Id = student1.Id;
+            homeworkSubmission1.SubmissionDate = DateTime.Today.AddDays(1);
+            homeworkSubmission1.Answer = "The stomach is a muscular organ that mixes food with gastric juices, breaking it down into a semi-liquid form called chyme. It also plays a role in the digestion of proteins and the absorption of certain nutrients.";
+            homeworkSubmission1.IsGraded = false;
+            homework1.Submissions.Add(homeworkSubmission1);
+            classSession1.HomeworkDetails.Add(homework1);
+
             classSession1.StudyMaterials = new List<FileAttachment>();
             classSession1.DiscussionThreads = new List<DiscussionThread>();
             classSession1.DiscussionThreads.Clear();
