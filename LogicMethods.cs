@@ -31,6 +31,18 @@ public static class LogicMethods
             .Where(staff => staff.Person.EducationLevel == educationLevel).ToList();
     }
 
+    //filter Teachers based on specified education level
+    public static List<Staff> GetTeachersByEducationLevel(School school, EducationLevel educationLevel)
+    {
+        if (school == null)
+            throw new ArgumentNullException(nameof(school), "School cannot be null.");
+
+        return school.Staff
+            .Where(staff => staff.JobRole == JobRole.Teacher &&
+                            staff.Person.EducationLevel == educationLevel)
+            .ToList();
+    }
+
     //Gets a list of all distinct EducationLevels found in the school's LearningPaths
     public static List<EducationLevel> GetExistingEducationLevels(School school)
     {

@@ -339,6 +339,15 @@ namespace FcmsPortal
                 "Make the students understand the function of every organ within the Digestive system";
             classSession1.Teacher = staff2;
             classSession1.AttendanceLog = new List<ClassAttendanceLogEntry>();
+            classSession1.AttendanceLog.Add(new ClassAttendanceLogEntry
+            {
+                Id = 1,
+                Teacher = staff2,
+                ClassSession = classSession1,
+                TimeStamp = DateTime.Today,
+                Attendees = new List<Student> { },
+                AbsentStudents = new List<Student> { },
+            });
             classSession1.HomeworkDetails = new List<Homework>();
             var homework1 = new Homework();
             homework1.Id = 1;

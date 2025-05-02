@@ -29,7 +29,6 @@ namespace FcmsPortal.Services
         bool DeleteStaff(int staffId);
         bool DeleteGuardian(int guardianId);
         bool RemoveClassSessionFromScheduleEntry(int learningPathId, int scheduleEntryId);
-
         Task<int> GetNextThreadId(int classSessionId);
         Task<int> GetNextPostId();
         Task AddDiscussionThread(DiscussionThread thread, int classSessionId);
@@ -48,15 +47,11 @@ namespace FcmsPortal.Services
         ScheduleEntry GetScheduleEntryById(int learningPathId, int scheduleEntryId);
         bool UpdateScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry);
         bool DeleteScheduleEntry(int learningPathId, int scheduleEntryId);
-
-        // Homework-related methods
         Homework GetHomeworkById(int id);
         List<Homework> GetHomeworksByClassSession(int classSessionId);
         Homework AddHomework(Homework homework);
         void UpdateHomework(Homework homework);
         bool DeleteHomework(int id);
-
-        // Homework submission-related methods
         HomeworkSubmission GetHomeworkSubmissionById(int id);
         List<HomeworkSubmission> GetSubmissionsByHomework(int homeworkId);
         List<HomeworkSubmission> GetSubmissionsByStudent(int studentId);
@@ -66,6 +61,7 @@ namespace FcmsPortal.Services
         bool UpdateClassSession(ClassSession classSession);
         bool UpdateCurriculum(Curriculum curriculum);
         ClassSession GetClassSessionById(int classSessionId);
+        int GetNextClassSessionId();
         CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId);
         void SaveCourseGrade(CourseGrade grade);
         LearningPathGradeReport GetGradeReportForLearningPath(int learningPathId);
@@ -316,7 +312,6 @@ namespace FcmsPortal.Services
 
         public async Task<int> GetNextPostId()
         {
-            // This can remain global since post IDs can be unique across the entire system
             int maxId = 0;
 
             foreach (var learningPath in _school.LearningPath)
@@ -378,18 +373,15 @@ namespace FcmsPortal.Services
 
         public async Task<DiscussionThread> GetDiscussionThread(int threadId, int classSessionId)
         {
-            // Find the class session first
             var classSession = GetClassSessionById(classSessionId);
             if (classSession == null || classSession.DiscussionThreads == null)
                 return null;
 
-            // Find the thread in the class session
             return classSession.DiscussionThreads.FirstOrDefault(t => t.Id == threadId);
         }
 
         public ClassSession GetClassSessionById(int classSessionId)
         {
-            // Search through all learning paths and their schedules
             foreach (var learningPath in _school.LearningPath)
             {
                 foreach (var schedule in learningPath.Schedule)
@@ -400,9 +392,25 @@ namespace FcmsPortal.Services
                     }
                 }
             }
-
-            // Not found
             return null;
+        }
+
+        public int GetNextClassSessionId()
+        {
+            int nextId = 1;
+
+            var allSessions = _school.LearningPath
+                .SelectMany(lp => lp.Schedule
+                    .Where(s => s.ClassSession != null)
+                    .Select(s => s.ClassSession))
+                .ToList();
+
+            if (allSessions.Any())
+            {
+                nextId = allSessions.Max(s => s.Id) + 1;
+            }
+
+            return nextId;
         }
 
         public async Task<FileAttachment> UploadFileAsync(IBrowserFile file, string category)
@@ -647,7 +655,6 @@ namespace FcmsPortal.Services
             return UpdateScheduleEntry(learningPathId, scheduleEntry);
         }
 
-        // Homework-related method implementations
         public Homework GetHomeworkById(int id)
         {
             foreach (var learningPath in _school.LearningPath)
@@ -762,7 +769,6 @@ namespace FcmsPortal.Services
             return false;
         }
 
-        // Homework submission-related method implementations
         public HomeworkSubmission GetHomeworkSubmissionById(int id)
         {
             foreach (var learningPath in _school.LearningPath)
@@ -937,8 +943,6 @@ namespace FcmsPortal.Services
                 return false;
             }
         }
-
-
 
         public CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId)
         {
