@@ -103,6 +103,17 @@ namespace FcmsPortal
             student1.Person.PersonalCalendar.Id = 177;
             student1.Person.PersonalCalendar.Name = "Student1's Study Calendar";
             student1.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
+            student1.CourseGrades = new List<CourseGrade>();
+            student1.CourseGrades.Add(new CourseGrade
+            {
+                Id = 1,
+                Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3],
+                TotalGrade = 0,
+                AttendancePercentage = 0,
+                FinalGradeCode = "",
+                StudentId = student1.Id,
+                LearningPathId = 1001
+            });
             student1.Person.SchoolFees = new SchoolFees();
             LogicMethods.AddStudentToGuardianWards(guardian1, student1);
             LogicMethods.AddStudentToSchool(fcmSchool, student1);
