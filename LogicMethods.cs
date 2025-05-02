@@ -2109,12 +2109,60 @@ public static class LogicMethods
             .ToList() ?? new List<TestGrade>();
     }
 
-    // Find all course grades related to the specific learning path
     public static List<CourseGrade> GetCourseGradesByLearningPathId(School school, int learningPathId)
     {
+        // Find all course grades related to the specific learning path
         return school.Students
             .SelectMany(s => s.CourseGrades)
             .Where(cg => cg.LearningPathId == learningPathId)
             .ToList();
+    }
+    public static LearningPathGradeReport GenerateGradeReportForLearningPath(School school, LearningPath learningPath)
+    {
+        var report = new LearningPathGradeReport
+        {
+            Id = learningPath.Id,
+            LearningPath = learningPath,
+            Semester = learningPath.Semester,
+            RankedStudents = new List<StudentGradeSummary>()
+        };
+
+        // Get all grades for this learning path
+        var grades = GetCourseGradesByLearningPathId(school, learningPath.Id);
+
+        // Group grades by student and calculate overall grade
+        var studentGrades = new Dictionary<Student, double>();
+
+        foreach (var grade in grades)
+        {
+            var student = school.Students.FirstOrDefault(s => s.Id == grade.StudentId);
+            if (student == null) continue;
+
+            if (!studentGrades.ContainsKey(student))
+            {
+                studentGrades[student] = 0;
+            }
+
+            studentGrades[student] += grade.TotalGrade;
+        }
+
+        // Create ranked list
+        foreach (var entry in studentGrades)
+        {
+            report.StudentSemesterGrades[entry.Key] = entry.Value;
+
+            report.RankedStudents.Add(new StudentGradeSummary
+            {
+                Student = entry.Key,
+                SemesterOverallGrade = entry.Value
+            });
+        }
+
+        // Sort ranked students by grade (descending)
+        report.RankedStudents = report.RankedStudents
+            .OrderByDescending(sg => sg.SemesterOverallGrade)
+            .ToList();
+
+        return report;
     }
 }

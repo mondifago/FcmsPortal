@@ -66,7 +66,10 @@ namespace FcmsPortal.Services
         bool UpdateClassSession(ClassSession classSession);
         bool UpdateCurriculum(Curriculum curriculum);
         ClassSession GetClassSessionById(int classSessionId);
-
+        CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId);
+        void SaveCourseGrade(CourseGrade grade);
+        LearningPathGradeReport GetGradeReportForLearningPath(int learningPathId);
+        void UpdateGradeReport(LearningPathGradeReport report);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -932,6 +935,71 @@ namespace FcmsPortal.Services
             {
                 Console.WriteLine($"Error updating curriculum: {ex.Message}");
                 return false;
+            }
+        }
+
+
+
+        public CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId)
+        {
+            return LogicMethods.GetCourseGradesByLearningPathId(_school, learningPathId)
+                .FirstOrDefault(g => g.StudentId == studentId);
+        }
+
+        public void SaveCourseGrade(CourseGrade grade)
+        {
+            var student = _school.Students.FirstOrDefault(s => s.Id == grade.StudentId);
+            if (student == null) return;
+
+            var existingGrade = student.CourseGrades.FirstOrDefault(g =>
+                g.LearningPathId == grade.LearningPathId);
+
+            if (existingGrade != null)
+            {
+                existingGrade.TotalGrade = grade.TotalGrade;
+                existingGrade.FinalGradeCode = grade.FinalGradeCode;
+                existingGrade.TestGrades = grade.TestGrades;
+                existingGrade.AttendancePercentage = grade.AttendancePercentage;
+            }
+            else
+            {
+                student.CourseGrades.Add(grade);
+            }
+        }
+
+        public LearningPathGradeReport GetGradeReportForLearningPath(int learningPathId)
+        {
+            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPathId);
+            if (learningPath == null) return null;
+
+            return LogicMethods.GenerateGradeReportForLearningPath(_school, learningPath);
+        }
+
+        public void UpdateGradeReport(LearningPathGradeReport report)
+        {
+            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == report.Id);
+            if (learningPath == null) return;
+
+            var existingReports = _school.Students
+                .SelectMany(s => s.CourseGrades)
+                .Where(cg => cg.LearningPathId == report.Id)
+                .ToList();
+
+            foreach (var grade in existingReports)
+            {
+                // Update any grade-specific finalization flags if needed
+            }
+
+            var existingReport = _school.GradeReports?.FirstOrDefault(r => r.Id == report.Id);
+            if (existingReport != null)
+            {
+                existingReport.IsFinalized = report.IsFinalized;
+                existingReport.RankedStudents = report.RankedStudents;
+                existingReport.StudentSemesterGrades = report.StudentSemesterGrades;
+            }
+            else if (_school.GradeReports != null)
+            {
+                _school.GradeReports.Add(report);
             }
         }
     }
