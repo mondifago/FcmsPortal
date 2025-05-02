@@ -13,5 +13,6 @@
         public int LearningPathId { get; set; }
         public LearningPath LearningPath { get; set; }
         public List<FileAttachment> FinalResultAttachments { get; set; } = new();
+        public bool IsFinalized { get; set; } = false;
     }
 }
