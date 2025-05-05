@@ -532,24 +532,20 @@ public static class LogicMethods
             return new List<ScheduleEntry>();
         }
 
-        return learningPath.Schedule;
+        return learningPath.Schedule
+        .OrderBy(s => s.DateTime)
+        .ToList();
     }
 
     //Get all schedules of a learning path for a particular date
     public static List<ScheduleEntry> GetSchedulesByDateInLearningPath(LearningPath learningPath, DateTime date)
     {
-        if (learningPath == null)
-        {
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-        }
-
-        if (learningPath.Schedule == null || !learningPath.Schedule.Any())
-        {
+        if (learningPath?.Schedule == null)
             return new List<ScheduleEntry>();
-        }
 
         return learningPath.Schedule
-            .Where(schedule => schedule.DateTime.Date == date.Date)
+            .Where(s => s.DateTime.Date == date.Date)
+            .OrderBy(s => s.DateTime.TimeOfDay)
             .ToList();
     }
 
@@ -1011,7 +1007,6 @@ public static class LogicMethods
 
         if (learningPath.Students == null || !learningPath.Students.Any())
         {
-            Console.WriteLine("No students are enrolled in this learning path.");
             return;
         }
 
@@ -1093,6 +1088,22 @@ public static class LogicMethods
         return totalPayments >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR;
     }
 
+    public static bool IsPaymentSuccessful(Student student, LearningPath learningPath)
+    {
+        return learningPath.StudentsPaymentSuccessful != null &&
+               learningPath.StudentsPaymentSuccessful.Any(s => s.Id == student.Id);
+    }
+
+    public static List<Student> GetUnpaidStudents(LearningPath learningPath)
+    {
+        if (learningPath.Students == null)
+            return new List<Student>();
+
+        return learningPath.Students
+            .Where(s => !IsPaymentSuccessful(s, learningPath))
+            .ToList();
+    }
+
     //generate payment summery
     public static List<string> GeneratePaymentSummaryForStudent(Student student)
     {
@@ -1154,29 +1165,12 @@ public static class LogicMethods
     //Grant student full access to schedule entries in learning path 
     public static void GrantAccessToSchedules(Student student, LearningPath learningPath)
     {
-        if (student == null)
-        {
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-        }
+        if (student == null) throw new ArgumentNullException(nameof(student));
+        if (learningPath == null) throw new ArgumentNullException(nameof(learningPath));
 
-        if (learningPath == null)
+        if (HasMetPaymentThreshold(student) && !learningPath.StudentsPaymentSuccessful.Contains(student))
         {
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-        }
-
-        if (student.Person?.SchoolFees == null)
-        {
-            throw new ArgumentException("Student does not have a valid school fees record.");
-        }
-
-        double totalPaid = student.Person.SchoolFees.Payments.Sum(payment => payment.Amount);
-
-        if (totalPaid >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR)
-        {
-            if (!learningPath.StudentsPaymentSuccessful.Contains(student))
-            {
-                learningPath.StudentsPaymentSuccessful.Add(student);
-            }
+            learningPath.StudentsPaymentSuccessful.Add(student);
         }
     }
 
@@ -1205,52 +1199,6 @@ public static class LogicMethods
         return paymentReport;
     }
 
-    //send notification of outstanding 
-    /*public static void NotifyStudentsOfPaymentStatus(LearningPath learningPath)
-    {
-        if (learningPath == null)
-        {
-            throw new ArgumentNullException(nameof(learningPath));
-        }
-
-        foreach (var student in learningPath.Students)
-        {
-            var schoolFees = student.Person?.SchoolFees;
-            if (schoolFees == null) continue;
-            var outstandingBalance = schoolFees.Balance;
-
-            if (outstandingBalance > 0)
-            {
-                string studentMessage = $"Dear {student.Person.FirstName}, " +
-                    $"you have an outstanding balance of {outstandingBalance:C}. " +
-                    "Please ensure payment is made to retain access to your classes.";
-
-                string guardianMessage = student.GuardianId != 0
-                    ? $"Dear Guardian of {student.Person.FirstName}, " +
-                      $"your ward has an outstanding balance of {outstandingBalance:C}. " +
-                      "Please ensure payment is made promptly."
-                    : null;
-
-                SendNotification(student.Person.Email, studentMessage, "Outstanding Payment Reminder");
-
-                if (!string.IsNullOrEmpty(student.Guardian?.Person.Email))
-                {
-                    SendNotification(student.Guardian.Person.Email, guardianMessage, "Outstanding Payment Reminder");
-                }
-            }
-        }
-    }*/
-
-    private static void SendNotification(string email, string message, string subject)
-    {
-        if (string.IsNullOrEmpty(email))
-        {
-            Console.WriteLine("No email address provided. Notification skipped.");
-            return;
-        }
-        Console.WriteLine($"Notification sent to {email}:\nSubject: {subject}\nMessage: {message}\n");
-    }
-
     //handle changes to Total amount of school fees
     public static void HandleFeeChangeForLearningPath(LearningPath learningPath, double newTotalFeeAmount)
     {
@@ -1267,37 +1215,21 @@ public static class LogicMethods
         foreach (var student in learningPath.Students)
         {
             var schoolFees = student.Person?.SchoolFees;
-
             if (schoolFees == null) continue;
 
             schoolFees.TotalAmount = newTotalFeeAmount;
 
-            if (schoolFees.TotalPaid >= FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount && !learningPath.StudentsPaymentSuccessful.Contains(student))
+            if (HasMetPaymentThreshold(student))
             {
-                GrantStudentAccess(student, learningPath);
+                GrantAccessToSchedules(student, learningPath);
             }
-            else if (schoolFees.TotalPaid < FcmsConstants.PAYMENT_THRESHOLD_FACTOR * newTotalFeeAmount && learningPath.StudentsPaymentSuccessful.Contains(student))
+            else
             {
-                RevokeStudentAccess(student, learningPath);
+                if (learningPath.StudentsPaymentSuccessful.Contains(student))
+                {
+                    learningPath.StudentsPaymentSuccessful.Remove(student);
+                }
             }
-        }
-    }
-
-    private static void GrantStudentAccess(Student student, LearningPath learningPath)
-    {
-        if (!learningPath.StudentsPaymentSuccessful.Contains(student))
-        {
-            learningPath.StudentsPaymentSuccessful.Add(student);
-            Console.WriteLine($"Access granted to student {student.Person.FirstName} {student.Person.LastName}.");
-        }
-    }
-
-    private static void RevokeStudentAccess(Student student, LearningPath learningPath)
-    {
-        if (learningPath.StudentsPaymentSuccessful.Contains(student))
-        {
-            learningPath.StudentsPaymentSuccessful.Remove(student);
-            Console.WriteLine($"Access revoked for student {student.Person.FirstName} {student.Person.LastName}.");
         }
     }
 
