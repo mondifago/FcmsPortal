@@ -553,6 +553,31 @@ public static class LogicMethods
             .ToList();
     }
 
+    //Retrieves the schedule entry that contains a specific class session
+    public static ScheduleEntry GetScheduleEntryForClassSession(School school, int classSessionId)
+    {
+        if (school?.LearningPath == null)
+            return null;
+
+        foreach (var learningPath in school.LearningPath)
+        {
+            if (learningPath.Schedule == null)
+                continue;
+
+            foreach (var schedule in learningPath.Schedule)
+            {
+                if (schedule.ClassSession?.Id == classSessionId)
+                {
+                    return schedule;
+                }
+            }
+        }
+
+        // Ensure all code paths return a value
+        return null;
+    }
+
+
     //Get all class sessions in a learning path
     public static List<ClassSession> GetClassSessionsInLearningPath(LearningPath learningPath)
     {
@@ -1605,7 +1630,7 @@ public static class LogicMethods
     /// Methods for Attendance
     /// </summary>
 
-    //Get expected students that ought to attend a class session
+    //Get expected students that ought to attend a class session, whether paid or not
     public static List<Student> GetExpectedStudentsForClassSession(School school, ClassSession classSession)
     {
         if (school == null)
