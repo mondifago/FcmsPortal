@@ -12,6 +12,6 @@ namespace FcmsPortal.Models
         public string Course { get; set; }
         public string Topic { get; set; }
         public string Description { get; set; }
-        public string LessonNote { get; set; }
+        public string LessonPlan { get; set; }
     }
 }

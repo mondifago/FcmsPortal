@@ -991,7 +991,7 @@ namespace FcmsPortal.Services
 
             foreach (var grade in existingReports)
             {
-                // Update any grade-specific finalization flags if needed
+                // Update any grade-specific finalization flags
             }
 
             var existingReport = _school.GradeReports?.FirstOrDefault(r => r.Id == report.Id);

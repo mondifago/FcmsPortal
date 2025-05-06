@@ -977,7 +977,7 @@ public static class LogicMethods
                 Course = session.Course,
                 Topic = session.Topic,
                 Description = session.Description,
-                LessonNote = session.LessonPlan,
+                LessonPlan = session.LessonPlan,
                 Semesters = new List<SemesterCurriculum>()
             };
 
@@ -987,7 +987,7 @@ public static class LogicMethods
         {
             curriculum.Topic = session.Topic;
             curriculum.Description = session.Description;
-            curriculum.LessonNote = session.LessonPlan;
+            curriculum.LessonPlan = session.LessonPlan;
         }
 
         return curriculum;
