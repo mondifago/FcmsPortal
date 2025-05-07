@@ -55,37 +55,12 @@ namespace FcmsPortal.Models
         public string PhoneNumber { get; set; } = string.Empty;
         public Calendar PersonalCalendar { get; set; } = new Calendar();
         public EducationLevel EducationLevel { get; set; }
-
         public ClassLevel ClassLevel { get; set; }
-        /*{
-            get => _classLevel;
-            set
-            {
-                if (!IsValidClassLevelForEducationLevel(EducationLevel, value))
-                {
-                    throw new ArgumentException("Invalid ClassLevel for the current EducationLevel.");
-                }
-                _classLevel = value;
-            }
-        }*/
         public SchoolFees? SchoolFees { get; set; }
         [StringLength(100, ErrorMessage = "Emergency contact details cannot exceed 100 characters.")]
         [Required(ErrorMessage = "Emergency contact number is required")]
         [Phone(ErrorMessage = "Please enter a valid phone number")]
         public string EmergencyContact { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
-
-        /*private ClassLevel _classLevel;
-        private bool IsValidClassLevelForEducationLevel(EducationLevel educationLevel, ClassLevel classLevel)
-        {
-            return educationLevel switch
-            {
-                EducationLevel.Kindergarten => classLevel is ClassLevel.KG_Daycare or ClassLevel.KG_PlayGroup or ClassLevel.KG_PreNursery or ClassLevel.KG_Nursery,
-                EducationLevel.Primary => classLevel is ClassLevel.PRI_1 or ClassLevel.PRI_2 or ClassLevel.PRI_3 or ClassLevel.PRI_4 or ClassLevel.PRI_5 or ClassLevel.PRI_6,
-                EducationLevel.JuniorCollege => classLevel is ClassLevel.JC_1 or ClassLevel.JC_2 or ClassLevel.JC_3,
-                EducationLevel.SeniorCollege => classLevel is ClassLevel.SC_1 or ClassLevel.SC_2 or ClassLevel.SC_3,
-                _ => false
-            };
-        }*/
     }
 }

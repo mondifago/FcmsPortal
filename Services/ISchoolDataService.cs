@@ -78,6 +78,7 @@ namespace FcmsPortal.Services
         void UpdateSchoolFees(SchoolFees schoolFees);
         void DeleteSchoolFees(int id);
         int GetNextSchoolFeesId();
+        Student GetStudentBySchoolFeesId(int schoolFeesId);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -1155,5 +1156,12 @@ namespace FcmsPortal.Services
         {
             return _schoolFees.Count > 0 ? _schoolFees.Max(sf => sf.Id) + 1 : 1;
         }
+
+        public Student GetStudentBySchoolFeesId(int schoolFeesId)
+        {
+            return GetStudents()
+                .FirstOrDefault(s => s.Person.SchoolFees != null && s.Person.SchoolFees.Id == schoolFeesId);
+        }
+
     }
 }
