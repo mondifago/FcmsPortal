@@ -66,6 +66,18 @@ namespace FcmsPortal.Services
         void SaveCourseGrade(CourseGrade grade);
         LearningPathGradeReport GetGradeReportForLearningPath(int learningPathId);
         void UpdateGradeReport(LearningPathGradeReport report);
+        List<Payment> GetAllPayments();
+        Payment GetPayment(int id);
+        void AddPayment(Payment payment);
+        void UpdatePayment(Payment payment);
+        void DeletePayment(int id);
+        int GetNextPaymentId();
+        List<SchoolFees> GetAllSchoolFees();
+        SchoolFees GetSchoolFees(int id);
+        void AddSchoolFees(SchoolFees schoolFees);
+        void UpdateSchoolFees(SchoolFees schoolFees);
+        void DeleteSchoolFees(int id);
+        int GetNextSchoolFeesId();
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -74,6 +86,8 @@ namespace FcmsPortal.Services
         private readonly IWebHostEnvironment _environment;
         private readonly Dictionary<string, List<(int referenceId, FileAttachment attachment)>> _attachmentReferences = new();
         private int _nextAttachmentId = 1;
+        private List<Payment> _payments = new List<Payment>();
+        private List<SchoolFees> _schoolFees = new List<SchoolFees>();
 
         public SchoolDataService(IWebHostEnvironment environment)
         {
@@ -1006,6 +1020,140 @@ namespace FcmsPortal.Services
                 _school.GradeReports.Add(report);
             }
         }
-    }
 
+        public List<Payment> GetAllPayments()
+        {
+            return _payments;
+        }
+
+        public Payment GetPayment(int id)
+        {
+            return _payments.FirstOrDefault(p => p.Id == id);
+        }
+
+        public void AddPayment(Payment payment)
+        {
+            if (payment.Id <= 0)
+            {
+                payment.Id = GetNextPaymentId();
+            }
+            _payments.Add(payment);
+
+            // If this payment is associated with SchoolFees, update it
+            if (payment.SchoolFeesId > 0)
+            {
+                var schoolFees = GetSchoolFees(payment.SchoolFeesId);
+                if (schoolFees != null)
+                {
+                    if (schoolFees.Payments == null)
+                        schoolFees.Payments = new List<Payment>();
+
+                    schoolFees.Payments.Add(payment);
+                }
+            }
+        }
+
+        public void UpdatePayment(Payment payment)
+        {
+            var existingPayment = _payments.FirstOrDefault(p => p.Id == payment.Id);
+            if (existingPayment != null)
+            {
+                int index = _payments.IndexOf(existingPayment);
+                _payments[index] = payment;
+
+                // Update in SchoolFees if needed
+                if (payment.SchoolFeesId > 0)
+                {
+                    var schoolFees = GetSchoolFees(payment.SchoolFeesId);
+                    if (schoolFees != null && schoolFees.Payments != null)
+                    {
+                        var paymentInFees = schoolFees.Payments.FirstOrDefault(p => p.Id == payment.Id);
+                        if (paymentInFees != null)
+                        {
+                            int paymentIndex = schoolFees.Payments.IndexOf(paymentInFees);
+                            schoolFees.Payments[paymentIndex] = payment;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void DeletePayment(int id)
+        {
+            var payment = _payments.FirstOrDefault(p => p.Id == id);
+            if (payment != null)
+            {
+                _payments.Remove(payment);
+
+                // Remove from SchoolFees if needed
+                if (payment.SchoolFeesId > 0)
+                {
+                    var schoolFees = GetSchoolFees(payment.SchoolFeesId);
+                    if (schoolFees != null && schoolFees.Payments != null)
+                    {
+                        var paymentInFees = schoolFees.Payments.FirstOrDefault(p => p.Id == id);
+                        if (paymentInFees != null)
+                        {
+                            schoolFees.Payments.Remove(paymentInFees);
+                        }
+                    }
+                }
+            }
+        }
+
+        public int GetNextPaymentId()
+        {
+            return _payments.Count > 0 ? _payments.Max(p => p.Id) + 1 : 1;
+        }
+
+        // SchoolFees Methods
+        public List<SchoolFees> GetAllSchoolFees()
+        {
+            return _schoolFees;
+        }
+
+        public SchoolFees GetSchoolFees(int id)
+        {
+            return _schoolFees.FirstOrDefault(sf => sf.Id == id);
+        }
+
+        public void AddSchoolFees(SchoolFees schoolFees)
+        {
+            if (schoolFees.Id <= 0)
+            {
+                schoolFees.Id = GetNextSchoolFeesId();
+            }
+
+            if (schoolFees.Payments == null)
+            {
+                schoolFees.Payments = new List<Payment>();
+            }
+
+            _schoolFees.Add(schoolFees);
+        }
+
+        public void UpdateSchoolFees(SchoolFees schoolFees)
+        {
+            var existingSchoolFees = _schoolFees.FirstOrDefault(sf => sf.Id == schoolFees.Id);
+            if (existingSchoolFees != null)
+            {
+                int index = _schoolFees.IndexOf(existingSchoolFees);
+                _schoolFees[index] = schoolFees;
+            }
+        }
+
+        public void DeleteSchoolFees(int id)
+        {
+            var schoolFees = _schoolFees.FirstOrDefault(sf => sf.Id == id);
+            if (schoolFees != null)
+            {
+                _schoolFees.Remove(schoolFees);
+            }
+        }
+
+        public int GetNextSchoolFeesId()
+        {
+            return _schoolFees.Count > 0 ? _schoolFees.Max(sf => sf.Id) + 1 : 1;
+        }
+    }
 }

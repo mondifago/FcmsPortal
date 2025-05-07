@@ -550,7 +550,7 @@ public static class LogicMethods
     }
 
     //Retrieves the schedule entry that contains a specific class session
-    public static ScheduleEntry GetScheduleEntryForClassSession(School school, int classSessionId)
+    public static ScheduleEntry? GetScheduleEntryForClassSession(School school, int classSessionId)
     {
         if (school?.LearningPath == null)
             return null;
@@ -1284,15 +1284,6 @@ public static class LogicMethods
             lp.EducationLevel == currentLearningPath.EducationLevel &&
             lp.ClassLevel == currentLearningPath.ClassLevel &&
             lp.Semester == nextSemester);
-
-        if (nextLearningPath != null)
-        {
-            Console.WriteLine($"Next Learning Path found: Semester {nextSemester}");
-        }
-        else
-        {
-            Console.WriteLine($"No learning path found for Semester {nextSemester}.");
-        }
 
         return nextLearningPath;
     }
