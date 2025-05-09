@@ -114,10 +114,9 @@ namespace FcmsPortal
                 StudentId = student1.Id,
                 LearningPathId = 1001
             });
-            student1.Person.SchoolFees = new SchoolFees();
             LogicMethods.AddStudentToGuardianWards(guardian1, student1);
             LogicMethods.AddStudentToSchool(fcmSchool, student1);
-            LogicMethods.MakePaymentForStudent(student1, 30000, PaymentMethod.Cash);
+
 
             //create student 4
             Student student4 = new Student();
@@ -626,7 +625,7 @@ namespace FcmsPortal
             learningPath1.FeePerSemester = 50000;
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
             var learning1Students = LogicMethods.GetStudentsByLevel(fcmSchool, EducationLevel.SeniorCollege, ClassLevel.SC_3);
-            LogicMethods.AddMultipleStudentsToLearningPath(learningPath1, learning1Students);
+
             fcmSchool.LearningPath.Add(learningPath1);
 
             LearningPath learningPath2 = new LearningPath();

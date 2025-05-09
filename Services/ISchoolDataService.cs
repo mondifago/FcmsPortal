@@ -79,6 +79,8 @@ namespace FcmsPortal.Services
         void DeleteSchoolFees(int id);
         int GetNextSchoolFeesId();
         Student GetStudentBySchoolFeesId(int schoolFeesId);
+        void AddMultipleStudentsToLearningPath(LearningPath learningPath, List<Student> studentsToAdd);
+        void AddStudentToLearningPath(LearningPath learningPath, Student student);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -1034,22 +1036,22 @@ namespace FcmsPortal.Services
 
         public void AddPayment(Payment payment)
         {
-            if (payment.Id <= 0)
-            {
-                payment.Id = GetNextPaymentId();
-            }
+            if (payment == null)
+                return;
+
+            payment.Id = GetNextPaymentId();
+
             _payments.Add(payment);
 
-            // If this payment is associated with SchoolFees, update it
             if (payment.SchoolFeesId > 0)
             {
-                var schoolFees = GetSchoolFees(payment.SchoolFeesId);
-                if (schoolFees != null)
+                var student = GetStudentBySchoolFeesId(payment.SchoolFeesId);
+                if (student != null && student.Person.SchoolFees != null)
                 {
-                    if (schoolFees.Payments == null)
-                        schoolFees.Payments = new List<Payment>();
-
-                    schoolFees.Payments.Add(payment);
+                    if (!student.Person.SchoolFees.Payments.Any(p => p.Id == payment.Id))
+                    {
+                        student.Person.SchoolFees.Payments.Add(payment);
+                    }
                 }
             }
         }
@@ -1062,7 +1064,6 @@ namespace FcmsPortal.Services
                 int index = _payments.IndexOf(existingPayment);
                 _payments[index] = payment;
 
-                // Update in SchoolFees if needed
                 if (payment.SchoolFeesId > 0)
                 {
                     var schoolFees = GetSchoolFees(payment.SchoolFeesId);
@@ -1086,7 +1087,6 @@ namespace FcmsPortal.Services
             {
                 _payments.Remove(payment);
 
-                // Remove from SchoolFees if needed
                 if (payment.SchoolFeesId > 0)
                 {
                     var schoolFees = GetSchoolFees(payment.SchoolFeesId);
@@ -1115,7 +1115,16 @@ namespace FcmsPortal.Services
 
         public SchoolFees GetSchoolFees(int id)
         {
-            return _schoolFees.FirstOrDefault(sf => sf.Id == id);
+            var schoolFees = _schoolFees.FirstOrDefault(sf => sf.Id == id);
+            if (schoolFees == null)
+            {
+                var student = GetStudentBySchoolFeesId(id);
+                if (student != null)
+                {
+                    schoolFees = student.Person.SchoolFees;
+                }
+            }
+            return schoolFees;
         }
 
         public void AddSchoolFees(SchoolFees schoolFees)
@@ -1154,14 +1163,66 @@ namespace FcmsPortal.Services
 
         public int GetNextSchoolFeesId()
         {
-            return _schoolFees.Count > 0 ? _schoolFees.Max(sf => sf.Id) + 1 : 1;
+            var existingIds = GetStudents()
+                .Where(s => s.Person?.SchoolFees != null && s.Person.SchoolFees.Id > 0)
+                .Select(s => s.Person.SchoolFees.Id)
+                .ToList();
+
+            existingIds.AddRange(GetAllSchoolFees().Select(sf => sf.Id));
+            int nextId = existingIds.Count > 0 ? existingIds.Max() + 1 : 1;
+            return nextId;
+        }
+
+        public void AddStudentToLearningPath(LearningPath learningPath, Student student)
+        {
+            if (learningPath == null)
+                throw new ArgumentNullException(nameof(learningPath));
+            if (student == null)
+                throw new ArgumentNullException(nameof(student));
+
+            if (learningPath.Students == null)
+                learningPath.Students = new List<Student>();
+
+            if (!learningPath.Students.Contains(student))
+            {
+                learningPath.Students.Add(student);
+                student.Person.SchoolFees = new SchoolFees();
+                student.Person.SchoolFees.Id = GetNextSchoolFeesId();
+                student.Person.SchoolFees.TotalAmount = learningPath.FeePerSemester;
+
+                if (student.CurrentLearningPathId == 0)
+                {
+                    student.CurrentLearningPathId = learningPath.Id;
+                    student.CurrentLearningPath = learningPath;
+                }
+
+                if (student.Person.SchoolFees.TotalPaid >= learningPath.FeePerSemester * FcmsConstants.PAYMENT_THRESHOLD_FACTOR &&
+                    !learningPath.StudentsPaymentSuccessful.Contains(student))
+                {
+                    learningPath.StudentsPaymentSuccessful.Add(student);
+                }
+            }
+        }
+
+        public void AddMultipleStudentsToLearningPath(LearningPath learningPath, List<Student> studentsToAdd)
+        {
+            if (learningPath == null)
+                throw new ArgumentNullException(nameof(learningPath));
+            if (studentsToAdd == null || !studentsToAdd.Any())
+                throw new ArgumentException("Students list cannot be null or empty.", nameof(studentsToAdd));
+
+            foreach (var student in studentsToAdd)
+            {
+                if (student == null)
+                    continue;
+
+                AddStudentToLearningPath(learningPath, student);
+            }
         }
 
         public Student GetStudentBySchoolFeesId(int schoolFeesId)
         {
-            return GetStudents()
-                .FirstOrDefault(s => s.Person.SchoolFees != null && s.Person.SchoolFees.Id == schoolFeesId);
+            return GetStudents().FirstOrDefault(s => s.Person?.SchoolFees?.Id == schoolFeesId);
         }
-
     }
 }
