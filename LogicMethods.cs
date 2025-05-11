@@ -1012,23 +1012,63 @@ public static class LogicMethods
         }
     }
 
-    //generate payment summery
+    //generate Student payment summery
     public static List<string> GeneratePaymentSummaryForStudent(Student student)
     {
         if (student?.Person?.SchoolFees == null)
         {
             throw new ArgumentException("Invalid student or school fees record.");
         }
-        var paymentSummary = new List<string>();
-        double totalPaid = 0;
 
+        var paymentSummary = new List<string>();
+
+        paymentSummary.Add($"Student Name: {student.Person.FirstName} {student.Person.MiddleName} {student.Person.LastName}");
+
+        if (student.Person.Addresses != null && student.Person.Addresses.Any())
+        {
+            var primaryAddress = student.Person.Addresses.FirstOrDefault(a => a.AddressType == AddressType.Home)
+                               ?? student.Person.Addresses.First();
+            paymentSummary.Add($"Student Address: {primaryAddress.Street}, {primaryAddress.City}, {primaryAddress.State}, {primaryAddress.Country}");
+        }
+
+        if (student.Guardian != null)
+        {
+            paymentSummary.Add($"Guardian Name: {student.Guardian.Person.FirstName} {student.Guardian.Person.MiddleName} {student.Guardian.Person.LastName}");
+            paymentSummary.Add($"Guardian Contact: {student.Guardian.Person.PhoneNumber}");
+            paymentSummary.Add($"Guardian Email: {student.Guardian.Person.Email}");
+        }
+
+        paymentSummary.Add($"Education Level: {student.Person.EducationLevel}");
+        paymentSummary.Add($"Class Level: {student.Person.ClassLevel}");
+
+        var currentLearningPath = student.CurrentLearningPath;
+        Payment latestPayment = student.Person.SchoolFees.Payments.OrderByDescending(p => p.Date).FirstOrDefault();
+
+        if (currentLearningPath != null)
+        {
+            paymentSummary.Add($"Academic Year: {currentLearningPath.AcademicYear}");
+            paymentSummary.Add($"Semester: {currentLearningPath.Semester}");
+        }
+        else if (latestPayment != null)
+        {
+            paymentSummary.Add($"Academic Year: {latestPayment.AcademicYear}");
+            paymentSummary.Add($"Semester: {latestPayment.Semester}");
+        }
+
+        paymentSummary.Add($"Total School Fees: {student.Person.SchoolFees.TotalAmount:C}");
+
+        double totalPaid = 0;
         foreach (var payment in student.Person.SchoolFees.Payments)
         {
             totalPaid += payment.Amount;
-            paymentSummary.Add($"Date: {payment.Date:yyyy-MM-dd}\tAmount paid: {payment.Amount:C}\t\tPayment Method: {payment.PaymentMethod}");
+            paymentSummary.Add($"Date: {payment.Date:yyyy-MM-dd}\tAmount: {payment.Amount:C}\tMethod: {payment.PaymentMethod}\tReference: {payment.Reference}");
         }
+
         paymentSummary.Add($"Total Paid: {totalPaid:C}");
         paymentSummary.Add($"Outstanding Balance: {student.Person.SchoolFees.Balance:C}");
+
+        // Report generation time
+        paymentSummary.Add($"Report Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
 
         return paymentSummary;
     }
