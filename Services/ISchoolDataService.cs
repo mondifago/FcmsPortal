@@ -66,17 +66,12 @@ namespace FcmsPortal.Services
         void SaveCourseGrade(CourseGrade grade);
         LearningPathGradeReport GetGradeReportForLearningPath(int learningPathId);
         void UpdateGradeReport(LearningPathGradeReport report);
-        List<Payment> GetAllPayments();
-        Payment GetPayment(int id);
         void AddPayment(Payment payment);
         void UpdatePayment(Payment payment);
         void DeletePayment(int id);
         int GetNextPaymentId();
-        List<SchoolFees> GetAllSchoolFees();
         SchoolFees GetSchoolFees(int id);
-        void AddSchoolFees(SchoolFees schoolFees);
         void UpdateSchoolFees(SchoolFees schoolFees);
-        void DeleteSchoolFees(int id);
         int GetNextSchoolFeesId();
         Student GetStudentBySchoolFeesId(int schoolFeesId);
         void AddMultipleStudentsToLearningPath(LearningPath learningPath, List<Student> studentsToAdd);
@@ -1024,16 +1019,6 @@ namespace FcmsPortal.Services
             }
         }
 
-        public List<Payment> GetAllPayments()
-        {
-            return _payments;
-        }
-
-        public Payment GetPayment(int id)
-        {
-            return _payments.FirstOrDefault(p => p.Id == id);
-        }
-
         public void AddPayment(Payment payment)
         {
             if (payment == null)
@@ -1107,12 +1092,6 @@ namespace FcmsPortal.Services
             return _payments.Count > 0 ? _payments.Max(p => p.Id) + 1 : 1;
         }
 
-        // SchoolFees Methods
-        public List<SchoolFees> GetAllSchoolFees()
-        {
-            return _schoolFees;
-        }
-
         public SchoolFees GetSchoolFees(int id)
         {
             var schoolFees = _schoolFees.FirstOrDefault(sf => sf.Id == id);
@@ -1127,21 +1106,6 @@ namespace FcmsPortal.Services
             return schoolFees;
         }
 
-        public void AddSchoolFees(SchoolFees schoolFees)
-        {
-            if (schoolFees.Id <= 0)
-            {
-                schoolFees.Id = GetNextSchoolFeesId();
-            }
-
-            if (schoolFees.Payments == null)
-            {
-                schoolFees.Payments = new List<Payment>();
-            }
-
-            _schoolFees.Add(schoolFees);
-        }
-
         public void UpdateSchoolFees(SchoolFees schoolFees)
         {
             var existingSchoolFees = _schoolFees.FirstOrDefault(sf => sf.Id == schoolFees.Id);
@@ -1152,15 +1116,6 @@ namespace FcmsPortal.Services
             }
         }
 
-        public void DeleteSchoolFees(int id)
-        {
-            var schoolFees = _schoolFees.FirstOrDefault(sf => sf.Id == id);
-            if (schoolFees != null)
-            {
-                _schoolFees.Remove(schoolFees);
-            }
-        }
-
         public int GetNextSchoolFeesId()
         {
             var existingIds = GetStudents()
@@ -1168,7 +1123,7 @@ namespace FcmsPortal.Services
                 .Select(s => s.Person.SchoolFees.Id)
                 .ToList();
 
-            existingIds.AddRange(GetAllSchoolFees().Select(sf => sf.Id));
+            existingIds.AddRange(_schoolFees.Select(sf => sf.Id));
             int nextId = existingIds.Count > 0 ? existingIds.Max() + 1 : 1;
             return nextId;
         }
