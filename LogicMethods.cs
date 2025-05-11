@@ -993,6 +993,25 @@ public static class LogicMethods
             .ToList();
     }
 
+    //Update payment status of a student in a learning path
+    public static void UpdatePaymentStatus(Student student, LearningPath learningPath)
+    {
+        if (student?.Person?.SchoolFees == null || learningPath == null)
+            return;
+
+        // Remove student from payment successful list if they exist there
+        if (learningPath.StudentsPaymentSuccessful.Contains(student))
+        {
+            learningPath.StudentsPaymentSuccessful.Remove(student);
+        }
+
+        // Check if payment is now successful (at least 50% paid)
+        if (IsPaymentSuccessful(student, learningPath))
+        {
+            learningPath.StudentsPaymentSuccessful.Add(student);
+        }
+    }
+
     //generate payment summery
     public static List<string> GeneratePaymentSummaryForStudent(Student student)
     {

@@ -66,12 +66,11 @@ namespace FcmsPortal.Services
         void SaveCourseGrade(CourseGrade grade);
         LearningPathGradeReport GetGradeReportForLearningPath(int learningPathId);
         void UpdateGradeReport(LearningPathGradeReport report);
-        void AddPayment(Payment payment);
+        Payment AddPayment(Payment payment);
         void UpdatePayment(Payment payment);
         void DeletePayment(int id);
-        int GetNextPaymentId();
+        Payment PrepareNewPayment(Student student);
         SchoolFees GetSchoolFees(int id);
-        void UpdateSchoolFees(SchoolFees schoolFees);
         int GetNextSchoolFeesId();
         Student GetStudentBySchoolFeesId(int schoolFeesId);
         void AddMultipleStudentsToLearningPath(LearningPath learningPath, List<Student> studentsToAdd);
@@ -1019,115 +1018,6 @@ namespace FcmsPortal.Services
             }
         }
 
-        public void AddPayment(Payment payment)
-        {
-            if (payment == null)
-                return;
-
-            payment.Id = GetNextPaymentId();
-
-            _payments.Add(payment);
-
-            if (payment.SchoolFeesId > 0)
-            {
-                var student = GetStudentBySchoolFeesId(payment.SchoolFeesId);
-                if (student != null && student.Person.SchoolFees != null)
-                {
-                    if (!student.Person.SchoolFees.Payments.Any(p => p.Id == payment.Id))
-                    {
-                        student.Person.SchoolFees.Payments.Add(payment);
-                    }
-                }
-            }
-        }
-
-        public void UpdatePayment(Payment payment)
-        {
-            var existingPayment = _payments.FirstOrDefault(p => p.Id == payment.Id);
-            if (existingPayment != null)
-            {
-                int index = _payments.IndexOf(existingPayment);
-                _payments[index] = payment;
-
-                if (payment.SchoolFeesId > 0)
-                {
-                    var schoolFees = GetSchoolFees(payment.SchoolFeesId);
-                    if (schoolFees != null && schoolFees.Payments != null)
-                    {
-                        var paymentInFees = schoolFees.Payments.FirstOrDefault(p => p.Id == payment.Id);
-                        if (paymentInFees != null)
-                        {
-                            int paymentIndex = schoolFees.Payments.IndexOf(paymentInFees);
-                            schoolFees.Payments[paymentIndex] = payment;
-                        }
-                    }
-                }
-            }
-        }
-
-        public void DeletePayment(int id)
-        {
-            var payment = _payments.FirstOrDefault(p => p.Id == id);
-            if (payment != null)
-            {
-                _payments.Remove(payment);
-
-                if (payment.SchoolFeesId > 0)
-                {
-                    var schoolFees = GetSchoolFees(payment.SchoolFeesId);
-                    if (schoolFees != null && schoolFees.Payments != null)
-                    {
-                        var paymentInFees = schoolFees.Payments.FirstOrDefault(p => p.Id == id);
-                        if (paymentInFees != null)
-                        {
-                            schoolFees.Payments.Remove(paymentInFees);
-                        }
-                    }
-                }
-            }
-        }
-
-        public int GetNextPaymentId()
-        {
-            return _payments.Count > 0 ? _payments.Max(p => p.Id) + 1 : 1;
-        }
-
-        public SchoolFees GetSchoolFees(int id)
-        {
-            var schoolFees = _schoolFees.FirstOrDefault(sf => sf.Id == id);
-            if (schoolFees == null)
-            {
-                var student = GetStudentBySchoolFeesId(id);
-                if (student != null)
-                {
-                    schoolFees = student.Person.SchoolFees;
-                }
-            }
-            return schoolFees;
-        }
-
-        public void UpdateSchoolFees(SchoolFees schoolFees)
-        {
-            var existingSchoolFees = _schoolFees.FirstOrDefault(sf => sf.Id == schoolFees.Id);
-            if (existingSchoolFees != null)
-            {
-                int index = _schoolFees.IndexOf(existingSchoolFees);
-                _schoolFees[index] = schoolFees;
-            }
-        }
-
-        public int GetNextSchoolFeesId()
-        {
-            var existingIds = GetStudents()
-                .Where(s => s.Person?.SchoolFees != null && s.Person.SchoolFees.Id > 0)
-                .Select(s => s.Person.SchoolFees.Id)
-                .ToList();
-
-            existingIds.AddRange(_schoolFees.Select(sf => sf.Id));
-            int nextId = existingIds.Count > 0 ? existingIds.Max() + 1 : 1;
-            return nextId;
-        }
-
         public void AddStudentToLearningPath(LearningPath learningPath, Student student)
         {
             if (learningPath == null)
@@ -1177,7 +1067,138 @@ namespace FcmsPortal.Services
 
         public Student GetStudentBySchoolFeesId(int schoolFeesId)
         {
-            return GetStudents().FirstOrDefault(s => s.Person?.SchoolFees?.Id == schoolFeesId);
+            var school = GetSchool();
+            return school.Students.FirstOrDefault(s => s.Person.SchoolFees?.Id == schoolFeesId);
+        }
+
+        public Payment AddPayment(Payment payment)
+        {
+            var schoolFees = GetSchoolFees(payment.SchoolFeesId);
+            if (schoolFees != null)
+            {
+                payment.Id = GetNextPaymentId();
+                schoolFees.Payments.Add(payment);
+
+                // Update student's payment status if needed
+                var student = GetStudentBySchoolFeesId(payment.SchoolFeesId);
+                if (student != null && student.CurrentLearningPath != null)
+                {
+                    LogicMethods.UpdatePaymentStatus(student, student.CurrentLearningPath);
+                }
+            }
+            return payment;
+        }
+
+        public void UpdatePayment(Payment payment)
+        {
+            var schoolFees = GetSchoolFees(payment.SchoolFeesId);
+            if (schoolFees != null)
+            {
+                var existingPayment = schoolFees.Payments.FirstOrDefault(p => p.Id == payment.Id);
+                if (existingPayment != null)
+                {
+                    existingPayment.Amount = payment.Amount;
+                    existingPayment.Date = payment.Date;
+                    existingPayment.PaymentMethod = payment.PaymentMethod;
+                    existingPayment.Reference = payment.Reference;
+                    existingPayment.Semester = payment.Semester;
+                    existingPayment.AcademicYearStart = payment.AcademicYearStart;
+                    existingPayment.LearningPathId = payment.LearningPathId;
+
+                    // Update student's payment status if needed
+                    var student = GetStudentBySchoolFeesId(payment.SchoolFeesId);
+                    if (student != null && student.CurrentLearningPath != null)
+                    {
+                        LogicMethods.UpdatePaymentStatus(student, student.CurrentLearningPath);
+                    }
+                }
+            }
+        }
+
+        public void DeletePayment(int paymentId)
+        {
+            var school = GetSchool();
+            foreach (var student in school.Students)
+            {
+                if (student.Person.SchoolFees?.Payments != null)
+                {
+                    var payment = student.Person.SchoolFees.Payments.FirstOrDefault(p => p.Id == paymentId);
+                    if (payment != null)
+                    {
+                        student.Person.SchoolFees.Payments.Remove(payment);
+
+                        // Update student's payment status if needed
+                        if (student.CurrentLearningPath != null)
+                        {
+                            LogicMethods.UpdatePaymentStatus(student, student.CurrentLearningPath);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        private int GetNextPaymentId()
+        {
+            var school = GetSchool();
+            int maxId = 0;
+            foreach (var student in school.Students)
+            {
+                if (student.Person.SchoolFees?.Payments != null)
+                {
+                    foreach (var payment in student.Person.SchoolFees.Payments)
+                    {
+                        if (payment.Id > maxId)
+                            maxId = payment.Id;
+                    }
+                }
+            }
+            return maxId + 1;
+        }
+
+        public Payment PrepareNewPayment(Student student)
+        {
+            var payment = new Payment { Date = DateTime.Today };
+
+            if (student.Person.SchoolFees != null)
+            {
+                payment.SchoolFeesId = student.Person.SchoolFees.Id;
+            }
+
+            if (student.CurrentLearningPath != null)
+            {
+                payment.AcademicYearStart = student.CurrentLearningPath.AcademicYearStart;
+                payment.Semester = student.CurrentLearningPath.Semester;
+                payment.LearningPathId = student.CurrentLearningPath.Id;
+            }
+
+            return payment;
+        }
+
+        public SchoolFees GetSchoolFees(int id)
+        {
+            var schoolFees = _schoolFees.FirstOrDefault(sf => sf.Id == id);
+            if (schoolFees == null)
+            {
+                var student = GetStudentBySchoolFeesId(id);
+                if (student != null)
+                {
+                    schoolFees = student.Person.SchoolFees;
+                }
+            }
+            return schoolFees;
+        }
+
+        public int GetNextSchoolFeesId()
+        {
+            var existingIds = GetStudents()
+                .Where(s => s.Person?.SchoolFees != null && s.Person.SchoolFees.Id > 0)
+                .Select(s => s.Person.SchoolFees.Id)
+                .ToList();
+
+            existingIds.AddRange(_schoolFees.Select(sf => sf.Id));
+            int nextId = existingIds.Count > 0 ? existingIds.Max() + 1 : 1;
+            return nextId;
         }
     }
 }
