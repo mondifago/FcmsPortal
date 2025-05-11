@@ -948,45 +948,6 @@ public static class LogicMethods
         }
     }
 
-    //Assign fees to all students in all learning paths of a school assuming all students in the school has uniform school fees
-    public static void SetFeesForAllLearningPaths(School school)
-    {
-        if (school == null) throw new ArgumentNullException(nameof(school));
-
-        foreach (var learningPath in school.LearningPath)
-        {
-            SetStudentFeesForLearningPath(learningPath);
-        }
-    }
-
-    //Assign fees to list of selected learning paths 
-    public static void AssignFeesForSelectedLearningPaths(List<LearningPath> selectedLearningPaths)
-    {
-        if (selectedLearningPaths == null || selectedLearningPaths.Count == 0)
-        {
-            throw new ArgumentException("The list of selected learning paths cannot be null or empty.");
-        }
-
-        foreach (var learningPath in selectedLearningPaths)
-        {
-            if (learningPath == null)
-            {
-                throw new ArgumentException("One of the learning paths in the list is null.");
-            }
-
-            foreach (var student in learningPath.Students)
-            {
-                if (student.Person.SchoolFees == null)
-                {
-                    student.Person.SchoolFees = new SchoolFees();
-                }
-
-                // Assign the semester fee
-                student.Person.SchoolFees.TotalAmount = learningPath.FeePerSemester;
-            }
-        }
-    }
-
     //student make payment
     public static void MakePaymentForStudent(Student student, double amount, PaymentMethod paymentMethod)
     {
@@ -1159,29 +1120,6 @@ public static class LogicMethods
                 }
             }
         }
-    }
-
-    //confirm student's eligibility for payment
-    public static bool ValidatePaymentEligibilityForLearningPath(Student student, LearningPath learningPath)
-    {
-        if (student == null)
-        {
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-        }
-
-        if (learningPath == null)
-        {
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-        }
-
-        bool isEnrolled = learningPath.Students.Contains(student);
-
-        if (!isEnrolled)
-        {
-            Console.WriteLine($"Student {student.Person.FirstName} {student.Person.LastName} is not enrolled in the learning path '{learningPath.EducationLevel} - {learningPath.ClassLevel}'. Payment is not allowed.");
-        }
-
-        return isEnrolled;
     }
 
     /// <summary>

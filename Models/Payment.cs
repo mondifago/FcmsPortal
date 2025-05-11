@@ -1,5 +1,6 @@
 ﻿using FcmsPortal.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
 {
@@ -19,7 +20,20 @@ namespace FcmsPortal.Models
         [Required(ErrorMessage = "Reference is required.")]
         [Range(1, int.MaxValue, ErrorMessage = "Reference must be a positive number.")]
         public int Reference { get; set; }
-
         public int SchoolFeesId { get; set; }
+        public Semester Semester { get; set; }
+        public DateTime AcademicYearStart { get; set; }
+        public int LearningPathId { get; set; }
+
+        [NotMapped]
+        public string AcademicYear
+        {
+            get
+            {
+                int startYear = AcademicYearStart.Year;
+                int endYear = startYear + 1;
+                return $"{startYear}-{endYear}";
+            }
+        }
     }
 }
