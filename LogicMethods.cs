@@ -1013,65 +1013,94 @@ public static class LogicMethods
     }
 
     //generate Student payment summery
-    public static List<string> GeneratePaymentSummaryForStudent(Student student)
+    public static StudentPaymentReportEntry GenerateStudentPaymentReportEntry(Student student)
     {
+        // Validate input
         if (student?.Person?.SchoolFees == null)
         {
             throw new ArgumentException("Invalid student or school fees record.");
         }
 
-        var paymentSummary = new List<string>();
+        // Constants for percentage calculations
+        const double PERCENTAGE_MULTIPLIER = 100.0;
+        const double DEFAULT_COMPLETION_RATE = 0.0;
 
-        paymentSummary.Add($"Student Name: {student.Person.FirstName} {student.Person.MiddleName} {student.Person.LastName}");
+        // Get references to related data
+        var payments = student.Person.SchoolFees.Payments ?? new List<Payment>();
+        var guardian = student.Guardian?.Person;
+        var currentLearningPath = student.CurrentLearningPath;
+        var latestPayment = payments.OrderByDescending(p => p.Date).FirstOrDefault();
 
+        // Find primary address if available
+        string studentAddress = null;
         if (student.Person.Addresses != null && student.Person.Addresses.Any())
         {
             var primaryAddress = student.Person.Addresses.FirstOrDefault(a => a.AddressType == AddressType.Home)
                                ?? student.Person.Addresses.First();
-            paymentSummary.Add($"Student Address: {primaryAddress.Street}, {primaryAddress.City}, {primaryAddress.State}, {primaryAddress.Country}");
+            studentAddress = $"{primaryAddress.Street}, {primaryAddress.City}, {primaryAddress.State}, {primaryAddress.Country}";
         }
 
-        if (student.Guardian != null)
-        {
-            paymentSummary.Add($"Guardian Name: {student.Guardian.Person.FirstName} {student.Guardian.Person.MiddleName} {student.Guardian.Person.LastName}");
-            paymentSummary.Add($"Guardian Contact: {student.Guardian.Person.PhoneNumber}");
-            paymentSummary.Add($"Guardian Email: {student.Guardian.Person.Email}");
-        }
-
-        paymentSummary.Add($"Education Level: {student.Person.EducationLevel}");
-        paymentSummary.Add($"Class Level: {student.Person.ClassLevel}");
-
-        var currentLearningPath = student.CurrentLearningPath;
-        Payment latestPayment = student.Person.SchoolFees.Payments.OrderByDescending(p => p.Date).FirstOrDefault();
+        // Determine learning path name and academic details
+        string learningPathName = null;
+        string academicYear = null;
+        string semester = null;
 
         if (currentLearningPath != null)
         {
-            paymentSummary.Add($"Academic Year: {currentLearningPath.AcademicYear}");
-            paymentSummary.Add($"Semester: {currentLearningPath.Semester}");
+            learningPathName = $"{currentLearningPath.EducationLevel} - {currentLearningPath.ClassLevel}";
+            academicYear = currentLearningPath.AcademicYear;
+            semester = currentLearningPath.Semester.ToString();
         }
         else if (latestPayment != null)
         {
-            paymentSummary.Add($"Academic Year: {latestPayment.AcademicYear}");
-            paymentSummary.Add($"Semester: {latestPayment.Semester}");
+            academicYear = latestPayment.AcademicYear;
+            semester = latestPayment.Semester.ToString();
         }
 
-        paymentSummary.Add($"Total School Fees: {student.Person.SchoolFees.TotalAmount:C}");
-
-        double totalPaid = 0;
-        foreach (var payment in student.Person.SchoolFees.Payments)
+        // Create payment details list
+        var paymentDetails = payments.Select(p => new PaymentDetails
         {
-            totalPaid += payment.Amount;
-            paymentSummary.Add($"Date: {payment.Date:yyyy-MM-dd}\tAmount: {payment.Amount:C}\tMethod: {payment.PaymentMethod}\tReference: {payment.Reference}");
+            Date = p.Date,
+            Amount = p.Amount,
+            PaymentMethod = p.PaymentMethod.ToString(),
+            Reference = p.Reference
+        }).ToList();
+
+        // Calculate payment completion rate
+        double paymentCompletionRate = DEFAULT_COMPLETION_RATE;
+        if (student.Person.SchoolFees.TotalAmount > 0)
+        {
+            paymentCompletionRate = (student.Person.SchoolFees.TotalPaid / student.Person.SchoolFees.TotalAmount) * PERCENTAGE_MULTIPLIER;
         }
 
-        paymentSummary.Add($"Total Paid: {totalPaid:C}");
-        paymentSummary.Add($"Outstanding Balance: {student.Person.SchoolFees.Balance:C}");
+        // Calculate timely completion rate based on business rules
+        double timelyCompletionRate = DEFAULT_COMPLETION_RATE;
+        // Example implementation - adjust according to your specific requirements
+        if (paymentDetails.Any() && currentLearningPath != null)
+        {
+            // Check if payments were made before due dates
+            // This is a placeholder calculation
+            timelyCompletionRate = paymentCompletionRate;
+        }
 
-        // Report generation time
-        paymentSummary.Add($"Report Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-
-        return paymentSummary;
+        // Create and return the report entry
+        return new StudentPaymentReportEntry
+        {
+            DateAndTimeReportGenerated = DateTime.Now,
+            StudentFullName = $"{student.Person.FirstName} {student.Person.MiddleName} {student.Person.LastName}",
+            StudentAddress = studentAddress,
+            LearningPathName = learningPathName,
+            AcademicYear = academicYear,
+            Semester = semester,
+            TotalFees = student.Person.SchoolFees.TotalAmount,
+            TotalPaid = student.Person.SchoolFees.TotalPaid,
+            OutstandingBalance = student.Person.SchoolFees.Balance,
+            StudentPaymentCompletionRate = paymentCompletionRate,
+            StudentTimelyCompletionRate = timelyCompletionRate,
+            PaymentDetails = paymentDetails
+        };
     }
+
 
     //retrieve students with outstanding balance
     public static List<(Student Student, double OutstandingBalance)> GetStudentsWithOutstandingPayments(LearningPath learningPath)
@@ -1123,29 +1152,7 @@ public static class LogicMethods
     }
 
     //Generate payment report of all students in a learning path
-    public static List<PaymentReportEntry> GetPaymentReportForLearningPath(LearningPath learningPath)
-    {
-        if (learningPath == null)
-        {
-            throw new ArgumentNullException(nameof(learningPath), "Learning Path cannot be null.");
-        }
 
-        var paymentReport = learningPath.Students.Select(student => new PaymentReportEntry
-        {
-            StudentName = $"{student.Person.FirstName} {student.Person.LastName}",
-            TotalFees = student.Person.SchoolFees.TotalAmount,
-            TotalPaid = student.Person.SchoolFees.Payments.Sum(payment => payment.Amount),
-            OutstandingBalance = student.Person.SchoolFees.Balance,
-            PaymentDetails = student.Person.SchoolFees.Payments.Select(payment => new PaymentDetails
-            {
-                Date = payment.Date,
-                Amount = payment.Amount,
-                PaymentMethod = payment.PaymentMethod.ToString()
-            }).ToList()
-        }).ToList();
-
-        return paymentReport;
-    }
 
     //handle changes to Total amount of school fees
     public static void HandleFeeChangeForLearningPath(LearningPath learningPath, double newTotalFeeAmount)

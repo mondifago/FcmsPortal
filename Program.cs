@@ -1173,63 +1173,6 @@ namespace FcmsPortal
                 //add fee for learning path 1
                 learningPath1.FeePerSemester = 1000.0;
 
-                //assign semester fee to each student in learning path1
-                LogicMethods.SetStudentFeesForLearningPath(learningPath1);
-
-                foreach (var student in learningPath1.Students)
-                {
-                    Console.WriteLine($"Student: {student.Person.FirstName} - {student.Person.SchoolFees.TotalAmount}");
-                }
-                //student1 make payment of 200 out of 1000
-                LogicMethods.MakePaymentForStudent(student1, 200.0, PaymentMethod.Cash);
-                LogicMethods.MakePaymentForStudent(student1, 100.0, PaymentMethod.Card);
-                Console.WriteLine($"Student 1's school fees cost is: {student1.Person.SchoolFees.TotalAmount}");
-                Console.WriteLine($"student 1's total fees are: {student1.Person.SchoolFees.Balance}");
-
-                //test generate payment summery
-                var summary = LogicMethods.GeneratePaymentSummaryForStudent(student1);
-                foreach (var line in summary)
-                {
-                    Console.WriteLine(line);
-                }
-
-                //students with outstanding payments
-                var outstandingPayments = LogicMethods.GetStudentsWithOutstandingPayments(learningPath1);
-
-                foreach (var (student, balance) in outstandingPayments)
-                {
-                    Console.WriteLine($"Student: {student.Person.FirstName} {student.Person.LastName}, Outstanding Balance: {balance:C}");
-                }
-                LogicMethods.MakePaymentForStudent(student1, 700.0, PaymentMethod.Card);
-                LogicMethods.GrantAccessToSchedules(student1, learningPath1);
-                //retrieve students with up to 50% payment
-                var studentsWithAccess = LogicMethods.GetStudentsWithAccess(learningPath1);
-
-                foreach (var student in studentsWithAccess)
-                {
-                    Console.WriteLine($"Student Id: {student.Id}, Name: {student.Person.FirstName} {student.Person.LastName}");
-                }
-
-                //generate payment report for learning path
-                var report = LogicMethods.GetPaymentReportForLearningPath(learningPath1);
-
-                foreach (var entry in report)
-                {
-                    Console.WriteLine($"Student: {entry.StudentName}");
-                    Console.WriteLine($"Total Fees: {entry.TotalFees:C}");
-                    Console.WriteLine($"Total Paid: {entry.TotalPaid:C}");
-                    Console.WriteLine($"Outstanding Balance: {entry.OutstandingBalance:C}");
-
-                    Console.WriteLine("Payment Details:");
-                    foreach (var payment in entry.PaymentDetails)
-                    {
-                        Console.WriteLine($"  Date: {payment.Date:d}, Amount: {payment.Amount:C}, Method: {payment.PaymentMethod}");
-                    }
-                    Console.WriteLine();
-                }
-
-                //LogicMethods.NotifyStudentsOfPaymentStatus(learningPath1);
-
                 var currentLearningPath = learningPath1;
 
                 Console.WriteLine($"Current Learning Path: {currentLearningPath.ClassLevel} - Semester {currentLearningPath.Semester}");
