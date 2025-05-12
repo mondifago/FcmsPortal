@@ -1021,33 +1021,51 @@ public static class LogicMethods
         }
 
         var payments = student.Person.SchoolFees.Payments ?? new List<Payment>();
-        var schoolFees = student.Person.SchoolFees;
+        var guardian = student.Guardian?.Person;
         var currentLearningPath = student.CurrentLearningPath;
         var latestPayment = payments.OrderByDescending(p => p.Date).FirstOrDefault();
 
-        var address = student.Person.Addresses?
-            .FirstOrDefault(a => a.AddressType == AddressType.Home)
-            ?? student.Person.Addresses?.FirstOrDefault();
+        string studentAddress = null;
+        if (student.Person.Addresses != null && student.Person.Addresses.Any())
+        {
+            var primaryAddress = student.Person.Addresses.FirstOrDefault(a => a.AddressType == AddressType.Home)
+                               ?? student.Person.Addresses.First();
+            studentAddress = $"{primaryAddress.Street}, {primaryAddress.City}, {primaryAddress.State}, {primaryAddress.Country}";
+        }
 
-        string studentAddress = address != null
-            ? $"{address.Street}, {address.City}, {address.State}, {address.Country}"
-            : null;
+        string learningPathName = null;
+        string academicYear = null;
+        string semester = null;
 
-        string learningPathName = currentLearningPath != null
-            ? $"{currentLearningPath.EducationLevel} - {currentLearningPath.ClassLevel}"
-            : null;
+        if (currentLearningPath != null)
+        {
+            learningPathName = $"{currentLearningPath.EducationLevel} - {currentLearningPath.ClassLevel}";
+            academicYear = currentLearningPath.AcademicYear;
+            semester = currentLearningPath.Semester.ToString();
+        }
+        else if (latestPayment != null)
+        {
+            academicYear = latestPayment.AcademicYear;
+            semester = latestPayment.Semester.ToString();
+        }
 
-        string academicYear = currentLearningPath?.AcademicYear ?? latestPayment?.AcademicYear;
-        string semester = currentLearningPath?.Semester.ToString() ?? latestPayment?.Semester.ToString();
+        var paymentDetails = payments.Select(p => new PaymentDetails
+        {
+            Date = p.Date,
+            Amount = p.Amount,
+            PaymentMethod = p.PaymentMethod.ToString(),
+            Reference = p.Reference
+        }).ToList();
 
-        double totalPaid = payments.Sum(p => p.Amount);
-        double totalFees = schoolFees.TotalAmount;
+        // Calculate payment completion rate
+        double paymentCompletionRate = FcmsConstants.DEFAULT_COMPLETION_RATE;
+        if (student.Person.SchoolFees.TotalAmount > FcmsConstants.DEFAULT_COMPLETION_RATE)
+        {
+            paymentCompletionRate = (student.Person.SchoolFees.TotalPaid / student.Person.SchoolFees.TotalAmount) * FcmsConstants.PERCENTAGE_MULTIPLIER;
+        }
 
-        // Payment completion rate (0-100%)
-        double paymentCompletionRate = totalFees > 0 ? (totalPaid / totalFees) * 100 : 0;
-
-        // Timely completion rate
-        double timelyCompletionRate = 0;
+        // Calculate timely completion rate based on business rules
+        double timelyCompletionRate = FcmsConstants.DEFAULT_COMPLETION_RATE;
         if (currentLearningPath != null && latestPayment != null)
         {
             DateTime semesterStart = currentLearningPath.SemesterStartDate;
@@ -1055,10 +1073,10 @@ public static class LogicMethods
             double semesterDurationDays = (semesterEnd - semesterStart).TotalDays;
             double paymentDurationDays = (latestPayment.Date - semesterStart).TotalDays;
 
-            if (semesterDurationDays > 0 && paymentDurationDays > 0)
+            if (semesterDurationDays > FcmsConstants.DEFAULT_COMPLETION_RATE && paymentDurationDays > FcmsConstants.DEFAULT_COMPLETION_RATE)
             {
-                timelyCompletionRate = (1 - (paymentDurationDays / semesterDurationDays)) * 100;
-                timelyCompletionRate = Math.Clamp(timelyCompletionRate, 0, 100);
+                timelyCompletionRate = (1 - (paymentDurationDays / semesterDurationDays)) * FcmsConstants.PERCENTAGE_MULTIPLIER;
+                timelyCompletionRate = Math.Clamp(timelyCompletionRate, FcmsConstants.DEFAULT_COMPLETION_RATE, FcmsConstants.PERCENTAGE_MULTIPLIER);
             }
         }
 
@@ -1070,18 +1088,12 @@ public static class LogicMethods
             LearningPathName = learningPathName,
             AcademicYear = academicYear,
             Semester = semester,
-            TotalFees = totalFees,
-            TotalPaid = totalPaid,
-            OutstandingBalance = schoolFees.Balance,
-            StudentPaymentCompletionRate = Math.Round(paymentCompletionRate, 2),
-            StudentTimelyCompletionRate = Math.Round(timelyCompletionRate, 2),
-            PaymentDetails = payments.Select(p => new PaymentDetails
-            {
-                Date = p.Date,
-                Amount = p.Amount,
-                PaymentMethod = p.PaymentMethod.ToString(),
-                Reference = p.Reference
-            }).ToList()
+            TotalFees = student.Person.SchoolFees.TotalAmount,
+            TotalPaid = student.Person.SchoolFees.TotalPaid,
+            OutstandingBalance = student.Person.SchoolFees.Balance,
+            StudentPaymentCompletionRate = paymentCompletionRate,
+            StudentTimelyCompletionRate = timelyCompletionRate,
+            PaymentDetails = paymentDetails
         };
     }
 
