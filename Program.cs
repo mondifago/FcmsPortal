@@ -623,6 +623,9 @@ namespace FcmsPortal
             learningPath1.Semester = Semester.First;
             learningPath1.AcademicYearStart = new DateTime(2026, 01, 01);
             learningPath1.FeePerSemester = 50000;
+            learningPath1.SemesterStartDate = new DateTime(2026, 01, 01);
+            learningPath1.SemesterEndDate = new DateTime(2026, 06, 30);
+            learningPath1.ExamsStartDate = new DateTime(2026, 07, 01);
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
             var learning1Students = LogicMethods.GetStudentsByLevel(fcmSchool, EducationLevel.SeniorCollege, ClassLevel.SC_3);
 

@@ -10,6 +10,9 @@ namespace FcmsPortal.Models
         public ClassLevel ClassLevel { get; set; }
         public Semester Semester { get; set; }
         public DateTime AcademicYearStart { get; set; }
+        public DateTime SemesterStartDate { get; set; }
+        public DateTime SemesterEndDate { get; set; }
+        public DateTime ExamsStartDate { get; set; }
 
         [NotMapped]
         public string AcademicYear

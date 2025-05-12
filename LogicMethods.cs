@@ -1015,75 +1015,53 @@ public static class LogicMethods
     //generate Student payment summery
     public static StudentPaymentReportEntry GenerateStudentPaymentReportEntry(Student student)
     {
-        // Validate input
         if (student?.Person?.SchoolFees == null)
         {
             throw new ArgumentException("Invalid student or school fees record.");
         }
 
-        // Constants for percentage calculations
-        const double PERCENTAGE_MULTIPLIER = 100.0;
-        const double DEFAULT_COMPLETION_RATE = 0.0;
-
-        // Get references to related data
         var payments = student.Person.SchoolFees.Payments ?? new List<Payment>();
-        var guardian = student.Guardian?.Person;
+        var schoolFees = student.Person.SchoolFees;
         var currentLearningPath = student.CurrentLearningPath;
         var latestPayment = payments.OrderByDescending(p => p.Date).FirstOrDefault();
 
-        // Find primary address if available
-        string studentAddress = null;
-        if (student.Person.Addresses != null && student.Person.Addresses.Any())
+        var address = student.Person.Addresses?
+            .FirstOrDefault(a => a.AddressType == AddressType.Home)
+            ?? student.Person.Addresses?.FirstOrDefault();
+
+        string studentAddress = address != null
+            ? $"{address.Street}, {address.City}, {address.State}, {address.Country}"
+            : null;
+
+        string learningPathName = currentLearningPath != null
+            ? $"{currentLearningPath.EducationLevel} - {currentLearningPath.ClassLevel}"
+            : null;
+
+        string academicYear = currentLearningPath?.AcademicYear ?? latestPayment?.AcademicYear;
+        string semester = currentLearningPath?.Semester.ToString() ?? latestPayment?.Semester.ToString();
+
+        double totalPaid = payments.Sum(p => p.Amount);
+        double totalFees = schoolFees.TotalAmount;
+
+        // Payment completion rate (0-100%)
+        double paymentCompletionRate = totalFees > 0 ? (totalPaid / totalFees) * 100 : 0;
+
+        // Timely completion rate
+        double timelyCompletionRate = 0;
+        if (currentLearningPath != null && latestPayment != null)
         {
-            var primaryAddress = student.Person.Addresses.FirstOrDefault(a => a.AddressType == AddressType.Home)
-                               ?? student.Person.Addresses.First();
-            studentAddress = $"{primaryAddress.Street}, {primaryAddress.City}, {primaryAddress.State}, {primaryAddress.Country}";
+            DateTime semesterStart = currentLearningPath.SemesterStartDate;
+            DateTime semesterEnd = currentLearningPath.SemesterEndDate;
+            double semesterDurationDays = (semesterEnd - semesterStart).TotalDays;
+            double paymentDurationDays = (latestPayment.Date - semesterStart).TotalDays;
+
+            if (semesterDurationDays > 0 && paymentDurationDays > 0)
+            {
+                timelyCompletionRate = (1 - (paymentDurationDays / semesterDurationDays)) * 100;
+                timelyCompletionRate = Math.Clamp(timelyCompletionRate, 0, 100);
+            }
         }
 
-        // Determine learning path name and academic details
-        string learningPathName = null;
-        string academicYear = null;
-        string semester = null;
-
-        if (currentLearningPath != null)
-        {
-            learningPathName = $"{currentLearningPath.EducationLevel} - {currentLearningPath.ClassLevel}";
-            academicYear = currentLearningPath.AcademicYear;
-            semester = currentLearningPath.Semester.ToString();
-        }
-        else if (latestPayment != null)
-        {
-            academicYear = latestPayment.AcademicYear;
-            semester = latestPayment.Semester.ToString();
-        }
-
-        // Create payment details list
-        var paymentDetails = payments.Select(p => new PaymentDetails
-        {
-            Date = p.Date,
-            Amount = p.Amount,
-            PaymentMethod = p.PaymentMethod.ToString(),
-            Reference = p.Reference
-        }).ToList();
-
-        // Calculate payment completion rate
-        double paymentCompletionRate = DEFAULT_COMPLETION_RATE;
-        if (student.Person.SchoolFees.TotalAmount > 0)
-        {
-            paymentCompletionRate = (student.Person.SchoolFees.TotalPaid / student.Person.SchoolFees.TotalAmount) * PERCENTAGE_MULTIPLIER;
-        }
-
-        // Calculate timely completion rate based on business rules
-        double timelyCompletionRate = DEFAULT_COMPLETION_RATE;
-        // Example implementation - adjust according to your specific requirements
-        if (paymentDetails.Any() && currentLearningPath != null)
-        {
-            // Check if payments were made before due dates
-            // This is a placeholder calculation
-            timelyCompletionRate = paymentCompletionRate;
-        }
-
-        // Create and return the report entry
         return new StudentPaymentReportEntry
         {
             DateAndTimeReportGenerated = DateTime.Now,
@@ -1092,14 +1070,21 @@ public static class LogicMethods
             LearningPathName = learningPathName,
             AcademicYear = academicYear,
             Semester = semester,
-            TotalFees = student.Person.SchoolFees.TotalAmount,
-            TotalPaid = student.Person.SchoolFees.TotalPaid,
-            OutstandingBalance = student.Person.SchoolFees.Balance,
-            StudentPaymentCompletionRate = paymentCompletionRate,
-            StudentTimelyCompletionRate = timelyCompletionRate,
-            PaymentDetails = paymentDetails
+            TotalFees = totalFees,
+            TotalPaid = totalPaid,
+            OutstandingBalance = schoolFees.Balance,
+            StudentPaymentCompletionRate = Math.Round(paymentCompletionRate, 2),
+            StudentTimelyCompletionRate = Math.Round(timelyCompletionRate, 2),
+            PaymentDetails = payments.Select(p => new PaymentDetails
+            {
+                Date = p.Date,
+                Amount = p.Amount,
+                PaymentMethod = p.PaymentMethod.ToString(),
+                Reference = p.Reference
+            }).ToList()
         };
     }
+
 
 
     //retrieve students with outstanding balance

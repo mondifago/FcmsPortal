@@ -19,5 +19,7 @@
         public const double D_GRADE_MIN = 40.0;
         public const double E_GRADE_MIN = 30.0;
         public const double PAYMENT_THRESHOLD_FACTOR = 0.5;
+        public const double PERCENTAGE_MULTIPLIER = 100.0;
+        public const double DEFAULT_COMPLETION_RATE = 0.0;
     }
 }
