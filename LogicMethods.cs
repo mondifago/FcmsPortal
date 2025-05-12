@@ -1057,27 +1057,19 @@ public static class LogicMethods
             Reference = p.Reference
         }).ToList();
 
-        // Calculate payment completion rate
-        double paymentCompletionRate = FcmsConstants.DEFAULT_COMPLETION_RATE;
-        if (student.Person.SchoolFees.TotalAmount > FcmsConstants.DEFAULT_COMPLETION_RATE)
-        {
-            paymentCompletionRate = (student.Person.SchoolFees.TotalPaid / student.Person.SchoolFees.TotalAmount) * FcmsConstants.PERCENTAGE_MULTIPLIER;
-        }
+        double paymentCompletionRate = CalculatePaymentCompletionRate(
+    student.Person.SchoolFees.TotalPaid,
+    student.Person.SchoolFees.TotalAmount
+);
 
-        // Calculate timely completion rate based on business rules
         double timelyCompletionRate = FcmsConstants.DEFAULT_COMPLETION_RATE;
         if (currentLearningPath != null && latestPayment != null)
         {
-            DateTime semesterStart = currentLearningPath.SemesterStartDate;
-            DateTime semesterEnd = currentLearningPath.SemesterEndDate;
-            double semesterDurationDays = (semesterEnd - semesterStart).TotalDays;
-            double paymentDurationDays = (latestPayment.Date - semesterStart).TotalDays;
-
-            if (semesterDurationDays > FcmsConstants.DEFAULT_COMPLETION_RATE && paymentDurationDays > FcmsConstants.DEFAULT_COMPLETION_RATE)
-            {
-                timelyCompletionRate = (1 - (paymentDurationDays / semesterDurationDays)) * FcmsConstants.PERCENTAGE_MULTIPLIER;
-                timelyCompletionRate = Math.Clamp(timelyCompletionRate, FcmsConstants.DEFAULT_COMPLETION_RATE, FcmsConstants.PERCENTAGE_MULTIPLIER);
-            }
+            timelyCompletionRate = CalculateTimelyCompletionRate(
+                currentLearningPath.SemesterStartDate,
+                currentLearningPath.SemesterEndDate,
+                latestPayment.Date
+            );
         }
 
         return new StudentPaymentReportEntry
@@ -1097,7 +1089,25 @@ public static class LogicMethods
         };
     }
 
+    public static double CalculatePaymentCompletionRate(double totalPaid, double totalFees)
+    {
+        if (totalFees <= FcmsConstants.DEFAULT_COMPLETION_RATE)
+            return FcmsConstants.DEFAULT_COMPLETION_RATE;
 
+        return (totalPaid / totalFees) * FcmsConstants.PERCENTAGE_MULTIPLIER;
+    }
+
+    public static double CalculateTimelyCompletionRate(DateTime semesterStart, DateTime semesterEnd, DateTime lastPaymentDate)
+    {
+        double semesterDurationDays = (semesterEnd - semesterStart).TotalDays;
+        double paymentDurationDays = (lastPaymentDate - semesterStart).TotalDays;
+
+        if (semesterDurationDays <= 0 || paymentDurationDays < 0)
+            return FcmsConstants.DEFAULT_COMPLETION_RATE;
+
+        double rate = (1 - (paymentDurationDays / semesterDurationDays)) * FcmsConstants.PERCENTAGE_MULTIPLIER;
+        return Math.Clamp(rate, FcmsConstants.DEFAULT_COMPLETION_RATE, FcmsConstants.PERCENTAGE_MULTIPLIER);
+    }
 
     //retrieve students with outstanding balance
     public static List<(Student Student, double OutstandingBalance)> GetStudentsWithOutstandingPayments(LearningPath learningPath)
