@@ -559,6 +559,9 @@ namespace FcmsPortal.Services
             var existingLearningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPath.Id);
             if (existingLearningPath != null)
             {
+                existingLearningPath.SemesterStartDate = learningPath.SemesterStartDate;
+                existingLearningPath.SemesterEndDate = learningPath.SemesterEndDate;
+                existingLearningPath.ExamsStartDate = learningPath.ExamsStartDate;
                 existingLearningPath.EducationLevel = learningPath.EducationLevel;
                 existingLearningPath.ClassLevel = learningPath.ClassLevel;
                 existingLearningPath.Semester = learningPath.Semester;
