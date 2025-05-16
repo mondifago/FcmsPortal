@@ -75,6 +75,15 @@ namespace FcmsPortal.Services
         Student GetStudentBySchoolFeesId(int schoolFeesId);
         void AddMultipleStudentsToLearningPath(LearningPath learningPath, List<Student> studentsToAdd);
         void AddStudentToLearningPath(LearningPath learningPath, Student student);
+        void GenerateCurriculumForLearningPath(LearningPath learningPath);
+        void UpdateCurriculumForLearningPath(LearningPath learningPath);
+        void UpdateAllCurricula();
+        Curriculum GetCurriculumForClass(EducationLevel educationLevel, ClassLevel classLevel, int year);
+        Curriculum GetOrCreateCurriculumForClassSession(ClassSession session);
+        List<Curriculum> GetAllCurricula();
+        List<Curriculum> GetCurriculaByCourse(string course);
+        List<Curriculum> GetCurriculaBySemester(Semester semester);
+        Dictionary<EducationLevel, Dictionary<ClassLevel, Dictionary<Semester, List<Curriculum>>>> GetCurriculaHierarchy();
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -1202,6 +1211,193 @@ namespace FcmsPortal.Services
             existingIds.AddRange(_schoolFees.Select(sf => sf.Id));
             int nextId = existingIds.Count > 0 ? existingIds.Max() + 1 : 1;
             return nextId;
+        }
+
+        public void GenerateCurriculumForLearningPath(LearningPath learningPath)
+        {
+            if (learningPath == null)
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+
+            if (learningPath.Schedule == null || !learningPath.Schedule.Any())
+                throw new InvalidOperationException("Learning path has no schedules to generate a curriculum.");
+
+            int year = learningPath.Schedule.First().DateTime.Year;
+
+            var semesterCurriculums = LogicMethods.GroupSchedulesIntoSemesters(learningPath.Schedule);
+
+            var newCurriculum = new Curriculum
+            {
+                Id = _school.Curricula.Any() ? _school.Curricula.Max(c => c.Id) + 1 : 1,
+                Year = year,
+                EducationLevel = learningPath.EducationLevel,
+                ClassLevel = learningPath.ClassLevel,
+                Semesters = semesterCurriculums
+            };
+
+            LogicMethods.ValidateCurriculumUniqueness(_school, newCurriculum);
+            _school.Curricula.Add(newCurriculum);
+        }
+
+        public void UpdateCurriculumForLearningPath(LearningPath learningPath)
+        {
+            if (learningPath == null)
+                throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+
+            if (learningPath.Schedule == null || !learningPath.Schedule.Any())
+                throw new InvalidOperationException("Learning path has no schedules to update the curriculum.");
+
+            int year = learningPath.Schedule.First().DateTime.Year;
+
+            var existingCurriculum = _school.Curricula.FirstOrDefault(c =>
+                c.Year == year &&
+                c.EducationLevel == learningPath.EducationLevel &&
+                c.ClassLevel == learningPath.ClassLevel);
+
+            if (existingCurriculum == null)
+            {
+                GenerateCurriculumForLearningPath(learningPath);
+                return;
+            }
+
+            var semesterCurriculums = LogicMethods.GroupSchedulesIntoSemesters(learningPath.Schedule);
+            existingCurriculum.Semesters = semesterCurriculums;
+        }
+
+        public void UpdateAllCurricula()
+        {
+            if (_school.LearningPath == null || !_school.LearningPath.Any())
+                throw new InvalidOperationException("No learning paths available in the school to update curricula.");
+
+            foreach (var learningPath in _school.LearningPath)
+            {
+                try
+                {
+                    UpdateCurriculumForLearningPath(learningPath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to update curriculum for Learning Path Id: {learningPath.Id}. Error: {ex.Message}");
+                }
+            }
+        }
+
+        public Curriculum GetCurriculumForClass(EducationLevel educationLevel, ClassLevel classLevel, int year)
+        {
+            if (_school.Curricula == null || !_school.Curricula.Any())
+                throw new InvalidOperationException("No curricula exist in the school.");
+
+            var curriculum = _school.Curricula
+                .FirstOrDefault(c => c.EducationLevel == educationLevel &&
+                                    c.ClassLevel == classLevel &&
+                                    c.Year == year);
+
+            if (curriculum == null)
+                throw new InvalidOperationException($"No curriculum found for Education Level: {educationLevel}, Class Level: {classLevel}, Year: {year}.");
+
+            return curriculum;
+        }
+
+        public Curriculum GetOrCreateCurriculumForClassSession(ClassSession session)
+        {
+            if (session == null)
+                throw new ArgumentNullException(nameof(session), "Class session cannot be null.");
+
+            // Find the learning path that contains this class session
+            var learningPath = _school.LearningPath
+                .FirstOrDefault(lp => lp.Schedule != null &&
+                                     lp.Schedule.Any(s => s.ClassSession?.Id == session.Id));
+
+            var educationLevel = learningPath?.EducationLevel ?? session.Teacher?.Person?.EducationLevel ?? EducationLevel.None;
+            var classLevel = learningPath?.ClassLevel ?? session.Teacher?.Person?.ClassLevel ?? ClassLevel.None;
+            var academicYear = DateTime.Now.Year;
+
+            var curriculum = _school.Curricula
+                .FirstOrDefault(c =>
+                    c.EducationLevel == educationLevel &&
+                    c.ClassLevel == classLevel &&
+                    c.Year == academicYear &&
+                    c.Course == session.Course);
+
+            if (curriculum == null)
+            {
+                curriculum = new Curriculum
+                {
+                    Id = _school.Curricula.Any() ? _school.Curricula.Max(c => c.Id) + 1 : 1,
+                    Year = academicYear,
+                    EducationLevel = educationLevel,
+                    ClassLevel = classLevel,
+                    Course = session.Course,
+                    Topic = session.Topic,
+                    Description = session.Description,
+                    LessonPlan = session.LessonPlan,
+                    Semesters = new List<SemesterCurriculum>()
+                };
+
+                _school.Curricula.Add(curriculum);
+            }
+            else
+            {
+                curriculum.Topic = session.Topic;
+                curriculum.Description = session.Description;
+                curriculum.LessonPlan = session.LessonPlan;
+            }
+
+            return curriculum;
+        }
+
+        public List<Curriculum> GetAllCurricula()
+        {
+            return _school.Curricula.ToList();
+        }
+
+        public List<Curriculum> GetCurriculaByCourse(string course)
+        {
+            if (string.IsNullOrEmpty(course))
+                throw new ArgumentException("Course name cannot be null or empty.", nameof(course));
+
+            return _school.Curricula
+                .Where(c => c.Course?.Equals(course, StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+        }
+
+        public List<Curriculum> GetCurriculaBySemester(Semester semester)
+        {
+            return _school.Curricula
+                .Where(c => c.Semesters != null && c.Semesters.Any(s => s.Semester == semester))
+                .ToList();
+        }
+
+        public Dictionary<EducationLevel, Dictionary<ClassLevel, Dictionary<Semester, List<Curriculum>>>> GetCurriculaHierarchy()
+        {
+            var hierarchy = new Dictionary<EducationLevel, Dictionary<ClassLevel, Dictionary<Semester, List<Curriculum>>>>();
+
+            foreach (var curriculum in _school.Curricula)
+            {
+                if (!hierarchy.ContainsKey(curriculum.EducationLevel))
+                {
+                    hierarchy[curriculum.EducationLevel] = new Dictionary<ClassLevel, Dictionary<Semester, List<Curriculum>>>();
+                }
+
+                if (!hierarchy[curriculum.EducationLevel].ContainsKey(curriculum.ClassLevel))
+                {
+                    hierarchy[curriculum.EducationLevel][curriculum.ClassLevel] = new Dictionary<Semester, List<Curriculum>>();
+                }
+
+                if (curriculum.Semesters != null)
+                {
+                    foreach (var semesterCurriculum in curriculum.Semesters)
+                    {
+                        if (!hierarchy[curriculum.EducationLevel][curriculum.ClassLevel].ContainsKey(semesterCurriculum.Semester))
+                        {
+                            hierarchy[curriculum.EducationLevel][curriculum.ClassLevel][semesterCurriculum.Semester] = new List<Curriculum>();
+                        }
+
+                        hierarchy[curriculum.EducationLevel][curriculum.ClassLevel][semesterCurriculum.Semester].Add(curriculum);
+                    }
+                }
+            }
+
+            return hierarchy;
         }
     }
 }

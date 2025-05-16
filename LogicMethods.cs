@@ -736,7 +736,7 @@ public static class LogicMethods
     /// </summary>
 
     //semester grouping 
-    private static List<SemesterCurriculum> GroupSchedulesIntoSemesters(List<ScheduleEntry> schedules)
+    public static List<SemesterCurriculum> GroupSchedulesIntoSemesters(List<ScheduleEntry> schedules)
     {
         return schedules
             .Where(se => se.ClassSession != null)
@@ -751,7 +751,7 @@ public static class LogicMethods
     }
 
     //check for curriculum uniqueness
-    private static void ValidateCurriculumUniqueness(School school, Curriculum newCurriculum)
+    public static void ValidateCurriculumUniqueness(School school, Curriculum newCurriculum)
     {
         if (school.Curricula.Any(c =>
                 c.Year == newCurriculum.Year &&
@@ -762,147 +762,7 @@ public static class LogicMethods
         }
     }
 
-    //Generate curriculum for learning path
-    public static void GenerateCurriculumForLearningPath(School school, LearningPath learningPath)
-    {
-        if (school == null)
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
 
-        if (learningPath == null)
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-
-        if (learningPath.Schedule == null || !learningPath.Schedule.Any())
-            throw new InvalidOperationException("Learning path has no schedules to generate a curriculum.");
-
-        int year = learningPath.Schedule.First().DateTime.Year;
-
-        var semesterCurriculums = GroupSchedulesIntoSemesters(learningPath.Schedule);
-
-        var newCurriculum = new Curriculum
-        {
-            Id = school.Curricula.Any() ? school.Curricula.Max(c => c.Id) + 1 : 1,
-            Year = year,
-            EducationLevel = learningPath.EducationLevel,
-            ClassLevel = learningPath.ClassLevel,
-            Semesters = semesterCurriculums
-        };
-
-        ValidateCurriculumUniqueness(school, newCurriculum);
-    }
-
-    //method to update curriculum from changes in learning path
-    public static void UpdateCurriculumForLearningPath(School school, LearningPath learningPath)
-    {
-        if (school == null)
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
-
-        if (learningPath == null)
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-
-        if (learningPath.Schedule == null || !learningPath.Schedule.Any())
-            throw new InvalidOperationException("Learning path has no schedules to update the curriculum.");
-
-        int year = learningPath.Schedule.First().DateTime.Year;
-
-        var existingCurriculum = school.Curricula.FirstOrDefault(c =>
-            c.Year == year &&
-            c.EducationLevel == learningPath.EducationLevel &&
-            c.ClassLevel == learningPath.ClassLevel);
-
-        if (existingCurriculum == null)
-        {
-            Console.WriteLine($"No existing curriculum found for {learningPath.EducationLevel} - {learningPath.ClassLevel}, Year {year}. Generating a new curriculum...");
-            GenerateCurriculumForLearningPath(school, learningPath);
-            return;
-        }
-
-        var semesterCurriculums = GroupSchedulesIntoSemesters(learningPath.Schedule);
-
-        existingCurriculum.Semesters = semesterCurriculums;
-    }
-
-    //method to update all curricula
-    public static void UpdateAllCurricula(School school)
-    {
-        if (school == null)
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
-
-        if (school.LearningPath == null || !school.LearningPath.Any())
-            throw new InvalidOperationException("No learning paths available in the school to update curricula.");
-
-        foreach (var learningPath in school.LearningPath)
-        {
-            try
-            {
-                UpdateCurriculumForLearningPath(school, learningPath);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to update curriculum for Learning Path Id: {learningPath.Id}. Error: {ex.Message}");
-            }
-        }
-    }
-
-    //to retrieve curriculum of any class
-    public static Curriculum GetCurriculumForClass(School school, EducationLevel educationLevel, ClassLevel classLevel, int year)
-    {
-        if (school == null)
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
-
-        if (school.Curricula == null || !school.Curricula.Any())
-            throw new InvalidOperationException("No curricula exist in the school.");
-
-        var curriculum = school.Curricula
-            .FirstOrDefault(c => c.EducationLevel == educationLevel &&
-                                          c.ClassLevel == classLevel &&
-                                          c.Year == year);
-
-        if (curriculum == null)
-            throw new InvalidOperationException($"No curriculum found for Education Level: {educationLevel}, Class Level: {classLevel}, Year: {year}.");
-
-        return curriculum;
-    }
-
-    //Get or Create Curriculum for a Class Session
-    public static Curriculum GetOrCreateCurriculumForClassSession(School school, ClassSession session)
-    {
-        var educationLevel = session.Teacher?.Person?.EducationLevel ?? EducationLevel.None;
-        var classLevel = session.Teacher?.Person?.ClassLevel ?? ClassLevel.None;
-        var academicYear = DateTime.Now.Year;
-
-        var curriculum = school.Curricula
-            .FirstOrDefault(c =>
-                c.EducationLevel == educationLevel &&
-                c.ClassLevel == classLevel &&
-                c.Year == academicYear &&
-                c.Course == session.Course);
-
-        if (curriculum == null)
-        {
-            curriculum = new Curriculum
-            {
-                Id = school.Curricula.Any() ? school.Curricula.Max(c => c.Id) + 1 : 1,
-                Year = academicYear,
-                EducationLevel = educationLevel,
-                ClassLevel = classLevel,
-                Course = session.Course,
-                Topic = session.Topic,
-                Description = session.Description,
-                LessonPlan = session.LessonPlan,
-                Semesters = new List<SemesterCurriculum>()
-            };
-
-            school.Curricula.Add(curriculum);
-        }
-        else
-        {
-            curriculum.Topic = session.Topic;
-            curriculum.Description = session.Description;
-            curriculum.LessonPlan = session.LessonPlan;
-        }
-
-        return curriculum;
-    }
 
     /// <summary>
     /// Methods for Payment
