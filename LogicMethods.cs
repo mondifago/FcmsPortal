@@ -797,8 +797,6 @@ public static class LogicMethods
         return filtered;
     }
 
-
-
     /// <summary>
     /// Methods for Payment
     /// </summary>
