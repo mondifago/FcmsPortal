@@ -74,7 +74,7 @@ namespace FcmsPortal.Services
         Student GetStudentBySchoolFeesId(int schoolFeesId);
         void AddMultipleStudentsToLearningPath(LearningPath learningPath, List<Student> studentsToAdd);
         void AddStudentToLearningPath(LearningPath learningPath, Student student);
-        IEnumerable<Curriculum> GetFullCurriculum();
+        List<Curriculum> GetFullCurriculum();
         List<Curriculum> FilterCurriculum(List<Curriculum> curriculum, EducationLevel educationLevel, ClassLevel classLevel, Semester? semester = null);
 
     }
