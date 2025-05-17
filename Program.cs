@@ -31,7 +31,6 @@ namespace FcmsPortal
             fcmSchool.LearningPath = new List<LearningPath>();
             fcmSchool.SchoolCalendar = new List<Calendar>();
             fcmSchool.Guardians = new List<Guardian>();
-            fcmSchool.Curricula = new List<Curriculum>();
             fcmSchool.LogoUrl = "";
             fcmSchool.Email = "info@fcms.com";
             fcmSchool.PhoneNumber = "08012345678";
@@ -659,7 +658,6 @@ namespace FcmsPortal
             fcmSchool.LearningPath = new List<LearningPath>();
             fcmSchool.SchoolCalendar = new List<Calendar>();
             fcmSchool.Guardians = new List<Guardian>();
-            fcmSchool.Curricula = new List<Curriculum>();
             fcmSchool.Address = address;
             address.Street = "120 City Road";
             address.City = "Asaba";
@@ -1130,216 +1128,172 @@ namespace FcmsPortal
                 }
             }
 
-            // Generate the curriculum for the Senior College Learning Path
-            LogicMethods.GenerateCurriculumForLearningPath(fcmSchool, learningPath1);
 
-            foreach (var curriculum in fcmSchool.Curricula)
+
+            //add fee for learning path 1
+            learningPath1.FeePerSemester = 1000.0;
+
+            var currentLearningPath = learningPath1;
+
+            Console.WriteLine($"Current Learning Path: {currentLearningPath.ClassLevel} - Semester {currentLearningPath.Semester}");
+
+            foreach (var schedule in learningPath1.Schedule)
             {
-                Console.WriteLine($"Curriculum Id: {curriculum.Id}");
-                Console.WriteLine($"Year: {curriculum.Year}");
-                Console.WriteLine($"Education Level: {curriculum.EducationLevel}");
-                Console.WriteLine($"Class Level: {curriculum.ClassLevel}");
-                foreach (var semester in curriculum.Semesters)
-                {
-                    Console.WriteLine($"  Semester {semester.Semester}:");
-                    foreach (var classSession in semester.ClassSessions)
-                    {
-                        Console.WriteLine($"    Course: {classSession.Course}");
-                        Console.WriteLine($"    Topic: {classSession.Topic}");
-                        Console.WriteLine($"    Description: {classSession.Description}");
-                        Console.WriteLine($"    Lesson Note: {classSession.LessonPlan}");
-                    }
-                }
-
-                //test retrieve curriculum
-                try
-                {
-                    var curriculumForClass = LogicMethods.GetCurriculumForClass(fcmSchool, EducationLevel.SeniorCollege, ClassLevel.SC_3, 2026);
-
-                    Console.WriteLine($"Curriculum Id: {curriculum.Id}");
-                    Console.WriteLine($"Year: {curriculum.Year}");
-                    Console.WriteLine($"Education Level: {curriculum.EducationLevel}");
-                    Console.WriteLine($"Class Level: {curriculum.ClassLevel}");
-                    foreach (var semester in curriculum.Semesters)
-                    {
-                        Console.WriteLine($"  Semester {semester.Semester}:");
-                        foreach (var classSession in semester.ClassSessions)
-                        {
-                            Console.WriteLine($"    Course: {classSession.Course}");
-                            Console.WriteLine($"    Topic: {classSession.Topic}");
-                            Console.WriteLine($"    Description: {classSession.Description}");
-                            Console.WriteLine($"    Lesson Note: {classSession.LessonPlan}");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                }
-
-                //add fee for learning path 1
-                learningPath1.FeePerSemester = 1000.0;
-
-                var currentLearningPath = learningPath1;
-
-                Console.WriteLine($"Current Learning Path: {currentLearningPath.ClassLevel} - Semester {currentLearningPath.Semester}");
-
-                foreach (var schedule in learningPath1.Schedule)
-                {
-                    Console.WriteLine($"{scheduleEntry.Id}: {scheduleEntry.DateTime} - {scheduleEntry.Title}, {scheduleEntry.Duration}");
-                }
-
-                LogicMethods.DisplayStudentSchedules(learningPath1);
-                // Get the next learning path
-                var nextLearningPath = LogicMethods.GetNextLearningPath(currentLearningPath, fcmSchool);
-
-                if (nextLearningPath != null)
-                {
-                    Console.WriteLine($"Next Learning Path: {nextLearningPath.ClassLevel} - Semester {nextLearningPath.Semester}");
-                }
-                else
-                {
-                    Console.WriteLine("No next learning path found. Manual promotion may be required.");
-                }
-
-                foreach (var student in learningPath1.Students)
-                {
-                    Console.WriteLine($"{student.Id}");
-                }
-
-                foreach (var entry in student1.Person.PersonalCalendar.ScheduleEntries)
-                {
-                    Console.WriteLine($"{scheduleEntry.DateTime}, {scheduleEntry.Title}, {scheduleEntry.Venue}");
-                }
-                LogicMethods.SynchronizeSchedulesWithStudents(learningPath1);
-
-                foreach (var entry in student1.Person.PersonalCalendar.ScheduleEntries)
-                {
-                    Console.WriteLine($"{scheduleEntry.DateTime}, {scheduleEntry.Title}, {scheduleEntry.Venue}");
-                }
-
-                var student1Calendar = student1.Person.PersonalCalendar;
-
-                LogicMethods.ClearCalendar(student1Calendar);
-
-                foreach (var entry in student1.Person.PersonalCalendar.ScheduleEntries)
-                {
-                    Console.WriteLine($"{scheduleEntry.DateTime}, {scheduleEntry.Title}, {scheduleEntry.Venue}");
-                }
-
-                //LogicMethods.TransferStudentsToNextLearningPath(learningPath1, learningPath2);
-
-                foreach (var student in learningPath1.Students)
-                {
-                    Console.WriteLine($"{student.Id}");
-                }
-
-                foreach (var student in learningPath2.Students)
-                {
-                    Console.WriteLine($"{student.Id}");
-                }
-                //put class session 2 and 3 into schedule entry 2 and 3
-                scheduleEntry2.ClassSession = classSession2;
-                scheduleEntry3.ClassSession = classSession3;
-
-                //add all schedules to the first learning path
-                Console.WriteLine(learningPath1.Schedule.Count);
-
-                learningPath1.Schedule.Add(scheduleEntry1);
-                learningPath1.Schedule.Add(scheduleEntry2);
-
-                Console.WriteLine(learningPath1.Schedule.Count);
-
-                var todaysSchedule = LogicMethods.GetEntriesByDate(allCalendar, DateTime.Today);
-
-                foreach (var entry in todaysSchedule)
-                {
-                    Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
-                }
-
-                var futureEntries = LogicMethods.GetUpcomingEntries(allCalendar);
-
-                foreach (var entry in futureEntries)
-                {
-                    Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
-                }
-
-                var mondayEntries = LogicMethods.GetEntriesForDayOfWeek(allCalendar, DayOfWeek.Thursday);
-                foreach (var entry in mondayEntries)
-                {
-                    Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
-                }
-
-                LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry1);
-                LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry2);
-                LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry3);
-                LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry4);
-                fcmSchool.SchoolCalendar.Add(allCalendar);
-
-                foreach (var entry in fcmSchool.SchoolCalendar)
-                {
-                    Console.WriteLine($" {entry.Name} ,  {entry.Id}");
-                }
-
-                //LogicMethods.ExportCalendar(allCalendar, @"../../../MYSTUDIES.xml");
-
-                var termWork = LogicMethods.GenerateSchoolCalendar(fcmSchool);
-
-                foreach (var entry in termWork)
-                {
-                    Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
-                }
-
-                //Attendance test
-                fcmSchool.LearningPath.Add(learningPath1);
-
-                var expectedStudents = LogicMethods.GetExpectedStudentsForClassSession(fcmSchool, classSession2);
-                foreach (var student in expectedStudents)
-                {
-                    Console.WriteLine($"{student.Id}, {student.Person.FirstName} {student.Person.LastName}");
-                }
-
-                List<Student> presenStudents = new List<Student>() { student1, student2 };
-                LogicMethods.TakeAttendanceForClassSession(fcmSchool, classSession2, presenStudents, staff2);
-
-                var absent = LogicMethods.GetStudentsAbsentForClassSession(classSession2);
-                foreach (var student in absent)
-                {
-                    Console.WriteLine($"Absentees from math class: {student.Id}: {student.Person.FirstName} {student.Person.LastName}");
-                }
-
-                List<Student> presentStudents = LogicMethods.GetStudentsPresentForClassSession(classSession2);
-
-                foreach (var student in presenStudents)
-                {
-                    Console.WriteLine($" Student present for math class: {student.Id}: {student.Person.FirstName} {student.Person.LastName}");
-                }
-
-                var attLog = LogicMethods.GetAttendanceForLearningPath(learningPath1);
-
-                Console.WriteLine($"Attendance Records for {learningPath1.Semester} Semester:");
-                foreach (var log in attLog)
-                {
-                    Console.WriteLine($"Class Session Id: {log.ClassSession.Id}, Course: {log.ClassSession.Course}, Topic: {log.ClassSession.Topic}");
-                    Console.WriteLine($"Teacher: {log.Teacher.Person.FirstName}");
-                    Console.WriteLine("Present Students:");
-                    foreach (var student in log.Attendees)
-                    {
-                        Console.WriteLine($" - {student.Person.FirstName}");
-                    }
-                    Console.WriteLine("Absent Students:");
-                    foreach (var student in log.AbsentStudents)
-                    {
-                        Console.WriteLine($" - {student.Person.FirstName}");
-                    }
-                    Console.WriteLine("--------------------------------------------------");
-                }
-
-
+                Console.WriteLine($"{scheduleEntry.Id}: {scheduleEntry.DateTime} - {scheduleEntry.Title}, {scheduleEntry.Duration}");
             }
-        }
 
+            LogicMethods.DisplayStudentSchedules(learningPath1);
+            // Get the next learning path
+            var nextLearningPath = LogicMethods.GetNextLearningPath(currentLearningPath, fcmSchool);
+
+            if (nextLearningPath != null)
+            {
+                Console.WriteLine($"Next Learning Path: {nextLearningPath.ClassLevel} - Semester {nextLearningPath.Semester}");
+            }
+            else
+            {
+                Console.WriteLine("No next learning path found. Manual promotion may be required.");
+            }
+
+            foreach (var student in learningPath1.Students)
+            {
+                Console.WriteLine($"{student.Id}");
+            }
+
+            foreach (var entry in student1.Person.PersonalCalendar.ScheduleEntries)
+            {
+                Console.WriteLine($"{scheduleEntry.DateTime}, {scheduleEntry.Title}, {scheduleEntry.Venue}");
+            }
+            LogicMethods.SynchronizeSchedulesWithStudents(learningPath1);
+
+            foreach (var entry in student1.Person.PersonalCalendar.ScheduleEntries)
+            {
+                Console.WriteLine($"{scheduleEntry.DateTime}, {scheduleEntry.Title}, {scheduleEntry.Venue}");
+            }
+
+            var student1Calendar = student1.Person.PersonalCalendar;
+
+            LogicMethods.ClearCalendar(student1Calendar);
+
+            foreach (var entry in student1.Person.PersonalCalendar.ScheduleEntries)
+            {
+                Console.WriteLine($"{scheduleEntry.DateTime}, {scheduleEntry.Title}, {scheduleEntry.Venue}");
+            }
+
+            //LogicMethods.TransferStudentsToNextLearningPath(learningPath1, learningPath2);
+
+            foreach (var student in learningPath1.Students)
+            {
+                Console.WriteLine($"{student.Id}");
+            }
+
+            foreach (var student in learningPath2.Students)
+            {
+                Console.WriteLine($"{student.Id}");
+            }
+            //put class session 2 and 3 into schedule entry 2 and 3
+            scheduleEntry2.ClassSession = classSession2;
+            scheduleEntry3.ClassSession = classSession3;
+
+            //add all schedules to the first learning path
+            Console.WriteLine(learningPath1.Schedule.Count);
+
+            learningPath1.Schedule.Add(scheduleEntry1);
+            learningPath1.Schedule.Add(scheduleEntry2);
+
+            Console.WriteLine(learningPath1.Schedule.Count);
+
+            var todaysSchedule = LogicMethods.GetEntriesByDate(allCalendar, DateTime.Today);
+
+            foreach (var entry in todaysSchedule)
+            {
+                Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
+            }
+
+            var futureEntries = LogicMethods.GetUpcomingEntries(allCalendar);
+
+            foreach (var entry in futureEntries)
+            {
+                Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
+            }
+
+            var mondayEntries = LogicMethods.GetEntriesForDayOfWeek(allCalendar, DayOfWeek.Thursday);
+            foreach (var entry in mondayEntries)
+            {
+                Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
+            }
+
+            LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry1);
+            LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry2);
+            LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry3);
+            LogicMethods.AddScheduleEntry(allCalendar, scheduleEntry4);
+            fcmSchool.SchoolCalendar.Add(allCalendar);
+
+            foreach (var entry in fcmSchool.SchoolCalendar)
+            {
+                Console.WriteLine($" {entry.Name} ,  {entry.Id}");
+            }
+
+            //LogicMethods.ExportCalendar(allCalendar, @"../../../MYSTUDIES.xml");
+
+            var termWork = LogicMethods.GenerateSchoolCalendar(fcmSchool);
+
+            foreach (var entry in termWork)
+            {
+                Console.WriteLine($" {entry.Title} , {entry.DateTime}, {entry.IsRecurring}, {entry.Id}");
+            }
+
+            //Attendance test
+            fcmSchool.LearningPath.Add(learningPath1);
+
+            var expectedStudents = LogicMethods.GetExpectedStudentsForClassSession(fcmSchool, classSession2);
+            foreach (var student in expectedStudents)
+            {
+                Console.WriteLine($"{student.Id}, {student.Person.FirstName} {student.Person.LastName}");
+            }
+
+            List<Student> presenStudents = new List<Student>() { student1, student2 };
+            LogicMethods.TakeAttendanceForClassSession(fcmSchool, classSession2, presenStudents, staff2);
+
+            var absent = LogicMethods.GetStudentsAbsentForClassSession(classSession2);
+            foreach (var student in absent)
+            {
+                Console.WriteLine($"Absentees from math class: {student.Id}: {student.Person.FirstName} {student.Person.LastName}");
+            }
+
+            List<Student> presentStudents = LogicMethods.GetStudentsPresentForClassSession(classSession2);
+
+            foreach (var student in presenStudents)
+            {
+                Console.WriteLine($" Student present for math class: {student.Id}: {student.Person.FirstName} {student.Person.LastName}");
+            }
+
+            var attLog = LogicMethods.GetAttendanceForLearningPath(learningPath1);
+
+            Console.WriteLine($"Attendance Records for {learningPath1.Semester} Semester:");
+            foreach (var log in attLog)
+            {
+                Console.WriteLine($"Class Session Id: {log.ClassSession.Id}, Course: {log.ClassSession.Course}, Topic: {log.ClassSession.Topic}");
+                Console.WriteLine($"Teacher: {log.Teacher.Person.FirstName}");
+                Console.WriteLine("Present Students:");
+                foreach (var student in log.Attendees)
+                {
+                    Console.WriteLine($" - {student.Person.FirstName}");
+                }
+                Console.WriteLine("Absent Students:");
+                foreach (var student in log.AbsentStudents)
+                {
+                    Console.WriteLine($" - {student.Person.FirstName}");
+                }
+                Console.WriteLine("--------------------------------------------------");
+            }
+
+
+        }
     }
+
 }
+
+
 
 

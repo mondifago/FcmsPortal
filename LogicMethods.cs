@@ -735,31 +735,66 @@ public static class LogicMethods
     /// Methods for Curriculum
     /// </summary>
 
-    //semester grouping 
-    public static List<SemesterCurriculum> GroupSchedulesIntoSemesters(List<ScheduleEntry> schedules)
+    //Generate Curriculum from Learning Paths 
+    public static List<Curriculum> GenerateCurriculumFromLearningPaths(List<LearningPath> learningPaths)
     {
-        return schedules
-            .Where(se => se.ClassSession != null)
-            .GroupBy(se => se.DateTime.Month <= FcmsConstants.SEMESTER_1_ENDMONTH ? Semester.First :
-                           se.DateTime.Month <= FcmsConstants.SEMESTER_2_ENDMONTH ? Semester.Second : Semester.Third)
-            .Select(group => new SemesterCurriculum
+        var curriculumByClass = new Dictionary<(EducationLevel, ClassLevel), Curriculum>();
+
+        foreach (var lp in learningPaths)
+        {
+            var key = (lp.EducationLevel, lp.ClassLevel);
+            if (!curriculumByClass.ContainsKey(key))
             {
-                Semester = group.Key,
-                ClassSessions = group.Select(se => se.ClassSession).ToList()
-            })
-            .ToList();
+                curriculumByClass[key] = new Curriculum
+                {
+                    AcademicYear = lp.AcademicYear,
+                    EducationLevel = lp.EducationLevel,
+                    ClassLevel = lp.ClassLevel,
+                    Semesters = new List<SemesterCurriculum>()
+                };
+            }
+
+            var curriculum = curriculumByClass[key];
+            var semesterCurriculum = curriculum.Semesters.FirstOrDefault(s => s.Semester == lp.Semester);
+            if (semesterCurriculum == null)
+            {
+                semesterCurriculum = new SemesterCurriculum
+                {
+                    Semester = lp.Semester,
+                    ClassSessions = new List<ClassSession>()
+                };
+                curriculum.Semesters.Add(semesterCurriculum);
+            }
+
+            var classSessions = lp.Schedule
+                .Where(s => s.ClassSession != null)
+                .Select(s => s.ClassSession)
+                .ToList();
+
+            semesterCurriculum.ClassSessions.AddRange(classSessions);
+        }
+
+        return curriculumByClass.Values.ToList();
     }
 
-    //check for curriculum uniqueness
-    public static void ValidateCurriculumUniqueness(School school, Curriculum newCurriculum)
+    // Filter curriculum based on education level, class level, and optional semester
+    public static List<Curriculum> FilterCurriculum(List<Curriculum> allCurriculum, EducationLevel educationLevel, ClassLevel classLevel, Semester? semester = null)
     {
-        if (school.Curricula.Any(c =>
-                c.Year == newCurriculum.Year &&
-                c.EducationLevel == newCurriculum.EducationLevel &&
-                c.ClassLevel == newCurriculum.ClassLevel))
+        var filtered = allCurriculum
+            .Where(c => c.EducationLevel == educationLevel && c.ClassLevel == classLevel)
+            .ToList();
+
+        if (semester.HasValue)
         {
-            throw new InvalidOperationException($"A curriculum for {newCurriculum.EducationLevel} - {newCurriculum.ClassLevel} already exists for the year {newCurriculum.Year}.");
+            foreach (var curriculum in filtered)
+            {
+                curriculum.Semesters = curriculum.Semesters
+                    .Where(s => s.Semester == semester.Value)
+                    .ToList();
+            }
         }
+
+        return filtered;
     }
 
 
