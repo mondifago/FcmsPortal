@@ -522,7 +522,7 @@ public static class LogicMethods
     }
 
     //Get all meetings on a particular date from any calendar
-    public static List<ScheduleEntry> GetAllMeetingsByDate(Calendar calendar, DateTime date)
+    public static List<ScheduleEntry> GetAllMeetingsByDate(CalendarModel calendar, DateTime date)
     {
         if (calendar == null || calendar.ScheduleEntries == null || !calendar.ScheduleEntries.Any())
         {
@@ -538,7 +538,7 @@ public static class LogicMethods
     }
 
     //Get all events on a particular date from any calendar
-    public static List<ScheduleEntry> GetAllEventsByDate(Calendar calendar, DateTime date)
+    public static List<ScheduleEntry> GetAllEventsByDate(CalendarModel calendar, DateTime date)
     {
         if (calendar == null || calendar.ScheduleEntries == null || !calendar.ScheduleEntries.Any())
         {
@@ -581,7 +581,7 @@ public static class LogicMethods
         {
             if (staff.Person.PersonalCalendar == null)
             {
-                staff.Person.PersonalCalendar = new Calendar
+                staff.Person.PersonalCalendar = new CalendarModel
                 {
                     Id = staff.Id,
                     Name = $"{staff.Person.FirstName} {staff.Person.LastName}'s Calendar",
@@ -626,7 +626,7 @@ public static class LogicMethods
         {
             if (guardian.Person.PersonalCalendar == null)
             {
-                guardian.Person.PersonalCalendar = new Calendar
+                guardian.Person.PersonalCalendar = new CalendarModel
                 {
                     Id = guardian.Id,
                     Name = $"{guardian.Person.LastName}'s Calendar"
@@ -662,7 +662,7 @@ public static class LogicMethods
             {
                 if (student.Person.PersonalCalendar == null)
                 {
-                    student.Person.PersonalCalendar = new Calendar
+                    student.Person.PersonalCalendar = new CalendarModel
                     {
                         Id = student.Id,
                         Name = $"{student.Person.FirstName} {student.Person.LastName}'s Calendar"
@@ -678,7 +678,7 @@ public static class LogicMethods
             {
                 if (staff.Person.PersonalCalendar == null)
                 {
-                    staff.Person.PersonalCalendar = new Calendar
+                    staff.Person.PersonalCalendar = new CalendarModel
                     {
                         Id = staff.Id,
                         Name = $"{staff.Person.LastName}'s Calendar"
@@ -694,7 +694,7 @@ public static class LogicMethods
             {
                 if (guardian.Person.PersonalCalendar == null)
                 {
-                    guardian.Person.PersonalCalendar = new Calendar
+                    guardian.Person.PersonalCalendar = new CalendarModel
                     {
                         Id = guardian.Id,
                         Name = $"{guardian.Person.LastName}'s Calendar"
@@ -1303,7 +1303,7 @@ public static class LogicMethods
     }
 
     //Clear Calendar
-    public static void ClearCalendar(Calendar calendar)
+    public static void ClearCalendar(CalendarModel calendar)
     {
         if (calendar == null)
         {
@@ -1330,7 +1330,7 @@ public static class LogicMethods
         {
             if (student.Person.PersonalCalendar == null)
             {
-                student.Person.PersonalCalendar = new Calendar
+                student.Person.PersonalCalendar = new CalendarModel
                 {
                     Id = student.Id,
                     Name = $"{student.Person.FirstName} {student.Person.LastName}'s Calendar"
@@ -1404,7 +1404,7 @@ public static class LogicMethods
     /// </summary>
 
     //Add schedule entry
-    public static void AddScheduleEntry(Calendar calendar, ScheduleEntry entry)
+    public static void AddScheduleEntry(CalendarModel calendar, ScheduleEntry entry)
     {
         if (calendar == null)
         {
@@ -1423,7 +1423,7 @@ public static class LogicMethods
     }
 
     //Remove Schedule Entry
-    public static void RemoveScheduleEntry(Calendar calendar, int entryId)
+    public static void RemoveScheduleEntry(CalendarModel calendar, int entryId)
     {
         if (calendar == null)
         {
@@ -1439,7 +1439,7 @@ public static class LogicMethods
     }
 
     //Retrieves all schedule entries for a specific date.
-    public static List<ScheduleEntry> GetEntriesByDate(Calendar calendar, DateTime date)
+    public static List<ScheduleEntry> GetEntriesByDate(CalendarModel calendar, DateTime date)
     {
         if (calendar == null)
         {
@@ -1452,7 +1452,7 @@ public static class LogicMethods
     }
 
     //Get upcoming events
-    public static List<ScheduleEntry> GetUpcomingEntries(Calendar calendar)
+    public static List<ScheduleEntry> GetUpcomingEntries(CalendarModel calendar)
     {
         if (calendar == null)
         {
@@ -1465,7 +1465,7 @@ public static class LogicMethods
     }
 
     //Retrieves all past schedule entries
-    public static List<ScheduleEntry> GetPastEntries(Calendar calendar)
+    public static List<ScheduleEntry> GetPastEntries(CalendarModel calendar)
     {
         if (calendar == null)
         {
@@ -1479,7 +1479,7 @@ public static class LogicMethods
     }
 
     //Clears all schedule entries in the calendar
-    public static void ClearAllEntries(Calendar calendar)
+    public static void ClearAllEntries(CalendarModel calendar)
     {
         if (calendar == null)
         {
@@ -1489,7 +1489,7 @@ public static class LogicMethods
     }
 
     //Retrieves all recurring schedule entries
-    public static List<ScheduleEntry> GetRecurringEntries(Calendar calendar)
+    public static List<ScheduleEntry> GetRecurringEntries(CalendarModel calendar)
     {
         if (calendar == null)
         {
@@ -1499,7 +1499,7 @@ public static class LogicMethods
     }
 
     //Retrieves all schedule entries for a specific day of the week
-    public static List<ScheduleEntry> GetEntriesForDayOfWeek(Calendar calendar, DayOfWeek dayOfWeek)
+    public static List<ScheduleEntry> GetEntriesForDayOfWeek(CalendarModel calendar, DayOfWeek dayOfWeek)
     {
         if (calendar == null)
         {
@@ -1509,7 +1509,7 @@ public static class LogicMethods
     }
 
     //Exports calendar entries to a JSON file
-    public static void ExportCalendar(Calendar calendar, string filePath)
+    public static void ExportCalendar(CalendarModel calendar, string filePath)
     {
         if (calendar == null)
         {
@@ -1520,7 +1520,7 @@ public static class LogicMethods
     }
 
     //Imports calendar entries from a JSON file
-    public static void ImportCalendar(Calendar calendar, string filePath)
+    public static void ImportCalendar(CalendarModel calendar, string filePath)
     {
         if (calendar == null)
         {

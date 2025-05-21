@@ -29,7 +29,7 @@ namespace FcmsPortal
             fcmSchool.Staff = new List<Staff>();
             fcmSchool.Students = new List<Student>();
             fcmSchool.LearningPath = new List<LearningPath>();
-            fcmSchool.SchoolCalendar = new List<Calendar>();
+            fcmSchool.SchoolCalendar = new List<CalendarModel>();
             fcmSchool.Guardians = new List<Guardian>();
             fcmSchool.LogoUrl = "";
             fcmSchool.Email = "info@fcms.com";
@@ -41,7 +41,7 @@ namespace FcmsPortal
             address.State = "Delta State";
             address.PostalCode = "P.O.Box 150";
             address.Country = "Nigeria";
-            Calendar allCalendar = new Calendar();
+            CalendarModel allCalendar = new CalendarModel();
             allCalendar.Id = 2024;
             allCalendar.Name = "2024 Calendar";
             allCalendar.ScheduleEntries = new List<ScheduleEntry>();
@@ -98,7 +98,7 @@ namespace FcmsPortal
             student1.Person.EducationLevel = EducationLevel.SeniorCollege;
             student1.Person.ClassLevel = ClassLevel.SC_3;
             student1.Person.IsActive = true;
-            student1.Person.PersonalCalendar = new Calendar();
+            student1.Person.PersonalCalendar = new CalendarModel();
             student1.Person.PersonalCalendar.Id = 177;
             student1.Person.PersonalCalendar.Name = "Student1's Study Calendar";
             student1.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
@@ -173,7 +173,7 @@ namespace FcmsPortal
             student2.Person.EducationLevel = EducationLevel.SeniorCollege;
             student2.Person.ClassLevel = ClassLevel.SC_3;
             student2.Person.IsActive = true;
-            student2.Person.PersonalCalendar = new Calendar();
+            student2.Person.PersonalCalendar = new CalendarModel();
             student2.Person.PersonalCalendar.Id = 277;
             student2.Person.PersonalCalendar.Name = "Student2's Study Calendar";
             student2.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
@@ -221,7 +221,7 @@ namespace FcmsPortal
             student3.Person.EducationLevel = EducationLevel.SeniorCollege;
             student3.Person.ClassLevel = ClassLevel.SC_3;
             student3.Person.IsActive = true;
-            student3.Person.PersonalCalendar = new Calendar();
+            student3.Person.PersonalCalendar = new CalendarModel();
             student3.Person.PersonalCalendar.Id = 377;
             student3.Person.PersonalCalendar.Name = "Student3's Study Calendar";
             student3.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
@@ -656,7 +656,7 @@ namespace FcmsPortal
             fcmSchool.Staff = new List<Staff>();
             fcmSchool.Students = new List<Student>();
             fcmSchool.LearningPath = new List<LearningPath>();
-            fcmSchool.SchoolCalendar = new List<Calendar>();
+            fcmSchool.SchoolCalendar = new List<CalendarModel>();
             fcmSchool.Guardians = new List<Guardian>();
             fcmSchool.Address = address;
             address.Street = "120 City Road";
@@ -664,7 +664,7 @@ namespace FcmsPortal
             address.State = "Delta State";
             address.PostalCode = "P.O.Box 150";
             address.Country = "Nigeria";
-            Calendar allCalendar = new Calendar();
+            CalendarModel allCalendar = new CalendarModel();
             allCalendar.Id = 2024;
             allCalendar.Name = "2024 Calendar";
             allCalendar.ScheduleEntries = new List<ScheduleEntry>();
@@ -682,7 +682,7 @@ namespace FcmsPortal
             student1.Person.LastName = "Jake";
             student1.Person.EducationLevel = EducationLevel.SeniorCollege;
             student1.Person.ClassLevel = ClassLevel.SC_3;
-            student1.Person.PersonalCalendar = new Calendar();
+            student1.Person.PersonalCalendar = new CalendarModel();
             student1.Person.PersonalCalendar.Id = 177;
             student1.Person.PersonalCalendar.Name = "Student1's Study Calendar";
             student1.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
@@ -705,7 +705,7 @@ namespace FcmsPortal
             student2.Person.LastName = "Deen";
             student2.Person.EducationLevel = EducationLevel.SeniorCollege;
             student2.Person.ClassLevel = ClassLevel.SC_3;
-            student2.Person.PersonalCalendar = new Calendar();
+            student2.Person.PersonalCalendar = new CalendarModel();
             student2.Person.PersonalCalendar.Id = 277;
             student2.Person.PersonalCalendar.Name = "Student2's Study Calendar";
             student2.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();
@@ -731,7 +731,7 @@ namespace FcmsPortal
             student3.Person.LastName = "Zik";
             student3.Person.EducationLevel = EducationLevel.SeniorCollege;
             student3.Person.ClassLevel = ClassLevel.SC_3;
-            student3.Person.PersonalCalendar = new Calendar();
+            student3.Person.PersonalCalendar = new CalendarModel();
             student3.Person.PersonalCalendar.Id = 377;
             student3.Person.PersonalCalendar.Name = "Student3's Study Calendar";
             student3.Person.PersonalCalendar.ScheduleEntries = new List<ScheduleEntry>();

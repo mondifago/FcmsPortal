@@ -1,6 +1,6 @@
 namespace FcmsPortal.Models;
 
-public class Calendar
+public class CalendarModel
 {
     public int Id { get; set; }
     public string Name { get; set; }

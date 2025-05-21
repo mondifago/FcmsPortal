@@ -13,7 +13,7 @@
         public List<Student> Students { get; set; } = new();
         public List<Guardian> Guardians { get; set; } = new();
         public List<LearningPath> LearningPath { get; set; } = new();
-        public List<Calendar> SchoolCalendar { get; set; }
+        public List<CalendarModel> SchoolCalendar { get; set; }
         public List<LearningPathGradeReport> GradeReports { get; set; } = new();
     }
 }

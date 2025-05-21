@@ -53,7 +53,7 @@ namespace FcmsPortal.Models
         [Required]
         [Phone]
         public string PhoneNumber { get; set; } = string.Empty;
-        public Calendar PersonalCalendar { get; set; } = new Calendar();
+        public CalendarModel PersonalCalendar { get; set; } = new CalendarModel();
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
         public SchoolFees? SchoolFees { get; set; }
