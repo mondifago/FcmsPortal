@@ -4,6 +4,5 @@ public enum ScheduleType
 {
     ClassSession,
     Event,
-    Meeting,
-    General
+    Meeting
 }

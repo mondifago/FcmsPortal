@@ -994,7 +994,6 @@ namespace FcmsPortal
             eventEntry.Duration = TimeSpan.FromHours(2);
             eventEntry.Venue = "School Sports Field";
             eventEntry.Event = "Annual Sport day";
-            eventEntry.Notes = "All students and staff to wear school sports attire";
             allCalendar.ScheduleEntries.Add(eventEntry);
 
             //Create a meeting for a Teachers with the Principal
@@ -1007,7 +1006,6 @@ namespace FcmsPortal
             meetingEntry.Meeting = "Academic Staff Meeting";
             meetingEntry.Event = null;
             meetingEntry.ClassSession = null;
-            meetingEntry.Notes = "Agenda: Weekly Academic Progress Evaluation";
 
             //make staff meeting a recurring feature
             meetingEntry.IsRecurring = true;
@@ -1034,7 +1032,6 @@ namespace FcmsPortal
                 Title = "Mathematics Class",
                 Event = null,
                 Meeting = null,
-                Notes = "Recurrence Example",
                 IsRecurring = true, // Enable recurrence
                 RecurrencePattern = RecurrenceType.Weekly, // Repeat Weekly
                 RecurrenceInterval = 1, // Every 1 week

@@ -391,7 +391,6 @@ public static class LogicMethods
                 Title = baseEntry.Title,
                 Event = baseEntry.Event,
                 Meeting = baseEntry.Meeting,
-                Notes = baseEntry.Notes,
                 IsRecurring = false, // Set to false for generated instances
             };
 
@@ -1351,7 +1350,6 @@ public static class LogicMethods
                         Title = entry.Title,
                         Event = entry.Event,
                         Meeting = entry.Meeting,
-                        Notes = entry.Notes,
                         IsRecurring = entry.IsRecurring,
                         RecurrencePattern = entry.RecurrencePattern,
                         DaysOfWeek = entry.DaysOfWeek,
