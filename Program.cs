@@ -589,6 +589,7 @@ namespace FcmsPortal
             scheduleEntry1.ClassSession = classSession1;
             scheduleEntry1.Title = "Biology Class";
             scheduleEntry1.Venue = "SSS3A Classroom";
+            allCalendar.ScheduleEntries.Add(scheduleEntry1);
 
             ScheduleEntry scheduleEntry2 = new ScheduleEntry();
             scheduleEntry2.Id = 22;
@@ -597,6 +598,7 @@ namespace FcmsPortal
             scheduleEntry2.ClassSession = classSession2;
             scheduleEntry2.Title = "Biology Class";
             scheduleEntry2.Venue = "SSS3A Classroom";
+            allCalendar.ScheduleEntries.Add(scheduleEntry2);
 
             ScheduleEntry scheduleEntry3 = new ScheduleEntry();
             scheduleEntry3.Id = 33;
@@ -605,6 +607,7 @@ namespace FcmsPortal
             scheduleEntry3.ClassSession = classSession3;
             scheduleEntry3.Title = "Geography Class";
             scheduleEntry3.Venue = "SSS3A Classroom";
+            allCalendar.ScheduleEntries.Add(scheduleEntry3);
 
             ScheduleEntry scheduleEntry4 = new ScheduleEntry();
             scheduleEntry4.Id = 44;
@@ -613,6 +616,7 @@ namespace FcmsPortal
             scheduleEntry4.ClassSession = classSession4;
             scheduleEntry4.Title = "Geography Class";
             scheduleEntry4.Venue = "SSS3A Classroom";
+            allCalendar.ScheduleEntries.Add(scheduleEntry4);
 
             //put all the schedule in a learning path
             LearningPath learningPath1 = new LearningPath();

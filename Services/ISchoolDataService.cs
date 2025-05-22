@@ -42,11 +42,15 @@ namespace FcmsPortal.Services
         LearningPath GetLearningPathById(int id);
         bool DeleteLearningPath(int id);
         ScheduleEntry AddScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry);
+        IEnumerable<ScheduleEntry> GetAllSchoolCalendarSchedules();
         IEnumerable<ScheduleEntry> GetScheduleEntriesByLearningPath(int learningPathId);
         IEnumerable<ScheduleEntry> GetScheduleEntriesByDate(int learningPathId, DateTime date);
         ScheduleEntry GetScheduleEntryById(int learningPathId, int scheduleEntryId);
         bool UpdateScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry);
         bool DeleteScheduleEntry(int learningPathId, int scheduleEntryId);
+        void AddScheduleToSchoolCalendar(ScheduleEntry scheduleEntry);
+        void UpdateScheduleInSchoolCalendar(ScheduleEntry scheduleEntry);
+        void RemoveScheduleFromSchoolCalendar(ScheduleEntry scheduleEntry);
         Homework GetHomeworkById(int id);
         List<Homework> GetHomeworksByClassSession(int classSessionId);
         Homework AddHomework(Homework homework);
@@ -590,6 +594,7 @@ namespace FcmsPortal.Services
 
             learningPath.Schedule.Add(scheduleEntry);
             UpdateLearningPath(learningPath);
+            AddScheduleToSchoolCalendar(scheduleEntry);
 
             return scheduleEntry;
         }
@@ -615,6 +620,24 @@ namespace FcmsPortal.Services
                 .ToList();
         }
 
+        public IEnumerable<ScheduleEntry> GetAllSchoolCalendarSchedules()
+        {
+            var allSchedules = new List<ScheduleEntry>();
+
+            if (_school.SchoolCalendar != null)
+            {
+                foreach (var calendar in _school.SchoolCalendar)
+                {
+                    if (calendar.ScheduleEntries != null)
+                    {
+                        allSchedules.AddRange(calendar.ScheduleEntries);
+                    }
+                }
+            }
+
+            return allSchedules;
+        }
+
         public ScheduleEntry GetScheduleEntryById(int learningPathId, int scheduleEntryId)
         {
             var learningPath = GetLearningPathById(learningPathId);
@@ -637,6 +660,7 @@ namespace FcmsPortal.Services
             learningPath.Schedule.Remove(existingEntry);
             learningPath.Schedule.Add(scheduleEntry);
             UpdateLearningPath(learningPath);
+            UpdateScheduleInSchoolCalendar(scheduleEntry);
 
             return true;
         }
@@ -653,8 +677,80 @@ namespace FcmsPortal.Services
 
             learningPath.Schedule.Remove(entry);
             UpdateLearningPath(learningPath);
+            RemoveScheduleFromSchoolCalendar(entry);
 
             return true;
+        }
+
+        public void AddScheduleToSchoolCalendar(ScheduleEntry scheduleEntry)
+        {
+            // Ensure school calendar exists
+            if (_school.SchoolCalendar == null)
+            {
+                _school.SchoolCalendar = new List<CalendarModel>();
+            }
+
+            // Get or create main calendar
+            var mainCalendar = _school.SchoolCalendar.FirstOrDefault();
+            if (mainCalendar == null)
+            {
+                mainCalendar = new CalendarModel
+                {
+                    Id = 1,
+                    Name = "Main School Calendar",
+                    ScheduleEntries = new List<ScheduleEntry>()
+                };
+                _school.SchoolCalendar.Add(mainCalendar);
+            }
+
+            // Check if schedule already exists in school calendar
+            var existingSchedule = mainCalendar.ScheduleEntries?.FirstOrDefault(s => s.Id == scheduleEntry.Id);
+            if (existingSchedule == null)
+            {
+                if (mainCalendar.ScheduleEntries == null)
+                {
+                    mainCalendar.ScheduleEntries = new List<ScheduleEntry>();
+                }
+                mainCalendar.ScheduleEntries.Add(scheduleEntry);
+            }
+        }
+
+        public void UpdateScheduleInSchoolCalendar(ScheduleEntry scheduleEntry)
+        {
+            if (_school.SchoolCalendar == null)
+                return;
+
+            foreach (var calendar in _school.SchoolCalendar)
+            {
+                if (calendar.ScheduleEntries != null)
+                {
+                    var existingIndex = calendar.ScheduleEntries.FindIndex(s => s.Id == scheduleEntry.Id);
+                    if (existingIndex >= 0)
+                    {
+                        calendar.ScheduleEntries[existingIndex] = scheduleEntry;
+                        break;
+                    }
+                }
+            }
+        }
+
+        public void RemoveScheduleFromSchoolCalendar(ScheduleEntry scheduleEntry)
+        {
+            if (_school.SchoolCalendar == null)
+                return;
+
+            foreach (var calendar in _school.SchoolCalendar)
+            {
+                if (calendar.ScheduleEntries != null)
+                {
+                    var scheduleToRemove = calendar.ScheduleEntries.FirstOrDefault(s => s.Id == scheduleEntry.Id);
+                    if (scheduleToRemove != null)
+                    {
+                        calendar.ScheduleEntries.Remove(scheduleToRemove);
+                        break;
+                    }
+                }
+            }
         }
 
         public bool RemoveClassSessionFromScheduleEntry(int learningPathId, int scheduleEntryId)
