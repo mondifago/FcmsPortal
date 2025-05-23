@@ -1169,6 +1169,60 @@ public static class LogicMethods
         };
     }
 
+    public static LearningPathPaymentSummary CalculateLearningPathPaymentSummary(LearningPath learningPath)
+    {
+        if (learningPath == null)
+            return new LearningPathPaymentSummary();
+
+        var expectedRevenue = learningPath.FeePerSemester * learningPath.Students.Count;
+        var totalPaid = GetTotalPaidForLearningPath(learningPath);
+        var outstanding = expectedRevenue - totalPaid;
+        var paymentRate = CalculatePaymentCompletionRate(totalPaid, expectedRevenue);
+
+        var lastPaymentDate = learningPath.Students
+            .SelectMany(s => s.Person?.SchoolFees?.Payments ?? new List<Payment>())
+            .Where(p => p.Date >= learningPath.SemesterStartDate && p.Date <= learningPath.SemesterEndDate)
+            .OrderByDescending(p => p.Date)
+            .Select(p => p.Date)
+            .FirstOrDefault();
+
+        var timelyRate = lastPaymentDate == default
+            ? FcmsConstants.DEFAULT_COMPLETION_RATE
+            : CalculateTimelyCompletionRate(learningPath.SemesterStartDate, learningPath.SemesterEndDate, lastPaymentDate);
+
+        return new LearningPathPaymentSummary
+        {
+            ExpectedRevenue = expectedRevenue,
+            TotalPaid = totalPaid,
+            Outstanding = outstanding,
+            PaymentCompletionRate = paymentRate,
+            TimelyCompletionRate = timelyRate,
+            LastPaymentDate = lastPaymentDate == default ? null : lastPaymentDate,
+            StudentCount = learningPath.Students.Count,
+            FeePerSemester = learningPath.FeePerSemester
+        };
+    }
+
+    private static double GetTotalPaidForLearningPath(LearningPath learningPath)
+    {
+        double totalPaid = 0;
+
+        foreach (var student in learningPath.Students)
+        {
+            var studentFees = student.Person.SchoolFees;
+            if (studentFees != null)
+            {
+                var studentPayments = studentFees.Payments
+                    .Where(p => p.LearningPathId == learningPath.Id)
+                    .Sum(p => p.Amount);
+
+                totalPaid += studentPayments;
+            }
+        }
+
+        return totalPaid;
+    }
+
     //Grant student full access to schedule entries in learning path 
     public static void GrantAccessToSchedules(Student student, LearningPath learningPath)
     {
