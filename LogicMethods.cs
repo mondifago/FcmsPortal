@@ -852,38 +852,21 @@ public static class LogicMethods
         return totalPayments >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR;
     }
 
-    public static bool IsPaymentSuccessful(Student student, LearningPath learningPath)
-    {
-        return learningPath.StudentsPaymentSuccessful != null &&
-               learningPath.StudentsPaymentSuccessful.Any(s => s.Id == student.Id);
-    }
-
-    public static List<Student> GetUnpaidStudents(LearningPath learningPath)
-    {
-        if (learningPath.Students == null)
-            return new List<Student>();
-
-        return learningPath.Students
-            .Where(s => !IsPaymentSuccessful(s, learningPath))
-            .ToList();
-    }
-
     //Update payment status of a student in a learning path
     public static void UpdatePaymentStatus(Student student, LearningPath learningPath)
     {
-        if (student?.Person?.SchoolFees == null || learningPath == null)
+        if (student?.Person?.SchoolFees == null || learningPath?.StudentsWithAccess == null)
             return;
 
-        // Remove student from payment successful list if they exist there
-        if (learningPath.StudentsPaymentSuccessful.Contains(student))
-        {
-            learningPath.StudentsPaymentSuccessful.Remove(student);
-        }
+        bool hasAccess = HasMetPaymentThreshold(student);
 
-        // Check if payment is now successful (at least 50% paid)
-        if (IsPaymentSuccessful(student, learningPath))
+        // Remove if already in list
+        learningPath.StudentsWithAccess.RemoveAll(s => s.Id == student.Id);
+
+        // Add only if payment threshold met
+        if (hasAccess)
         {
-            learningPath.StudentsPaymentSuccessful.Add(student);
+            learningPath.StudentsWithAccess.Add(student);
         }
     }
 
@@ -1186,52 +1169,15 @@ public static class LogicMethods
         };
     }
 
-    //retrieve students with outstanding balance
-    public static List<(Student Student, double OutstandingBalance)> GetStudentsWithOutstandingPayments(LearningPath learningPath)
-    {
-        if (learningPath == null)
-        {
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-        }
-
-        var result = new List<(Student Student, double OutstandingBalance)>();
-
-        foreach (var student in learningPath.Students)
-        {
-            if (student.Person?.SchoolFees == null)
-            {
-                continue;
-            }
-
-            double outstandingBalance = student.Person.SchoolFees.Balance;
-            if (outstandingBalance > 0)
-            {
-                result.Add((student, outstandingBalance));
-            }
-        }
-        return result;
-    }
-
-    //Get students with access
-    public static List<Student> GetStudentsWithAccess(LearningPath learningPath)
-    {
-        if (learningPath == null)
-        {
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-        }
-
-        return learningPath.StudentsPaymentSuccessful;
-    }
-
     //Grant student full access to schedule entries in learning path 
     public static void GrantAccessToSchedules(Student student, LearningPath learningPath)
     {
         if (student == null) throw new ArgumentNullException(nameof(student));
         if (learningPath == null) throw new ArgumentNullException(nameof(learningPath));
 
-        if (HasMetPaymentThreshold(student) && !learningPath.StudentsPaymentSuccessful.Contains(student))
+        if (HasMetPaymentThreshold(student) && !learningPath.StudentsWithAccess.Contains(student))
         {
-            learningPath.StudentsPaymentSuccessful.Add(student);
+            learningPath.StudentsWithAccess.Add(student);
         }
     }
 
@@ -1261,9 +1207,9 @@ public static class LogicMethods
             }
             else
             {
-                if (learningPath.StudentsPaymentSuccessful.Contains(student))
+                if (learningPath.StudentsWithAccess.Contains(student))
                 {
-                    learningPath.StudentsPaymentSuccessful.Remove(student);
+                    learningPath.StudentsWithAccess.Remove(student);
                 }
             }
         }

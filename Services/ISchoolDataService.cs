@@ -575,7 +575,7 @@ namespace FcmsPortal.Services
                 existingLearningPath.AcademicYearStart = learningPath.AcademicYearStart;
                 existingLearningPath.ApprovalStatus = learningPath.ApprovalStatus;
                 existingLearningPath.Students = learningPath.Students;
-                existingLearningPath.StudentsPaymentSuccessful = learningPath.StudentsPaymentSuccessful;
+                existingLearningPath.StudentsWithAccess = learningPath.StudentsWithAccess;
             }
         }
 
@@ -1119,9 +1119,9 @@ namespace FcmsPortal.Services
                 }
 
                 if (student.Person.SchoolFees.TotalPaid >= learningPath.FeePerSemester * FcmsConstants.PAYMENT_THRESHOLD_FACTOR &&
-                    !learningPath.StudentsPaymentSuccessful.Contains(student))
+                    !learningPath.StudentsWithAccess.Contains(student))
                 {
-                    learningPath.StudentsPaymentSuccessful.Add(student);
+                    learningPath.StudentsWithAccess.Add(student);
                 }
             }
         }
