@@ -51,6 +51,10 @@ namespace FcmsPortal.Services
         void AddScheduleToSchoolCalendar(ScheduleEntry scheduleEntry);
         void UpdateScheduleInSchoolCalendar(ScheduleEntry scheduleEntry);
         void RemoveScheduleFromSchoolCalendar(ScheduleEntry scheduleEntry);
+        bool UpdateGeneralCalendarScheduleEntry(ScheduleEntry scheduleEntry);
+        bool DeleteGeneralCalendarScheduleEntry(int scheduleEntryId);
+        ScheduleEntry GetGeneralCalendarScheduleEntryById(int scheduleEntryId);
+        bool IsScheduleFromLearningPath(int scheduleEntryId);
         Homework GetHomeworkById(int id);
         List<Homework> GetHomeworksByClassSession(int classSessionId);
         Homework AddHomework(Homework homework);
@@ -684,13 +688,11 @@ namespace FcmsPortal.Services
 
         public void AddScheduleToSchoolCalendar(ScheduleEntry scheduleEntry)
         {
-            // Ensure school calendar exists
             if (_school.SchoolCalendar == null)
             {
                 _school.SchoolCalendar = new List<CalendarModel>();
             }
 
-            // Get or create main calendar
             var mainCalendar = _school.SchoolCalendar.FirstOrDefault();
             if (mainCalendar == null)
             {
@@ -703,7 +705,6 @@ namespace FcmsPortal.Services
                 _school.SchoolCalendar.Add(mainCalendar);
             }
 
-            // Check if schedule already exists in school calendar
             var existingSchedule = mainCalendar.ScheduleEntries?.FirstOrDefault(s => s.Id == scheduleEntry.Id);
             if (existingSchedule == null)
             {
@@ -765,6 +766,76 @@ namespace FcmsPortal.Services
 
             scheduleEntry.ClassSession = null;
             return UpdateScheduleEntry(learningPathId, scheduleEntry);
+        }
+
+        public bool UpdateGeneralCalendarScheduleEntry(ScheduleEntry scheduleEntry)
+        {
+            if (_school.SchoolCalendar == null)
+                return false;
+
+            foreach (var calendar in _school.SchoolCalendar)
+            {
+                if (calendar.ScheduleEntries != null)
+                {
+                    var existingIndex = calendar.ScheduleEntries.FindIndex(s => s.Id == scheduleEntry.Id);
+                    if (existingIndex >= 0)
+                    {
+                        calendar.ScheduleEntries[existingIndex] = scheduleEntry;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool DeleteGeneralCalendarScheduleEntry(int scheduleEntryId)
+        {
+            if (_school.SchoolCalendar == null)
+                return false;
+
+            foreach (var calendar in _school.SchoolCalendar)
+            {
+                if (calendar.ScheduleEntries != null)
+                {
+                    var scheduleToRemove = calendar.ScheduleEntries.FirstOrDefault(s => s.Id == scheduleEntryId);
+                    if (scheduleToRemove != null)
+                    {
+                        calendar.ScheduleEntries.Remove(scheduleToRemove);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public ScheduleEntry GetGeneralCalendarScheduleEntryById(int scheduleEntryId)
+        {
+            if (_school.SchoolCalendar == null)
+                return null;
+
+            foreach (var calendar in _school.SchoolCalendar)
+            {
+                if (calendar.ScheduleEntries != null)
+                {
+                    var schedule = calendar.ScheduleEntries.FirstOrDefault(s => s.Id == scheduleEntryId);
+                    if (schedule != null)
+                        return schedule;
+                }
+            }
+            return null;
+        }
+
+        public bool IsScheduleFromLearningPath(int scheduleEntryId)
+        {
+            // Check if this schedule exists in any learning path
+            foreach (var learningPath in _school.LearningPath)
+            {
+                if (learningPath.Schedule != null && learningPath.Schedule.Any(s => s.Id == scheduleEntryId))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public Homework GetHomeworkById(int id)
