@@ -40,6 +40,7 @@ namespace FcmsPortal.Services
         Task SaveAttachmentReferenceAsync(FileAttachment attachment, string category, int referenceId);
         IEnumerable<LearningPath> GetAllLearningPaths();
         LearningPath GetLearningPathById(int id);
+        LearningPath GetLearningPathByScheduleEntry(int scheduleEntryId);
         bool DeleteLearningPath(int id);
         ScheduleEntry AddScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry);
         IEnumerable<ScheduleEntry> GetAllSchoolCalendarSchedules();
@@ -581,6 +582,18 @@ namespace FcmsPortal.Services
                 existingLearningPath.Students = learningPath.Students;
                 existingLearningPath.StudentsWithAccess = learningPath.StudentsWithAccess;
             }
+        }
+
+        public LearningPath GetLearningPathByScheduleEntry(int scheduleEntryId)
+        {
+            foreach (var learningPath in _school.LearningPath)
+            {
+                if (learningPath.Schedule != null && learningPath.Schedule.Any(s => s.Id == scheduleEntryId))
+                {
+                    return learningPath;
+                }
+            }
+            return null;
         }
 
         public ScheduleEntry AddScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry)
