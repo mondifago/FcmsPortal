@@ -56,6 +56,7 @@ namespace FcmsPortal.Services
         bool DeleteGeneralCalendarScheduleEntry(int scheduleEntryId);
         ScheduleEntry GetGeneralCalendarScheduleEntryById(int scheduleEntryId);
         bool IsScheduleFromLearningPath(int scheduleEntryId);
+        int GetNextScheduleId();
         Homework GetHomeworkById(int id);
         List<Homework> GetHomeworksByClassSession(int classSessionId);
         Homework AddHomework(Homework homework);
@@ -602,13 +603,7 @@ namespace FcmsPortal.Services
             if (learningPath == null)
                 return null;
 
-            int nextId = 1;
-            if (learningPath.Schedule.Any())
-            {
-                nextId = learningPath.Schedule.Max(s => s.Id) + 1;
-            }
-            scheduleEntry.Id = nextId;
-
+            scheduleEntry.Id = GetNextScheduleId();
             learningPath.Schedule.Add(scheduleEntry);
             UpdateLearningPath(learningPath);
             AddScheduleToSchoolCalendar(scheduleEntry);
@@ -697,6 +692,26 @@ namespace FcmsPortal.Services
             RemoveScheduleFromSchoolCalendar(entry);
 
             return true;
+        }
+
+        public int GetNextScheduleId()
+        {
+            int maxId = 0;
+
+            if (_school.SchoolCalendar != null)
+            {
+                foreach (var calendar in _school.SchoolCalendar)
+                {
+                    if (calendar.ScheduleEntries != null && calendar.ScheduleEntries.Any())
+                    {
+                        var calendarMaxId = calendar.ScheduleEntries.Max(s => s.Id);
+                        if (calendarMaxId > maxId)
+                            maxId = calendarMaxId;
+                    }
+                }
+            }
+
+            return maxId + 1;
         }
 
         public void AddScheduleToSchoolCalendar(ScheduleEntry scheduleEntry)
