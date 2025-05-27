@@ -49,7 +49,7 @@ namespace FcmsPortal.Services
         ScheduleEntry GetScheduleEntryById(int learningPathId, int scheduleEntryId);
         bool UpdateScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry);
         bool DeleteScheduleEntry(int learningPathId, int scheduleEntryId);
-        void AddScheduleToSchoolCalendar(ScheduleEntry scheduleEntry);
+        ScheduleEntry AddGeneralScheduleEntry(ScheduleEntry scheduleEntry);
         void UpdateScheduleInSchoolCalendar(ScheduleEntry scheduleEntry);
         void RemoveScheduleFromSchoolCalendar(ScheduleEntry scheduleEntry);
         bool UpdateGeneralCalendarScheduleEntry(ScheduleEntry scheduleEntry);
@@ -606,7 +606,7 @@ namespace FcmsPortal.Services
             scheduleEntry.Id = GetNextScheduleId();
             learningPath.Schedule.Add(scheduleEntry);
             UpdateLearningPath(learningPath);
-            AddScheduleToSchoolCalendar(scheduleEntry);
+            AddGeneralScheduleEntry(scheduleEntry);
 
             return scheduleEntry;
         }
@@ -714,13 +714,8 @@ namespace FcmsPortal.Services
             return maxId + 1;
         }
 
-        public void AddScheduleToSchoolCalendar(ScheduleEntry scheduleEntry)
+        public ScheduleEntry AddGeneralScheduleEntry(ScheduleEntry scheduleEntry)
         {
-            if (_school.SchoolCalendar == null)
-            {
-                _school.SchoolCalendar = new List<CalendarModel>();
-            }
-
             var mainCalendar = _school.SchoolCalendar.FirstOrDefault();
             if (mainCalendar == null)
             {
@@ -733,14 +728,31 @@ namespace FcmsPortal.Services
                 _school.SchoolCalendar.Add(mainCalendar);
             }
 
-            var existingSchedule = mainCalendar.ScheduleEntries?.FirstOrDefault(s => s.Id == scheduleEntry.Id);
-            if (existingSchedule == null)
+            if (scheduleEntry.Id > 0)
             {
-                if (mainCalendar.ScheduleEntries == null)
+                var existingSchedule = mainCalendar.ScheduleEntries?.FirstOrDefault(s => s.Id == scheduleEntry.Id);
+                if (existingSchedule == null)
                 {
-                    mainCalendar.ScheduleEntries = new List<ScheduleEntry>();
+                    mainCalendar.ScheduleEntries.Add(scheduleEntry);
                 }
+                return scheduleEntry;
+            }
+
+            if (scheduleEntry.IsRecurring)
+            {
+                var recurringEntries = LogicMethods.GenerateRecurringSchedules(scheduleEntry);
+                foreach (var entry in recurringEntries)
+                {
+                    entry.Id = GetNextScheduleId();
+                    mainCalendar.ScheduleEntries.Add(entry);
+                }
+                return recurringEntries.FirstOrDefault();
+            }
+            else
+            {
+                scheduleEntry.Id = GetNextScheduleId();
                 mainCalendar.ScheduleEntries.Add(scheduleEntry);
+                return scheduleEntry;
             }
         }
 

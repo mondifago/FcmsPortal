@@ -497,7 +497,7 @@ namespace FcmsPortal
             LogicMethods.AddReply(
                 examThread,
                 13,
-                student4.Person, // Even the younger student wants to help!
+                student4.Person,
                 "Can I join too? I know I'm in kindergarten but I like science and my brother can bring me!"
             );
 
@@ -508,7 +508,7 @@ namespace FcmsPortal
                 "Sorry John, these are senior college exams, but maybe we can help you with your studies another time! Let's meet this Friday at 3 PM in the library, everyone."
             );
 
-            // Update the thread timestamp and add it to the school
+            // Update the thread timestamp and add it to the class session
             examThread.UpdateLastUpdated();
             classSession3.DiscussionThreads.Add(examThread);
 
@@ -525,11 +525,12 @@ namespace FcmsPortal
             classSession4.StudyMaterials = new List<FileAttachment>();
             classSession4.DiscussionThreads = new List<DiscussionThread>();
             classSession4.DiscussionThreads.Clear();
+
             // Create a discussion about a school event
             var eventThread = LogicMethods.StartDiscussion(
                 4,
                 15,
-                staff1.Person, // Started by the principal
+                staff1.Person,
                 "Attention students: We're planning a Science Fair for the end of the term. Please start thinking about project ideas and which teachers you want as advisors."
             );
 
@@ -544,7 +545,7 @@ namespace FcmsPortal
             LogicMethods.AddReply(
                 eventThread,
                 17,
-                staff2.Person, // Biology teacher responds
+                staff2.Person,
                 "Joe, that sounds like an excellent project idea. I'd be happy to be your advisor. Let's discuss the details after class tomorrow."
             );
 
@@ -558,7 +559,7 @@ namespace FcmsPortal
             LogicMethods.AddReply(
                 eventThread,
                 19,
-                staff3.Person, // Geography teacher responds
+                staff3.Person,
                 "Of course, Dan. That's a very relevant topic. Stop by my office on Thursday and we can outline your project approach."
             );
 
@@ -572,11 +573,10 @@ namespace FcmsPortal
             LogicMethods.AddReply(
                 eventThread,
                 21,
-                staff1.Person, // Principal answers
+                staff1.Person,
                 "Project proposals are due by the end of next week. The best projects will be selected for presentation to the whole school during our Science Fair Day on the last Friday of term."
             );
 
-            // Update the thread timestamp
             eventThread.UpdateLastUpdated();
             classSession4.DiscussionThreads.Add(eventThread);
 
