@@ -369,21 +369,20 @@ public static class LogicMethods
     {
         var schedules = new List<ScheduleEntry>();
 
-        // Return the base entry if it's not recurring
         if (!baseEntry.IsRecurring)
         {
             schedules.Add(baseEntry);
             return schedules;
         }
 
-        // Calculate recurring dates
         DateTime currentDate = baseEntry.DateTime;
-        while (currentDate <= baseEntry.EndDate)
+        int idCounter = 0;
+
+        while (currentDate.Date <= baseEntry.EndDate?.Date)
         {
-            // Create a new schedule entry for each recurrence
             var newEntry = new ScheduleEntry
             {
-                Id = baseEntry.Id, // Assign new Id if necessary
+                Id = baseEntry.Id + idCounter++,
                 DateTime = currentDate,
                 Duration = baseEntry.Duration,
                 Venue = baseEntry.Venue,
@@ -391,12 +390,11 @@ public static class LogicMethods
                 Title = baseEntry.Title,
                 Event = baseEntry.Event,
                 Meeting = baseEntry.Meeting,
-                IsRecurring = false, // Set to false for generated instances
+                IsRecurring = false,
             };
 
             schedules.Add(newEntry);
 
-            // Update date based on recurrence pattern
             currentDate = baseEntry.RecurrencePattern switch
             {
                 RecurrenceType.Daily => currentDate.AddDays(baseEntry.RecurrenceInterval),
@@ -407,43 +405,6 @@ public static class LogicMethods
         }
 
         return schedules;
-    }
-
-    //Method to display school calendar entries
-    public static void DisplayAllCalendarEntries(School fcmSchool)
-    {
-        // Check if the school or its calendar is null
-        if (fcmSchool == null || fcmSchool.SchoolCalendar == null || !fcmSchool.SchoolCalendar.Any())
-        {
-            Console.WriteLine("No calendar entries available.");
-            return;
-        }
-
-        Console.WriteLine("Calendar Entries:");
-
-        // Iterate through each calendar in the school calendar
-        foreach (var calendar in fcmSchool.SchoolCalendar)
-        {
-            Console.WriteLine($"\nCalendar: {calendar.Name} (Id: {calendar.Id})");
-
-            // Check if the calendar has schedule entries
-            if (calendar.ScheduleEntries == null || !calendar.ScheduleEntries.Any())
-            {
-                Console.WriteLine("  No schedule entries in this calendar.");
-                continue;
-            }
-
-            // Display each schedule entry
-            foreach (var entry in calendar.ScheduleEntries)
-            {
-                string entryType = entry.GetScheduleType().ToString();
-                DateTime endTime = entry.DateTime.Add(entry.Duration);
-
-                Console.WriteLine($"  Id: {entry.Id}, Date: {entry.DateTime.ToShortDateString()}, " +
-                                  $"Type: {entryType}, Start: {entry.DateTime.ToShortTimeString()}, " +
-                                  $"End: {endTime.ToShortTimeString()}, Duration: {entry.Duration}, Recurrence: {entry.IsRecurring}, Recurring Type: {entry.RecurrencePattern}, Recurrence interval: {entry.RecurrenceInterval}");
-            }
-        }
     }
 
     //To get all schedules in a learning path
@@ -706,29 +667,6 @@ public static class LogicMethods
         Console.WriteLine($"Event '{eventEntry.Title}' has been successfully posted to all students, staff, and guardians.");
     }
 
-    //display all students in a learning path along with their schedules
-    public static void DisplayStudentSchedules(LearningPath learningPath)
-    {
-        Console.WriteLine($"Schedules for Students in Learning Path: {learningPath.Id} - {learningPath.ClassLevel} {learningPath.EducationLevel}\n");
-
-        foreach (var student in learningPath.Students)
-        {
-            Console.WriteLine($"Student: {student.Person.FirstName} {student.Person.LastName}");
-
-            if (student.Person.PersonalCalendar != null && student.Person.PersonalCalendar.ScheduleEntries.Any())
-            {
-                foreach (var entry in student.Person.PersonalCalendar.ScheduleEntries)
-                {
-                    Console.WriteLine($" - Schedule Entry Id: {entry.Id}, Date: {entry.DateTime}, Duration: {entry.Duration}, Topic: {entry.ClassSession?.Topic ?? "N/A"}");
-                }
-            }
-            else
-            {
-                Console.WriteLine(" - No schedules available.");
-            }
-            Console.WriteLine();
-        }
-    }
 
     /// <summary>
     /// Methods for Curriculum
