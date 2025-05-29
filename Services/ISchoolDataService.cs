@@ -1267,7 +1267,6 @@ namespace FcmsPortal.Services
                 payment.Id = GetNextPaymentId();
                 schoolFees.Payments.Add(payment);
 
-                // Update student's payment status if needed
                 var student = GetStudentBySchoolFeesId(payment.SchoolFeesId);
                 if (student != null && student.CurrentLearningPath != null)
                 {
@@ -1293,7 +1292,6 @@ namespace FcmsPortal.Services
                     existingPayment.AcademicYearStart = payment.AcademicYearStart;
                     existingPayment.LearningPathId = payment.LearningPathId;
 
-                    // Update student's payment status if needed
                     var student = GetStudentBySchoolFeesId(payment.SchoolFeesId);
                     if (student != null && student.CurrentLearningPath != null)
                     {
@@ -1315,7 +1313,6 @@ namespace FcmsPortal.Services
                     {
                         student.Person.SchoolFees.Payments.Remove(payment);
 
-                        // Update student's payment status if needed
                         if (student.CurrentLearningPath != null)
                         {
                             LogicMethods.UpdatePaymentStatus(student, student.CurrentLearningPath);
@@ -1396,13 +1393,13 @@ namespace FcmsPortal.Services
         }
 
         public List<Curriculum> FilterCurriculum(
-     List<Curriculum> curriculum,
-     EducationLevel educationLevel,
-     ClassLevel classLevel,
-     Semester? semester = null
- )
+                                 List<Curriculum> curriculum,
+                                 EducationLevel educationLevel,
+                                 ClassLevel classLevel,
+                                 Semester? semester = null
+                             )
         {
-            // Filter to relevant EducationLevel and ClassLevel
+
             var filteredCurricula = curriculum
                 .Where(c => c.EducationLevel == educationLevel && c.ClassLevel == classLevel)
                 .Select(c => new Curriculum
