@@ -28,7 +28,7 @@ namespace FcmsPortal.Models
         public List<ScheduleEntry> Schedule { get; set; } = new List<ScheduleEntry>();
         public List<Student> Students { get; set; } = new List<Student>();
         public List<Student> StudentsWithAccess { get; set; } = new List<Student>();
-        public List<AttendanceLogEntry> AttendanceLog { get; set; } = new List<AttendanceLogEntry>();
+        public List<DailyAttendanceLogEntry> AttendanceLog { get; set; } = new List<DailyAttendanceLogEntry>();
         public PrincipalApprovalStatus ApprovalStatus { get; set; } = PrincipalApprovalStatus.Pending;
 
     }
