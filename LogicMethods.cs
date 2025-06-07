@@ -767,7 +767,7 @@ public static class LogicMethods
     /// <summary>
     /// Methods for Attendance
     /// </summary>
-
+    /*
     //Get expected students that ought to attend a class session, whether paid or not
     public static List<Student> GetExpectedStudentsForClassSession(School school, ClassSession classSession)
     {
@@ -930,7 +930,7 @@ public static class LogicMethods
         }
 
         return studentAttendance;
-    }
+    }*/
 
     /// <summary>
     /// Methods for Class Session Collarboration
