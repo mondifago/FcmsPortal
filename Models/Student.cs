@@ -20,9 +20,9 @@ public class Student
     public Guardian Guardian { get; set; }
     public List<CourseGrade> CourseGrades { get; set; } = new();
     [InverseProperty("StudentsPresent")]
-    public List<ClassAttendanceLogEntry> AttendedSessions { get; set; } = new();
+    public List<AttendanceLogEntry> AttendedSessions { get; set; } = new();
     [InverseProperty("StudentsAbsent")]
-    public List<ClassAttendanceLogEntry> AbsentSessions { get; set; } = new();
+    public List<AttendanceLogEntry> AbsentSessions { get; set; } = new();
     [Required]
     public int CurrentLearningPathId { get; set; }
     [ForeignKey("CurrentLearningPathId")]

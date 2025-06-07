@@ -335,16 +335,6 @@ namespace FcmsPortal
             classSession1.LessonPlan =
                 "Make the students understand the function of every organ within the Digestive system";
             classSession1.Teacher = staff2;
-            classSession1.AttendanceLog = new List<ClassAttendanceLogEntry>();
-            classSession1.AttendanceLog.Add(new ClassAttendanceLogEntry
-            {
-                Id = 1,
-                Teacher = staff2,
-                ClassSession = classSession1,
-                TimeStamp = DateTime.Today,
-                Attendees = new List<Student> { },
-                AbsentStudents = new List<Student> { },
-            });
             classSession1.HomeworkDetails = new List<Homework>();
             var homework1 = new Homework();
             homework1.Id = 1;
@@ -419,7 +409,6 @@ namespace FcmsPortal
             classSession2.LessonPlan =
                 "Make the students understand the function of every Enzyme within the Digestive system";
             classSession2.Teacher = staff2;
-            classSession2.AttendanceLog = new List<ClassAttendanceLogEntry>();
             classSession2.HomeworkDetails = new List<Homework>();
             classSession2.StudyMaterials = new List<FileAttachment>();
             classSession2.DiscussionThreads = new List<DiscussionThread>();
@@ -466,7 +455,6 @@ namespace FcmsPortal
             classSession3.Description = "Planets of the solar System";
             classSession3.LessonPlan = "Make the students know the name of the nine planets";
             classSession3.Teacher = staff3;
-            classSession3.AttendanceLog = new List<ClassAttendanceLogEntry>();
             classSession3.HomeworkDetails = new List<Homework>();
             classSession3.StudyMaterials = new List<FileAttachment>();
             classSession3.DiscussionThreads = new List<DiscussionThread>();
@@ -520,7 +508,6 @@ namespace FcmsPortal
             classSession4.Description = "Introduction to Continents";
             classSession4.LessonPlan = "Make the students know the name and location of the all the continents";
             classSession4.Teacher = staff3;
-            classSession4.AttendanceLog = new List<ClassAttendanceLogEntry>();
             classSession4.HomeworkDetails = new List<Homework>();
             classSession4.StudyMaterials = new List<FileAttachment>();
             classSession4.DiscussionThreads = new List<DiscussionThread>();

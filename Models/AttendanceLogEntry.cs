@@ -1,10 +1,10 @@
 ﻿namespace FcmsPortal.Models
 {
-    public class ClassAttendanceLogEntry
+    public class AttendanceLogEntry
     {
         public int Id { get; set; }
-        public int ClassSessionId { get; set; }
-        public ClassSession ClassSession { get; set; }
+        public int learningPathId { get; set; }
+        public LearningPath learningPath { get; set; }
         public int TeacherId { get; set; }
         public Staff Teacher { get; set; }
         public List<Student> Attendees { get; set; } = new();
