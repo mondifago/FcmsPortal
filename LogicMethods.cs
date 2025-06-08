@@ -765,174 +765,6 @@ public static class LogicMethods
     }
 
     /// <summary>
-    /// Methods for Attendance
-    /// </summary>
-    /*
-    //Get expected students that ought to attend a class session, whether paid or not
-    public static List<Student> GetExpectedStudentsForClassSession(School school, ClassSession classSession)
-    {
-        if (school == null)
-            throw new ArgumentNullException(nameof(school));
-
-        if (classSession == null)
-            throw new ArgumentNullException(nameof(classSession));
-
-        var learningPath = school.LearningPath
-            .FirstOrDefault(lp => lp.Schedule.Any(s => s.ClassSession?.Id == classSession.Id));
-
-        return learningPath?.Students ?? new List<Student>();
-    }
-
-    //take attendance for class session
-    public static void TakeAttendanceForClassSession(School school, ClassSession classSession, List<Student> presentStudents, Staff teacher)
-    {
-        if (school == null)
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
-
-        if (classSession == null)
-            throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
-
-        if (teacher == null)
-            throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
-
-        if (classSession.Teacher != teacher)
-            throw new InvalidOperationException("Only the assigned teacher can take attendance for this class session.");
-
-        List<Student> expectedStudents = GetExpectedStudentsForClassSession(school, classSession);
-
-        if (!expectedStudents.Any())
-            throw new InvalidOperationException("No students are expected for this class session.");
-
-        if (presentStudents == null)
-            throw new ArgumentNullException(nameof(presentStudents), "Present students list cannot be null.");
-
-        foreach (var student in presentStudents)
-        {
-            if (!expectedStudents.Contains(student))
-                throw new InvalidOperationException($"Student {student.Id} is not expected in this class session.");
-        }
-
-        List<Student> absentStudents = expectedStudents.Except(presentStudents).ToList();
-
-        var attendanceLogEntry = new ClassAttendanceLogEntry
-        {
-            Id = classSession.AttendanceLog.Count + 1,
-            ClassSession = classSession,
-            ClassSessionId = classSession.Id,
-            Teacher = teacher,
-            PresentStudents = presentStudents,
-            AbsentStudents = absentStudents,
-            TimeStamp = DateTime.Now
-        };
-        classSession.AttendanceLog.Add(attendanceLogEntry);
-    }
-
-    //Retrieve students Absent from a class session
-    public static List<Student> GetStudentsAbsentForClassSession(ClassSession classSession)
-    {
-        if (classSession == null)
-            throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
-
-        var latestAttendanceLog = classSession.AttendanceLog.LastOrDefault();
-
-        return latestAttendanceLog?.AbsentStudents ?? new List<Student>();
-    }
-
-    //Retrieve students present for a class session
-    public static List<Student> GetStudentsPresentForClassSession(ClassSession classSession)
-    {
-        if (classSession == null)
-            throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
-
-        var latestAttendanceLog = classSession.AttendanceLog.LastOrDefault();
-
-        return latestAttendanceLog?.PresentStudents ?? new List<Student>();
-    }
-
-    //Retrieve attendance of a class session
-    public static ClassAttendanceLogEntry RetrieveAttendanceForClassSession(ClassSession classSession)
-    {
-        if (classSession == null)
-            throw new ArgumentNullException(nameof(classSession), "Class session cannot be null.");
-
-        var latestAttendanceLog = classSession.AttendanceLog.LastOrDefault();
-
-        if (latestAttendanceLog == null)
-            throw new InvalidOperationException("No attendance records found for this class session.");
-
-        return latestAttendanceLog;
-    }
-
-    //Retrieve all attendance recorded for a learning path
-    public static List<ClassAttendanceLogEntry> GetAttendanceForLearningPath(LearningPath learningPath)
-    {
-        if (learningPath == null)
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-
-        List<ClassAttendanceLogEntry> attendanceLogs = new();
-
-        foreach (var schedule in learningPath.Schedule)
-        {
-            if (schedule.ClassSession != null && schedule.ClassSession.AttendanceLog.Any())
-            {
-                attendanceLogs.AddRange(schedule.ClassSession.AttendanceLog);
-            }
-        }
-
-        return attendanceLogs;
-    }
-
-    //Get attendance of all the students in a particular learning path for a select day
-    public static List<ClassAttendanceLogEntry> GetAttendanceForLearningPathByDate(LearningPath learningPath, DateTime date)
-    {
-        if (learningPath == null)
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-
-        List<ClassAttendanceLogEntry> attendanceLogs = new();
-
-        foreach (var schedule in learningPath.Schedule)
-        {
-            if (schedule.ClassSession != null)
-            {
-                var filteredLogs = schedule.ClassSession.AttendanceLog
-                    .Where(log => log.TimeStamp.Date == date.Date)
-                    .ToList();
-
-                attendanceLogs.AddRange(filteredLogs);
-            }
-        }
-
-        return attendanceLogs;
-    }
-
-    //Get a student's Attendance record for a semester
-    public static List<ClassAttendanceLogEntry> GetAStudentSemesterAttendance(LearningPath learningPath, Student student)
-    {
-        if (learningPath == null)
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-
-        if (student == null)
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-
-        List<ClassAttendanceLogEntry> studentAttendance = new();
-
-        foreach (var schedule in learningPath.Schedule)
-        {
-            if (schedule.ClassSession != null && schedule.ClassSession.AttendanceLog.Any())
-            {
-                var latestLog = schedule.ClassSession.AttendanceLog.LastOrDefault();
-
-                if (latestLog != null && (latestLog.PresentStudents.Contains(student) || latestLog.AbsentStudents.Contains(student)))
-                {
-                    studentAttendance.Add(latestLog);
-                }
-            }
-        }
-
-        return studentAttendance;
-    }*/
-
-    /// <summary>
     /// Methods for Class Session Collarboration
     /// </summary>
 
@@ -1341,101 +1173,129 @@ public static class LogicMethods
         return report;
     }
 
-    // Add these methods to LogicMethods.cs
-
     /// <summary>
-    /// Check if attendance has been taken for a learning path today
+    /// Methods for Attendance
     /// </summary>
-    public static bool HasAttendanceBeenTakenToday(LearningPath learningPath)
-    {
-        if (learningPath?.AttendanceLog == null || !learningPath.AttendanceLog.Any())
-            return false;
 
-        var today = DateTime.Now.Date;
-        return learningPath.AttendanceLog.Any(log => log.TimeStamp.Date == today);
+    // Take attendance for a learning path on a specific date
+    public static DailyAttendanceLogEntry TakeAttendanceForLearningPath(LearningPath learningPath, List<Student> presentStudents, Staff teacher, DateTime? attendanceDate = null)
+    {
+        if (learningPath == null)
+            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+
+        if (teacher == null)
+            throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
+
+        if (presentStudents == null)
+            throw new ArgumentNullException(nameof(presentStudents), "Present students list cannot be null.");
+
+        var targetDate = attendanceDate ?? DateTime.Now;
+
+        var allStudents = learningPath.Students ?? new List<Student>();
+
+        var absentStudents = allStudents.Where(s => !presentStudents.Any(p => p.Id == s.Id)).ToList();
+
+        var attendanceLogEntry = new DailyAttendanceLogEntry
+        {
+            Id = (learningPath.AttendanceLog?.Count ?? 0) + 1,
+            LearningPathId = learningPath.Id,
+            LearningPath = learningPath,
+            TeacherId = teacher.Id,
+            Teacher = teacher,
+            PresentStudents = presentStudents,
+            AbsentStudents = absentStudents,
+            TimeStamp = targetDate
+        };
+
+        if (learningPath.AttendanceLog == null)
+            learningPath.AttendanceLog = new List<DailyAttendanceLogEntry>();
+
+        learningPath.AttendanceLog.Add(attendanceLogEntry);
+
+        return attendanceLogEntry;
     }
 
-    /// <summary>
-    /// Get today's attendance log for a learning path
-    /// </summary>
-    public static DailyAttendanceLogEntry GetTodaysAttendanceLog(LearningPath learningPath)
+    // Calculate attendance rate as a percentage
+    public static double CalculateAttendanceRate(int presentCount, int totalCount)
     {
-        if (learningPath?.AttendanceLog == null)
-            return null;
-
-        var today = DateTime.Now.Date;
-        return learningPath.AttendanceLog
-            .FirstOrDefault(log => log.TimeStamp.Date == today);
+        if (totalCount == 0) return 0;
+        return Math.Round((double)presentCount / totalCount * 100, 1);
     }
 
-    /// <summary>
-    /// Get all attendance logs for a specific date
-    /// </summary>
-    public static List<DailyAttendanceLogEntry> GetAttendanceLogsByDate(List<LearningPath> learningPaths, DateTime date)
+    // Get attendance data for a specific date across multiple learning paths
+    public static List<DailyAttendanceLogEntry> GetDailyAttendanceData(List<LearningPath> learningPaths, DateTime date)
     {
-        var attendanceLogs = new List<DailyAttendanceLogEntry>();
+        var attendanceData = new List<DailyAttendanceLogEntry>();
 
-        if (learningPaths == null) return attendanceLogs;
+        if (learningPaths == null) return attendanceData;
 
         foreach (var learningPath in learningPaths)
         {
             if (learningPath.AttendanceLog != null)
             {
-                var dayLogs = learningPath.AttendanceLog
-                    .Where(log => log.TimeStamp.Date == date.Date)
-                    .ToList();
-                attendanceLogs.AddRange(dayLogs);
+                var dayLog = learningPath.AttendanceLog
+                    .FirstOrDefault(log => log.TimeStamp.Date == date.Date);
+
+                if (dayLog != null)
+                {
+                    attendanceData.Add(dayLog);
+                }
             }
         }
 
-        return attendanceLogs;
+        return attendanceData;
     }
 
-    /// <summary>
-    /// Get attendance summary for a learning path
-    /// </summary>
-    /*public static AttendanceSummary GetAttendanceSummary(LearningPath learningPath)
+    // Generate semester attendance report for a learning path
+    public static SemesterAttendanceReport GenerateSemesterAttendanceReport(LearningPath learningPath)
     {
-        if (learningPath?.AttendanceLog == null || !learningPath.AttendanceLog.Any())
+        if (learningPath == null)
+            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+
+        var report = new SemesterAttendanceReport
         {
-            return new AttendanceSummary
-            {
-                TotalDays = 0,
-                TotalStudents = learningPath?.Students?.Count ?? 0,
-                AverageAttendanceRate = 0
-            };
+            LearningPathId = learningPath.Id,
+            LearningPathName = $"{learningPath.EducationLevel} - {learningPath.ClassLevel}",
+            StartDate = learningPath.SemesterStartDate,
+            EndDate = learningPath.SemesterEndDate
+        };
+
+        if (learningPath.AttendanceLog == null || !learningPath.AttendanceLog.Any())
+        {
+            return report;
         }
 
-        var totalDays = learningPath.AttendanceLog.Count;
-        var totalStudents = learningPath.Students?.Count ?? 0;
-        var totalPossibleAttendances = totalDays * totalStudents;
-        var totalActualAttendances = learningPath.AttendanceLog
-            .Sum(log => log.PresentStudents?.Count ?? 0);
+        var attendanceDates = learningPath.AttendanceLog
+            .Select(log => log.TimeStamp.Date)
+            .Distinct()
+            .OrderBy(date => date)
+            .ToList();
 
-        var averageAttendanceRate = totalPossibleAttendances > 0
-            ? (double)totalActualAttendances / totalPossibleAttendances * 100
-            : 0;
+        report.AttendanceDates = attendanceDates;
 
-        return new AttendanceSummary
+        var allStudents = learningPath.Students ?? new List<Student>();
+
+        foreach (var student in allStudents)
         {
-            TotalDays = totalDays,
-            TotalStudents = totalStudents,
-            AverageAttendanceRate = Math.Round(averageAttendanceRate, 2)
-        };
+            var studentAttendance = new StudentSemesterAttendance
+            {
+                StudentId = student.Id,
+                StudentName = $"{student.Person.FirstName} {student.Person.LastName}",
+            };
+
+            foreach (var date in attendanceDates)
+            {
+                var dayLog = learningPath.AttendanceLog.FirstOrDefault(log => log.TimeStamp.Date == date);
+                if (dayLog != null)
+                {
+                    var wasPresent = dayLog.PresentStudents?.Any(s => s.Id == student.Id) == true;
+                    studentAttendance.AttendanceByDate[date] = wasPresent;
+                }
+            }
+
+            report.Students.Add(studentAttendance);
+        }
+
+        return report;
     }
-
-    /// <summary>
-    /// Get student attendance rate for a learning path
-    /// </summary>
-    public static double GetStudentAttendanceRate(Student student, LearningPath learningPath)
-    {
-        if (learningPath?.AttendanceLog == null || !learningPath.AttendanceLog.Any())
-            return 0;
-
-        var totalDays = learningPath.AttendanceLog.Count;
-        var daysPresent = learningPath.AttendanceLog
-            .Count(log => log.PresentStudents?.Any(s => s.Id == student.Id) == true);
-
-        return totalDays > 0 ? Math.Round((double)daysPresent / totalDays * 100, 2) : 0;
-    }*/
 }
