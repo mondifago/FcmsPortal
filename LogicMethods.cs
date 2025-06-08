@@ -820,7 +820,7 @@ public static class LogicMethods
             ClassSession = classSession,
             ClassSessionId = classSession.Id,
             Teacher = teacher,
-            Attendees = presentStudents,
+            PresentStudents = presentStudents,
             AbsentStudents = absentStudents,
             TimeStamp = DateTime.Now
         };
@@ -846,7 +846,7 @@ public static class LogicMethods
 
         var latestAttendanceLog = classSession.AttendanceLog.LastOrDefault();
 
-        return latestAttendanceLog?.Attendees ?? new List<Student>();
+        return latestAttendanceLog?.PresentStudents ?? new List<Student>();
     }
 
     //Retrieve attendance of a class session
@@ -922,7 +922,7 @@ public static class LogicMethods
             {
                 var latestLog = schedule.ClassSession.AttendanceLog.LastOrDefault();
 
-                if (latestLog != null && (latestLog.Attendees.Contains(student) || latestLog.AbsentStudents.Contains(student)))
+                if (latestLog != null && (latestLog.PresentStudents.Contains(student) || latestLog.AbsentStudents.Contains(student)))
                 {
                     studentAttendance.Add(latestLog);
                 }
@@ -1340,4 +1340,102 @@ public static class LogicMethods
 
         return report;
     }
+
+    // Add these methods to LogicMethods.cs
+
+    /// <summary>
+    /// Check if attendance has been taken for a learning path today
+    /// </summary>
+    public static bool HasAttendanceBeenTakenToday(LearningPath learningPath)
+    {
+        if (learningPath?.AttendanceLog == null || !learningPath.AttendanceLog.Any())
+            return false;
+
+        var today = DateTime.Now.Date;
+        return learningPath.AttendanceLog.Any(log => log.TimeStamp.Date == today);
+    }
+
+    /// <summary>
+    /// Get today's attendance log for a learning path
+    /// </summary>
+    public static DailyAttendanceLogEntry GetTodaysAttendanceLog(LearningPath learningPath)
+    {
+        if (learningPath?.AttendanceLog == null)
+            return null;
+
+        var today = DateTime.Now.Date;
+        return learningPath.AttendanceLog
+            .FirstOrDefault(log => log.TimeStamp.Date == today);
+    }
+
+    /// <summary>
+    /// Get all attendance logs for a specific date
+    /// </summary>
+    public static List<DailyAttendanceLogEntry> GetAttendanceLogsByDate(List<LearningPath> learningPaths, DateTime date)
+    {
+        var attendanceLogs = new List<DailyAttendanceLogEntry>();
+
+        if (learningPaths == null) return attendanceLogs;
+
+        foreach (var learningPath in learningPaths)
+        {
+            if (learningPath.AttendanceLog != null)
+            {
+                var dayLogs = learningPath.AttendanceLog
+                    .Where(log => log.TimeStamp.Date == date.Date)
+                    .ToList();
+                attendanceLogs.AddRange(dayLogs);
+            }
+        }
+
+        return attendanceLogs;
+    }
+
+    /// <summary>
+    /// Get attendance summary for a learning path
+    /// </summary>
+    /*public static AttendanceSummary GetAttendanceSummary(LearningPath learningPath)
+    {
+        if (learningPath?.AttendanceLog == null || !learningPath.AttendanceLog.Any())
+        {
+            return new AttendanceSummary
+            {
+                TotalDays = 0,
+                TotalStudents = learningPath?.Students?.Count ?? 0,
+                AverageAttendanceRate = 0
+            };
+        }
+
+        var totalDays = learningPath.AttendanceLog.Count;
+        var totalStudents = learningPath.Students?.Count ?? 0;
+        var totalPossibleAttendances = totalDays * totalStudents;
+        var totalActualAttendances = learningPath.AttendanceLog
+            .Sum(log => log.PresentStudents?.Count ?? 0);
+
+        var averageAttendanceRate = totalPossibleAttendances > 0
+            ? (double)totalActualAttendances / totalPossibleAttendances * 100
+            : 0;
+
+        return new AttendanceSummary
+        {
+            TotalDays = totalDays,
+            TotalStudents = totalStudents,
+            AverageAttendanceRate = Math.Round(averageAttendanceRate, 2)
+        };
+    }
+
+    /// <summary>
+    /// Get student attendance rate for a learning path
+    /// </summary>
+    public static double GetStudentAttendanceRate(Student student, LearningPath learningPath)
+    {
+        if (learningPath?.AttendanceLog == null || !learningPath.AttendanceLog.Any())
+            return 0;
+
+        var totalDays = learningPath.AttendanceLog.Count;
+        var daysPresent = learningPath.AttendanceLog
+            .Count(log => log.PresentStudents?.Any(s => s.Id == student.Id) == true);
+
+        return totalDays > 0 ? Math.Round((double)daysPresent / totalDays * 100, 2) : 0;
+    }*/
 }
