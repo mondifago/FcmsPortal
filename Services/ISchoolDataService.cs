@@ -86,12 +86,8 @@ namespace FcmsPortal.Services
         void AddStudentToLearningPath(LearningPath learningPath, Student student);
         List<Curriculum> GetFullCurriculum();
         List<Curriculum> FilterCurriculum(List<Curriculum> curriculum, EducationLevel educationLevel, ClassLevel classLevel, Semester? semester = null);
-        List<DailyAttendanceLogEntry> GetDailyAttendanceByDate(List<int> learningPathIds, DateTime date);
-        DailyAttendanceLogEntry GetAttendanceByLearningPathAndDate(int learningPathId, DateTime date);
-        List<DailyAttendanceLogEntry> GetAllAttendanceForLearningPath(int learningPathId);
         DailyAttendanceLogEntry SaveAttendance(int learningPathId, List<int> presentStudentIds, int teacherId, DateTime? attendanceDate = null);
         bool HasAttendanceBeenTaken(int learningPathId, DateTime date);
-        List<LearningPath> GetLearningPathsWithAttendanceOnDate(DateTime date, string academicYear = null, string semester = null);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -1427,47 +1423,6 @@ namespace FcmsPortal.Services
             return filteredCurricula;
         }
 
-        // Get attendance data for multiple learning paths on a specific date
-        public List<DailyAttendanceLogEntry> GetDailyAttendanceByDate(List<int> learningPathIds, DateTime date)
-        {
-            var attendanceData = new List<DailyAttendanceLogEntry>();
-
-            foreach (var learningPathId in learningPathIds)
-            {
-                var learningPath = GetLearningPathById(learningPathId);
-                if (learningPath?.AttendanceLog != null)
-                {
-                    var dayLog = learningPath.AttendanceLog
-                        .FirstOrDefault(log => log.TimeStamp.Date == date.Date);
-
-                    if (dayLog != null)
-                    {
-                        attendanceData.Add(dayLog);
-                    }
-                }
-            }
-
-            return attendanceData;
-        }
-
-        // Get attendance data for a specific learning path and date
-        public DailyAttendanceLogEntry GetAttendanceByLearningPathAndDate(int learningPathId, DateTime date)
-        {
-            var learningPath = GetLearningPathById(learningPathId);
-            if (learningPath?.AttendanceLog == null)
-                return null;
-
-            return learningPath.AttendanceLog
-                .FirstOrDefault(log => log.TimeStamp.Date == date.Date);
-        }
-
-        // Get all attendance records for a learning path
-        public List<DailyAttendanceLogEntry> GetAllAttendanceForLearningPath(int learningPathId)
-        {
-            var learningPath = GetLearningPathById(learningPathId);
-            return learningPath?.AttendanceLog ?? new List<DailyAttendanceLogEntry>();
-        }
-
         // Save attendance for a learning path
         public DailyAttendanceLogEntry SaveAttendance(int learningPathId, List<int> presentStudentIds, int teacherId, DateTime? attendanceDate = null)
         {
@@ -1495,23 +1450,6 @@ namespace FcmsPortal.Services
 
             return learningPath.AttendanceLog
                 .Any(log => log.TimeStamp.Date == date.Date);
-        }
-
-        // Get learning paths with attendance on a specific date
-        public List<LearningPath> GetLearningPathsWithAttendanceOnDate(DateTime date, string academicYear = null, string semester = null)
-        {
-            var query = _school.LearningPath.AsEnumerable();
-
-            if (!string.IsNullOrEmpty(academicYear))
-                query = query.Where(lp => lp.AcademicYear == academicYear);
-
-            if (!string.IsNullOrEmpty(semester))
-                query = query.Where(lp => lp.Semester.ToString() == semester);
-
-            return query
-                .Where(lp => lp.AttendanceLog != null &&
-                             lp.AttendanceLog.Any(log => log.TimeStamp.Date == date.Date))
-                .ToList();
         }
     }
 }
