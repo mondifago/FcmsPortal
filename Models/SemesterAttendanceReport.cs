@@ -1,4 +1,6 @@
-﻿namespace FcmsPortal.Models
+﻿using FcmsPortal.Constants;
+
+namespace FcmsPortal.Models
 {
     public class SemesterAttendanceReport
     {
@@ -17,6 +19,6 @@
         public int TotalPresentDays => AttendanceByDate.Values.Count(s => s);
         public int TotalAbsentDays => AttendanceByDate.Values.Count(s => !s);
         public double AttendanceRate => AttendanceByDate.Count > 0 ?
-            (double)TotalPresentDays / AttendanceByDate.Count * 100 : 0;
+            (double)TotalPresentDays / AttendanceByDate.Count * FcmsConstants.PERCENTAGE_MULTIPLIER : 0;
     }
 }

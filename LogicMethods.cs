@@ -1223,28 +1223,14 @@ public static class LogicMethods
     }
 
     // Get attendance data for a specific date across multiple learning paths
-    public static List<DailyAttendanceLogEntry> GetDailyAttendanceData(List<LearningPath> learningPaths, DateTime date)
+    public static DailyAttendanceLogEntry? GetDailyAttendanceEntry(LearningPath learningPath, DateTime date)
     {
-        var attendanceData = new List<DailyAttendanceLogEntry>();
+        if (learningPath?.AttendanceLog == null) return null;
 
-        if (learningPaths == null) return attendanceData;
-
-        foreach (var learningPath in learningPaths)
-        {
-            if (learningPath.AttendanceLog != null)
-            {
-                var dayLog = learningPath.AttendanceLog
-                    .FirstOrDefault(log => log.TimeStamp.Date == date.Date);
-
-                if (dayLog != null)
-                {
-                    attendanceData.Add(dayLog);
-                }
-            }
-        }
-
-        return attendanceData;
+        return learningPath.AttendanceLog
+            .FirstOrDefault(log => log.TimeStamp.Date == date.Date);
     }
+
 
     // Generate semester attendance report for a learning path
     public static SemesterAttendanceReport GenerateSemesterAttendanceReport(LearningPath learningPath)
