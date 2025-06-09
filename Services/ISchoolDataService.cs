@@ -92,7 +92,6 @@ namespace FcmsPortal.Services
         DailyAttendanceLogEntry SaveAttendance(int learningPathId, List<int> presentStudentIds, int teacherId, DateTime? attendanceDate = null);
         bool HasAttendanceBeenTaken(int learningPathId, DateTime date);
         List<LearningPath> GetLearningPathsWithAttendanceOnDate(DateTime date, string academicYear = null, string semester = null);
-        SemesterAttendanceReport GenerateAttendanceReport(int learningPathId);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -1513,16 +1512,6 @@ namespace FcmsPortal.Services
                 .Where(lp => lp.AttendanceLog != null &&
                              lp.AttendanceLog.Any(log => log.TimeStamp.Date == date.Date))
                 .ToList();
-        }
-
-        // Generate semester attendance report for a learning path
-        public SemesterAttendanceReport GenerateAttendanceReport(int learningPathId)
-        {
-            var learningPath = GetLearningPathById(learningPathId);
-            if (learningPath == null)
-                throw new ArgumentException($"Learning path with ID {learningPathId} not found.");
-
-            return LogicMethods.GenerateSemesterAttendanceReport(learningPath);
         }
     }
 }
