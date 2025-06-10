@@ -335,7 +335,7 @@ namespace FcmsPortal
             classSession1.LessonPlan =
                 "Make the students understand the function of every organ within the Digestive system";
             classSession1.Teacher = staff2;
-            classSession1.HomeworkDetails = new List<Homework>();
+
             var homework1 = new Homework();
             homework1.Id = 1;
             homework1.Title = "Digestive System Homework";
@@ -344,16 +344,19 @@ namespace FcmsPortal
             homework1.ClassSessionId = classSession1.Id;
             homework1.Question = "Explain the function of the stomach in the digestive system.";
             homework1.Submissions = new List<HomeworkSubmission>();
+
             var homeworkSubmission1 = new HomeworkSubmission();
             homeworkSubmission1.Id = 1;
             homeworkSubmission1.Homework = homework1;
             homeworkSubmission1.Student = student1;
-            //homeworkSubmission1.Student.Id = student1.Id;
             homeworkSubmission1.SubmissionDate = DateTime.Today.AddDays(1);
             homeworkSubmission1.Answer = "The stomach is a muscular organ that mixes food with gastric juices, breaking it down into a semi-liquid form called chyme. It also plays a role in the digestion of proteins and the absorption of certain nutrients.";
             homeworkSubmission1.IsGraded = false;
+
             homework1.Submissions.Add(homeworkSubmission1);
-            classSession1.HomeworkDetails.Add(homework1);
+
+            // Assign the single homework to the class session
+            classSession1.HomeworkDetails = homework1;
 
             classSession1.StudyMaterials = new List<FileAttachment>();
             classSession1.DiscussionThreads = new List<DiscussionThread>();
@@ -409,7 +412,7 @@ namespace FcmsPortal
             classSession2.LessonPlan =
                 "Make the students understand the function of every Enzyme within the Digestive system";
             classSession2.Teacher = staff2;
-            classSession2.HomeworkDetails = new List<Homework>();
+            classSession2.HomeworkDetails = new Homework();
             classSession2.StudyMaterials = new List<FileAttachment>();
             classSession2.DiscussionThreads = new List<DiscussionThread>();
             classSession2.DiscussionThreads.Clear();
@@ -455,7 +458,7 @@ namespace FcmsPortal
             classSession3.Description = "Planets of the solar System";
             classSession3.LessonPlan = "Make the students know the name of the nine planets";
             classSession3.Teacher = staff3;
-            classSession3.HomeworkDetails = new List<Homework>();
+            classSession3.HomeworkDetails = new Homework();
             classSession3.StudyMaterials = new List<FileAttachment>();
             classSession3.DiscussionThreads = new List<DiscussionThread>();
             classSession3.DiscussionThreads.Clear();
@@ -508,7 +511,7 @@ namespace FcmsPortal
             classSession4.Description = "Introduction to Continents";
             classSession4.LessonPlan = "Make the students know the name and location of the all the continents";
             classSession4.Teacher = staff3;
-            classSession4.HomeworkDetails = new List<Homework>();
+            classSession4.HomeworkDetails = new Homework();
             classSession4.StudyMaterials = new List<FileAttachment>();
             classSession4.DiscussionThreads = new List<DiscussionThread>();
             classSession4.DiscussionThreads.Clear();

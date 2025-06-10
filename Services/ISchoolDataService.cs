@@ -58,7 +58,7 @@ namespace FcmsPortal.Services
         bool IsScheduleFromLearningPath(int scheduleEntryId);
         int GetNextScheduleId();
         Homework GetHomeworkById(int id);
-        List<Homework> GetHomeworksByClassSession(int classSessionId);
+        Homework GetHomeworkByClassSession(int classSessionId);
         Homework AddHomework(Homework homework);
         void UpdateHomework(Homework homework);
         bool DeleteHomework(int id);
@@ -887,18 +887,15 @@ namespace FcmsPortal.Services
                 {
                     if (schedule.ClassSession?.HomeworkDetails != null)
                     {
-                        foreach (var homework in schedule.ClassSession.HomeworkDetails)
-                        {
-                            if (homework.Id == id)
-                                return homework;
-                        }
+                        if (schedule.ClassSession.HomeworkDetails.Id == id)
+                            return schedule.ClassSession.HomeworkDetails;
                     }
                 }
             }
             return null;
         }
 
-        public List<Homework> GetHomeworksByClassSession(int classSessionId)
+        public Homework GetHomeworkByClassSession(int classSessionId)
         {
             foreach (var learningPath in _school.LearningPath)
             {
@@ -906,11 +903,11 @@ namespace FcmsPortal.Services
                 {
                     if (schedule.ClassSession?.Id == classSessionId)
                     {
-                        return schedule.ClassSession.HomeworkDetails.ToList();
+                        return schedule.ClassSession.HomeworkDetails;
                     }
                 }
             }
-            return new List<Homework>();
+            return null;
         }
 
         public Homework AddHomework(Homework homework)
@@ -924,20 +921,25 @@ namespace FcmsPortal.Services
                 {
                     if (schedule.ClassSession?.Id == homework.ClassSessionId)
                     {
-                        if (schedule.ClassSession.HomeworkDetails == null)
-                            schedule.ClassSession.HomeworkDetails = new List<Homework>();
-
                         if (homework.Id <= 0)
                         {
+                            // Generate unique ID across all homework
                             int nextId = 1;
-                            if (schedule.ClassSession.HomeworkDetails.Any())
+                            foreach (var lp in _school.LearningPath)
                             {
-                                nextId = schedule.ClassSession.HomeworkDetails.Max(h => h.Id) + 1;
+                                foreach (var sch in lp.Schedule)
+                                {
+                                    if (sch.ClassSession?.HomeworkDetails != null &&
+                                        sch.ClassSession.HomeworkDetails.Id >= nextId)
+                                    {
+                                        nextId = sch.ClassSession.HomeworkDetails.Id + 1;
+                                    }
+                                }
                             }
                             homework.Id = nextId;
                         }
 
-                        schedule.ClassSession.HomeworkDetails.Add(homework);
+                        schedule.ClassSession.HomeworkDetails = homework;
                         return homework;
                     }
                 }
@@ -954,19 +956,14 @@ namespace FcmsPortal.Services
             {
                 foreach (var schedule in learningPath.Schedule)
                 {
-                    if (schedule.ClassSession?.HomeworkDetails != null)
+                    if (schedule.ClassSession?.HomeworkDetails != null &&
+                        schedule.ClassSession.HomeworkDetails.Id == homework.Id)
                     {
-                        var existingHomework = schedule.ClassSession.HomeworkDetails
-                            .FirstOrDefault(h => h.Id == homework.Id);
-
-                        if (existingHomework != null)
-                        {
-                            existingHomework.Title = homework.Title;
-                            existingHomework.AssignedDate = homework.AssignedDate;
-                            existingHomework.DueDate = homework.DueDate;
-                            existingHomework.Question = homework.Question;
-                            return;
-                        }
+                        schedule.ClassSession.HomeworkDetails.Title = homework.Title;
+                        schedule.ClassSession.HomeworkDetails.AssignedDate = homework.AssignedDate;
+                        schedule.ClassSession.HomeworkDetails.DueDate = homework.DueDate;
+                        schedule.ClassSession.HomeworkDetails.Question = homework.Question;
+                        return;
                     }
                 }
             }
@@ -978,15 +975,11 @@ namespace FcmsPortal.Services
             {
                 foreach (var schedule in learningPath.Schedule)
                 {
-                    if (schedule.ClassSession?.HomeworkDetails != null)
+                    if (schedule.ClassSession?.HomeworkDetails != null &&
+                        schedule.ClassSession.HomeworkDetails.Id == id)
                     {
-                        var homework = schedule.ClassSession.HomeworkDetails
-                            .FirstOrDefault(h => h.Id == id);
-
-                        if (homework != null)
-                        {
-                            return schedule.ClassSession.HomeworkDetails.Remove(homework);
-                        }
+                        schedule.ClassSession.HomeworkDetails = null;
+                        return true;
                     }
                 }
             }
@@ -1001,12 +994,9 @@ namespace FcmsPortal.Services
                 {
                     if (schedule.ClassSession?.HomeworkDetails != null)
                     {
-                        foreach (var homework in schedule.ClassSession.HomeworkDetails)
-                        {
-                            var submission = homework.Submissions?.FirstOrDefault(s => s.Id == id);
-                            if (submission != null)
-                                return submission;
-                        }
+                        var submission = schedule.ClassSession.HomeworkDetails.Submissions?.FirstOrDefault(s => s.Id == id);
+                        if (submission != null)
+                            return submission;
                     }
                 }
             }
@@ -1029,15 +1019,12 @@ namespace FcmsPortal.Services
                 {
                     if (schedule.ClassSession?.HomeworkDetails != null)
                     {
-                        foreach (var homework in schedule.ClassSession.HomeworkDetails)
-                        {
-                            var submissions = homework.Submissions?
-                                .Where(s => s.Student?.Id == studentId)
-                                .ToList();
+                        var submissions = schedule.ClassSession.HomeworkDetails.Submissions?
+                            .Where(s => s.Student?.Id == studentId)
+                            .ToList();
 
-                            if (submissions != null && submissions.Any())
-                                result.AddRange(submissions);
-                        }
+                        if (submissions != null && submissions.Any())
+                            result.AddRange(submissions);
                     }
                 }
             }
@@ -1094,15 +1081,12 @@ namespace FcmsPortal.Services
                 {
                     if (schedule.ClassSession?.HomeworkDetails != null)
                     {
-                        foreach (var homework in schedule.ClassSession.HomeworkDetails)
+                        if (schedule.ClassSession.HomeworkDetails.Submissions != null)
                         {
-                            if (homework.Submissions != null)
+                            var submission = schedule.ClassSession.HomeworkDetails.Submissions.FirstOrDefault(s => s.Id == id);
+                            if (submission != null)
                             {
-                                var submission = homework.Submissions.FirstOrDefault(s => s.Id == id);
-                                if (submission != null)
-                                {
-                                    return homework.Submissions.Remove(submission);
-                                }
+                                return schedule.ClassSession.HomeworkDetails.Submissions.Remove(submission);
                             }
                         }
                     }
