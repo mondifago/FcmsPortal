@@ -1241,7 +1241,7 @@ public static class LogicMethods
         var report = new SemesterAttendanceReport
         {
             LearningPathId = learningPath.Id,
-            LearningPathName = $"{learningPath.EducationLevel} - {learningPath.ClassLevel}",
+            LearningPathName = GetLearningPathDisplayName(learningPath),
             StartDate = learningPath.SemesterStartDate,
             EndDate = learningPath.SemesterEndDate
         };
@@ -1283,5 +1283,26 @@ public static class LogicMethods
         }
 
         return report;
+    }
+
+    private static string GetLearningPathDisplayName(LearningPath learningPath)
+    {
+        return $"{learningPath.EducationLevel} - {learningPath.ClassLevel} ({learningPath.AcademicYear} {learningPath.Semester})";
+    }
+
+    public static ClassSessionReport CreateClassSessionReport(ScheduleEntry scheduleEntry, LearningPath learningPath)
+    {
+        if (scheduleEntry?.ClassSession == null || learningPath == null)
+            return null;
+
+        return new ClassSessionReport
+        {
+            ClassSessionId = scheduleEntry.ClassSession.Id,
+            LearningPathName = GetLearningPathDisplayName(learningPath),
+            Course = scheduleEntry.ClassSession.Course,
+            Topic = scheduleEntry.ClassSession.Topic,
+            SubmittedBy = scheduleEntry.ClassSession.Teacher?.Person?.LastName ?? "Unknown",
+            TimeSubmitted = scheduleEntry.DateTime
+        };
     }
 }
