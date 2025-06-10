@@ -41,6 +41,7 @@ namespace FcmsPortal.Services
         IEnumerable<LearningPath> GetAllLearningPaths();
         LearningPath GetLearningPathById(int id);
         LearningPath GetLearningPathByScheduleEntry(int scheduleEntryId);
+        LearningPath GetLearningPathByClassSessionId(int classSessionId);
         bool DeleteLearningPath(int id);
         ScheduleEntry AddScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry);
         IEnumerable<ScheduleEntry> GetAllSchoolCalendarSchedules();
@@ -593,6 +594,21 @@ namespace FcmsPortal.Services
                 if (learningPath.Schedule != null && learningPath.Schedule.Any(s => s.Id == scheduleEntryId))
                 {
                     return learningPath;
+                }
+            }
+            return null;
+        }
+
+        public LearningPath GetLearningPathByClassSessionId(int classSessionId)
+        {
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.Id == classSessionId)
+                    {
+                        return learningPath;
+                    }
                 }
             }
             return null;
