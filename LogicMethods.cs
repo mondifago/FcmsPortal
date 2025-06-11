@@ -819,7 +819,10 @@ public static class LogicMethods
         var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == submission.HomeworkGrade.Course);
 
         if (courseGrade == null)
-            throw new InvalidOperationException($"Student has no recorded CourseGrades for {submission.HomeworkGrade.Course}.");
+        {
+            courseGrade = new CourseGrade { Course = submission.HomeworkGrade.Course };
+            student.CourseGrades.Add(courseGrade);
+        }
 
         courseGrade.TestGrades.Add(submission.HomeworkGrade);
     }

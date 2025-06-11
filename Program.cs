@@ -106,6 +106,7 @@ namespace FcmsPortal
             {
                 Id = 1,
                 Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3],
+                TestGrades = new List<TestGrade>(),
                 TotalGrade = 0,
                 AttendancePercentage = 0,
                 FinalGradeCode = "",
