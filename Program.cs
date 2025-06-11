@@ -359,6 +359,31 @@ namespace FcmsPortal
             // Assign the single homework to the class session
             classSession1.HomeworkDetails = homework1;
 
+            var joeSubmission = homework1.Submissions.FirstOrDefault(s => s.Student.Id == student1.Id);
+            if (joeSubmission != null)
+            {
+                // Create the homework grade
+                var homeworkGrade = new TestGrade
+                {
+                    Course = classSession1.Course, // Biology
+                    Score = 70,
+                    GradeType = GradeType.Homework,
+                    WeightPercentage = 100,
+                    Teacher = staff2, // Mr. Een (Biology teacher)
+                    Date = DateTime.Now.AddDays(-1), // Graded yesterday
+                    TeacherRemark = "Good understanding of enzyme functions. Your explanation shows you grasp the basic concepts well. Try to include more specific examples of where each enzyme is produced in the body for extra points."
+                };
+
+                // Update the submission with grade
+                joeSubmission.HomeworkGrade = homeworkGrade;
+                joeSubmission.IsGraded = true;
+                joeSubmission.FeedbackComment = "Good understanding of enzyme functions. Your explanation shows you grasp the basic concepts well. Try to include more specific examples of where each enzyme is produced in the body for extra points.";
+
+                // Add the grade to Joe's course grades using the corrected method
+                LogicMethods.SubmitHomeworkGradeToStudent(student1, joeSubmission);
+            }
+
+
             classSession1.StudyMaterials = new List<FileAttachment>();
             classSession1.DiscussionThreads = new List<DiscussionThread>();
             classSession1.DiscussionThreads.Clear();
