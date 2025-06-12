@@ -59,8 +59,6 @@ namespace FcmsPortal.Services
         bool IsScheduleFromLearningPath(int scheduleEntryId);
         int GetNextScheduleId();
         Homework GetHomeworkById(int id);
-        Homework GetHomeworkByClassSession(int classSessionId);
-        Homework AddHomework(Homework homework);
         HomeworkSubmission SubmitHomework(int homeworkId, Student student, string answer);
         void UpdateHomework(Homework homework);
         bool DeleteHomework(int id);
@@ -902,57 +900,6 @@ namespace FcmsPortal.Services
                     {
                         if (schedule.ClassSession.HomeworkDetails.Id == id)
                             return schedule.ClassSession.HomeworkDetails;
-                    }
-                }
-            }
-            return null;
-        }
-
-        public Homework GetHomeworkByClassSession(int classSessionId)
-        {
-            foreach (var learningPath in _school.LearningPath)
-            {
-                foreach (var schedule in learningPath.Schedule)
-                {
-                    if (schedule.ClassSession?.Id == classSessionId)
-                    {
-                        return schedule.ClassSession.HomeworkDetails;
-                    }
-                }
-            }
-            return null;
-        }
-
-        public Homework AddHomework(Homework homework)
-        {
-            if (homework == null)
-                return null;
-
-            foreach (var learningPath in _school.LearningPath)
-            {
-                foreach (var schedule in learningPath.Schedule)
-                {
-                    if (schedule.ClassSession?.Id == homework.ClassSessionId)
-                    {
-                        if (homework.Id <= 0)
-                        {
-                            int nextId = 1;
-                            foreach (var lp in _school.LearningPath)
-                            {
-                                foreach (var sch in lp.Schedule)
-                                {
-                                    if (sch.ClassSession?.HomeworkDetails != null &&
-                                        sch.ClassSession.HomeworkDetails.Id >= nextId)
-                                    {
-                                        nextId = sch.ClassSession.HomeworkDetails.Id + 1;
-                                    }
-                                }
-                            }
-                            homework.Id = nextId;
-                        }
-
-                        schedule.ClassSession.HomeworkDetails = homework;
-                        return homework;
                     }
                 }
             }
