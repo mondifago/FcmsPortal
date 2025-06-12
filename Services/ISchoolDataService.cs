@@ -68,7 +68,6 @@ namespace FcmsPortal.Services
         List<HomeworkSubmission> GetSubmissionsByStudent(int studentId);
         HomeworkSubmission AddHomeworkSubmission(HomeworkSubmission submission);
         void UpdateHomeworkSubmission(HomeworkSubmission submission);
-        bool DeleteHomeworkSubmission(int id);
         bool UpdateClassSession(ClassSession classSession);
         ClassSession GetClassSessionById(int classSessionId);
         int GetNextClassSessionId();
@@ -1062,14 +1061,30 @@ namespace FcmsPortal.Services
             if (submission.Id <= 0)
             {
                 int nextId = 1;
-                if (homework.Submissions.Any())
+                foreach (var learningPath in _school.LearningPath)
                 {
-                    nextId = homework.Submissions.Max(s => s.Id) + 1;
+                    foreach (var schedule in learningPath.Schedule)
+                    {
+                        if (schedule.ClassSession?.HomeworkDetails?.Submissions != null)
+                        {
+                            var maxId = schedule.ClassSession.HomeworkDetails.Submissions
+                                .Where(s => s.Id >= nextId)
+                                .Select(s => s.Id)
+                                .DefaultIfEmpty(0)
+                                .Max();
+
+                            if (maxId >= nextId)
+                                nextId = maxId + 1;
+                        }
+                    }
                 }
                 submission.Id = nextId;
             }
 
+            submission.Homework = homework;
+            submission.SubmissionDate = DateTime.Now;
             homework.Submissions.Add(submission);
+
             return submission;
         }
 
@@ -1077,7 +1092,6 @@ namespace FcmsPortal.Services
         {
             if (submission == null)
                 return;
-
             var existingSubmission = GetHomeworkSubmissionById(submission.Id);
             if (existingSubmission != null)
             {
@@ -1086,28 +1100,6 @@ namespace FcmsPortal.Services
                 existingSubmission.FeedbackComment = submission.FeedbackComment;
                 existingSubmission.HomeworkGrade = submission.HomeworkGrade;
             }
-        }
-
-        public bool DeleteHomeworkSubmission(int id)
-        {
-            foreach (var learningPath in _school.LearningPath)
-            {
-                foreach (var schedule in learningPath.Schedule)
-                {
-                    if (schedule.ClassSession?.HomeworkDetails != null)
-                    {
-                        if (schedule.ClassSession.HomeworkDetails.Submissions != null)
-                        {
-                            var submission = schedule.ClassSession.HomeworkDetails.Submissions.FirstOrDefault(s => s.Id == id);
-                            if (submission != null)
-                            {
-                                return schedule.ClassSession.HomeworkDetails.Submissions.Remove(submission);
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
         }
 
         public bool UpdateClassSession(ClassSession classSession)

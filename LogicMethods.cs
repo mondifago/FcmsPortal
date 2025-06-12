@@ -768,42 +768,6 @@ public static class LogicMethods
     /// Methods for Class Session Collarboration
     /// </summary>
 
-    //Submit homework
-    public static void SubmitHomework(Homework homework, Student student, string answer)
-    {
-        if (homework == null)
-            throw new ArgumentNullException(nameof(homework), "Homework cannot be null.");
-
-        if (student == null)
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-
-        if (string.IsNullOrWhiteSpace(answer))
-            throw new ArgumentException("Answer cannot be null or empty.", nameof(answer));
-
-        var submission = new HomeworkSubmission
-        {
-            Id = homework.Submissions.Count + 1,
-            Student = student,
-            Answer = answer,
-            SubmissionDate = DateTime.Now,
-            IsGraded = false
-        };
-
-        homework.Submissions.Add(submission);
-    }
-
-    //search and retrieve homework submitted by a particular student
-    public static List<HomeworkSubmission> GetSubmissionsByStudent(Homework homework, Student student)
-    {
-        if (homework == null)
-            throw new ArgumentNullException(nameof(homework), "Homework cannot be null.");
-
-        if (student == null)
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-
-        return homework.Submissions.Where(s => s.Student.Id == student.Id).ToList();
-    }
-
     // Add a student's graded homework to their cumulative course grade
     public static void SubmitHomeworkGradeToStudent(Student student, HomeworkSubmission submission)
     {
@@ -826,7 +790,6 @@ public static class LogicMethods
 
         courseGrade.TestGrades.Add(submission.HomeworkGrade);
     }
-
 
     //Start discussion 
     public static DiscussionThread StartDiscussion(int threadId, int firstPostId, Person author, string comment)
@@ -919,40 +882,6 @@ public static class LogicMethods
         }
 
         courseGrade.TestGrades.Add(testGrade);
-    }
-
-
-    //Grade Homework
-    public static void GradeHomework(HomeworkSubmission submission, double score, double weightPercentage, Staff teacher, Semester semester, Homework homework, ClassSession classSession)
-    {
-        if (submission == null)
-            throw new ArgumentNullException(nameof(submission), "Homework submission cannot be null.");
-
-        if (submission.Student == null)
-            throw new ArgumentNullException(nameof(submission.Student), "Student cannot be null.");
-
-        if (string.IsNullOrWhiteSpace(classSession.Course))
-            throw new ArgumentException("Course name is required.", nameof(classSession.Course));
-
-        if (score < 0 || score > 100)
-            throw new ArgumentException("Score must be between 0 and 100.", nameof(score));
-
-        if (weightPercentage < 0 || weightPercentage > 100)
-            throw new ArgumentException("Weight percentage must be between 0 and 100.", nameof(weightPercentage));
-
-        var homeworkGrade = new TestGrade
-        {
-            Course = classSession.Course,
-            Score = score,
-            GradeType = GradeType.Homework,
-            WeightPercentage = weightPercentage,
-            Teacher = teacher,
-            Semester = semester,
-            Date = DateTime.Now
-        };
-
-        submission.HomeworkGrade = homeworkGrade;
-        submission.IsGraded = true;
     }
 
     // Compute Total Grade for a course at the end of the semester
