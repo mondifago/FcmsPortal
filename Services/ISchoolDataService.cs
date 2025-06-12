@@ -61,11 +61,10 @@ namespace FcmsPortal.Services
         Homework GetHomeworkById(int id);
         Homework GetHomeworkByClassSession(int classSessionId);
         Homework AddHomework(Homework homework);
+        HomeworkSubmission SubmitHomework(int homeworkId, Student student, string answer);
         void UpdateHomework(Homework homework);
         bool DeleteHomework(int id);
         HomeworkSubmission GetHomeworkSubmissionById(int id);
-        List<HomeworkSubmission> GetSubmissionsByHomework(int homeworkId);
-        List<HomeworkSubmission> GetSubmissionsByStudent(int studentId);
         HomeworkSubmission AddHomeworkSubmission(HomeworkSubmission submission);
         void UpdateHomeworkSubmission(HomeworkSubmission submission);
         bool UpdateClassSession(ClassSession classSession);
@@ -937,7 +936,6 @@ namespace FcmsPortal.Services
                     {
                         if (homework.Id <= 0)
                         {
-                            // Generate unique ID across all homework
                             int nextId = 1;
                             foreach (var lp in _school.LearningPath)
                             {
@@ -959,6 +957,29 @@ namespace FcmsPortal.Services
                 }
             }
             return null;
+        }
+
+        public HomeworkSubmission SubmitHomework(int homeworkId, Student student, string answer)
+        {
+            var homework = GetHomeworkById(homeworkId);
+            if (homework == null)
+                throw new ArgumentException($"Homework with ID {homeworkId} not found.");
+
+            if (student == null)
+                throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(answer))
+                throw new ArgumentException("Answer cannot be null or empty.", nameof(answer));
+
+            var submission = new HomeworkSubmission
+            {
+                Student = student,
+                Answer = answer,
+                IsGraded = false,
+                Homework = homework
+            };
+
+            return AddHomeworkSubmission(submission);
         }
 
         public void UpdateHomework(Homework homework)
@@ -1015,35 +1036,6 @@ namespace FcmsPortal.Services
                 }
             }
             return null;
-        }
-
-        public List<HomeworkSubmission> GetSubmissionsByHomework(int homeworkId)
-        {
-            var homework = GetHomeworkById(homeworkId);
-            return homework?.Submissions?.ToList() ?? new List<HomeworkSubmission>();
-        }
-
-        public List<HomeworkSubmission> GetSubmissionsByStudent(int studentId)
-        {
-            var result = new List<HomeworkSubmission>();
-
-            foreach (var learningPath in _school.LearningPath)
-            {
-                foreach (var schedule in learningPath.Schedule)
-                {
-                    if (schedule.ClassSession?.HomeworkDetails != null)
-                    {
-                        var submissions = schedule.ClassSession.HomeworkDetails.Submissions?
-                            .Where(s => s.Student?.Id == studentId)
-                            .ToList();
-
-                        if (submissions != null && submissions.Any())
-                            result.AddRange(submissions);
-                    }
-                }
-            }
-
-            return result;
         }
 
         public HomeworkSubmission AddHomeworkSubmission(HomeworkSubmission submission)
