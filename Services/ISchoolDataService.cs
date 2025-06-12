@@ -884,7 +884,6 @@ namespace FcmsPortal.Services
 
         public bool IsScheduleFromLearningPath(int scheduleEntryId)
         {
-            // Check if this schedule exists in any learning path
             foreach (var learningPath in _school.LearningPath)
             {
                 if (learningPath.Schedule != null && learningPath.Schedule.Any(s => s.Id == scheduleEntryId))
