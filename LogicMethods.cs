@@ -849,6 +849,34 @@ public static class LogicMethods
     /// Methods for Class Session Collarboration
     /// </summary>
 
+    public static void ConfigureCourseGradingWeights(LearningPath learningPath, string course,
+    double homeworkWeight, double quizWeight, double examWeight)
+    {
+        if (Math.Abs(homeworkWeight + quizWeight + examWeight - 100.0) > 0.01)
+            throw new ArgumentException("Weight percentages must sum to 100%");
+
+        var existingConfig = learningPath.CourseGradingConfigurations
+            .FirstOrDefault(c => c.Course == course);
+
+        if (existingConfig != null)
+        {
+            existingConfig.HomeworkWeightPercentage = homeworkWeight;
+            existingConfig.QuizWeightPercentage = quizWeight;
+            existingConfig.FinalExamWeightPercentage = examWeight;
+        }
+        else
+        {
+            learningPath.CourseGradingConfigurations.Add(new CourseGradingConfiguration
+            {
+                Course = course,
+                LearningPathId = learningPath.Id,
+                HomeworkWeightPercentage = homeworkWeight,
+                QuizWeightPercentage = quizWeight,
+                FinalExamWeightPercentage = examWeight
+            });
+        }
+    }
+
     // Grade a test (Quiz, Exam, or Homework) for a student and add it to the appropriate course
     public static void AddTestGrade(Student student, string course, double score, GradeType gradeType, double weightPercentage, Staff teacher, Semester semester, string teacherRemark)
     {
@@ -866,7 +894,6 @@ public static class LogicMethods
             Course = course,
             Score = score,
             GradeType = gradeType,
-            WeightPercentage = weightPercentage,
             Teacher = teacher,
             Semester = semester,
             Date = DateTime.Now,
@@ -885,21 +912,32 @@ public static class LogicMethods
     }
 
     // Compute Total Grade for a course at the end of the semester
-    public static double ComputeTotalGrade(Student student, string course)
+    public static double ComputeTotalGrade(Student student, string course, LearningPath learningPath)
     {
-        if (student == null || student.CourseGrades == null)
-            throw new ArgumentNullException(nameof(student), "Invalid student data.");
-
         var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == course);
-
         if (courseGrade == null || !courseGrade.TestGrades.Any())
             return 0;
 
-        double weightedSum = courseGrade.TestGrades.Sum(tg => tg.Score * (tg.WeightPercentage / FcmsConstants.TOTAL_SCORE));
+        var gradingConfig = learningPath.CourseGradingConfigurations
+            .FirstOrDefault(c => c.Course == course);
+
+        if (gradingConfig == null)
+            return 0; // MVP: Return 0 instead of throwing exception
+
+        var homeworkGrades = courseGrade.TestGrades.Where(tg => tg.GradeType == GradeType.Homework);
+        var quizGrades = courseGrade.TestGrades.Where(tg => tg.GradeType == GradeType.Quiz);
+        var examGrades = courseGrade.TestGrades.Where(tg => tg.GradeType == GradeType.FinalExam);
+
+        double homeworkAvg = homeworkGrades.Any() ? homeworkGrades.Average(g => g.Score) : 0;
+        double quizAvg = quizGrades.Any() ? quizGrades.Average(g => g.Score) : 0;
+        double examAvg = examGrades.Any() ? examGrades.Average(g => g.Score) : 0;
+
+        double weightedSum = (homeworkAvg * gradingConfig.HomeworkWeightPercentage / 100) +
+                            (quizAvg * gradingConfig.QuizWeightPercentage / 100) +
+                            (examAvg * gradingConfig.FinalExamWeightPercentage / 100);
 
         return Math.Round(weightedSum, FcmsConstants.GRADE_ROUNDING_DIGIT);
     }
-
 
     //Assign Grade Code
     public static string GetGradeCode(double totalGrade)
@@ -967,7 +1005,6 @@ public static class LogicMethods
             throw new InvalidOperationException($"Student {student.Id} has no valid course grades.");
 
         double overallSemesterAverage = courseGrades.Sum() / courseGrades.Count;
-
         return overallSemesterAverage;
     }
 

@@ -368,7 +368,6 @@ namespace FcmsPortal
                     Course = classSession1.Course, // Biology
                     Score = 70,
                     GradeType = GradeType.Homework,
-                    WeightPercentage = 100,
                     Teacher = staff2, // Mr. Een (Biology teacher)
                     Date = DateTime.Now.AddDays(-1), // Graded yesterday
                     TeacherRemark = "Good understanding of enzyme functions. Your explanation shows you grasp the basic concepts well. Try to include more specific examples of where each enzyme is produced in the body for extra points."
