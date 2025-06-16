@@ -88,6 +88,10 @@ namespace FcmsPortal.Services
         void SaveCourseGradingConfiguration(CourseGradingConfiguration configuration);
         CourseGradingConfiguration GetCourseGradingConfiguration(int learningPathId, string courseName);
         List<CourseGradingConfiguration> GetAllCourseGradingConfigurations(int learningPathId);
+        bool HasCourseGradingConfiguration(int learningPathId, string courseName);
+        void DeleteCourseGradingConfiguration(int learningPathId, string courseName);
+        List<string> GetCoursesWithoutGradingConfiguration(int learningPathId);
+        bool ValidateGradingConfigurationWeights(double homeworkWeight, double quizWeight, double examWeight);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -1430,5 +1434,41 @@ namespace FcmsPortal.Services
 
             return allConfigurations.Any() ? allConfigurations.Max(c => c.Id) + 1 : 1;
         }
+
+        public bool HasCourseGradingConfiguration(int learningPathId, string courseName)
+        {
+            return GetCourseGradingConfiguration(learningPathId, courseName) != null;
+        }
+
+        public void DeleteCourseGradingConfiguration(int learningPathId, string courseName)
+        {
+            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPathId);
+            if (learningPath == null) return;
+
+            var config = learningPath.CourseGradingConfigurations
+                .FirstOrDefault(c => c.Course == courseName);
+
+            if (config != null)
+            {
+                learningPath.CourseGradingConfigurations.Remove(config);
+            }
+        }
+
+        public List<string> GetCoursesWithoutGradingConfiguration(int learningPathId)
+        {
+            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPathId);
+            if (learningPath == null) return new List<string>();
+
+            var allCourses = CourseDefaults.GetCourseNames(learningPath.EducationLevel);
+            var configuredCourses = learningPath.CourseGradingConfigurations.Select(c => c.Course).ToList();
+
+            return allCourses.Except(configuredCourses).ToList();
+        }
+
+        public bool ValidateGradingConfigurationWeights(double homeworkWeight, double quizWeight, double examWeight)
+        {
+            return Math.Abs(homeworkWeight + quizWeight + examWeight - 100.0) <= 0.01;
+        }
+
     }
 }
