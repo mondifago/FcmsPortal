@@ -379,7 +379,7 @@ namespace FcmsPortal
                 joeSubmission.FeedbackComment = "Good understanding of enzyme functions. Your explanation shows you grasp the basic concepts well. Try to include more specific examples of where each enzyme is produced in the body for extra points.";
 
                 // Add the grade to Joe's course grades using the corrected method
-                LogicMethods.SubmitHomeworkGradeToStudent(student1, joeSubmission);
+                //LogicMethods.SubmitHomeworkGradeToStudent(student1, joeSubmission);
             }
 
 

@@ -856,29 +856,6 @@ public static class LogicMethods
         }
     }
 
-    // Add a student's graded homework to their cumulative course grade
-    public static void SubmitHomeworkGradeToStudent(Student student, HomeworkSubmission submission)
-    {
-        if (student == null)
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-
-        if (submission == null || !submission.IsGraded)
-            throw new ArgumentException("Homework submission must be graded before submission to Course Grade.");
-
-        if (submission.HomeworkGrade == null)
-            throw new ArgumentException("Homework grade is missing.");
-
-        var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == submission.HomeworkGrade.Course);
-
-        if (courseGrade == null)
-        {
-            courseGrade = new CourseGrade { Course = submission.HomeworkGrade.Course };
-            student.CourseGrades.Add(courseGrade);
-        }
-
-        courseGrade.TestGrades.Add(submission.HomeworkGrade);
-    }
-
     // Grade a test (Quiz, Exam, or Homework) for a student and add it to the appropriate course
     public static void AddTestGrade(Student student, string course, double score, GradeType gradeType, Staff teacher, Semester semester, string teacherRemark)
     {
@@ -949,14 +926,12 @@ public static class LogicMethods
             foreach (var course in CourseDefaults.GetCourseNames(learningPath.EducationLevel))
             {
                 double totalGrade = ComputeTotalGrade(student, course, learningPath);
-                //string gradeCode = Util.GetGradeCode(totalGrade);
 
                 var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == course && cg.LearningPathId == learningPath.Id);
 
                 if (courseGrade != null)
                 {
                     courseGrade.TotalGrade = totalGrade;
-                    //courseGrade.FinalGradeCode = gradeCode;
                     courseGrade.IsFinalized = true;
                 }
                 else
@@ -965,7 +940,6 @@ public static class LogicMethods
                     {
                         Course = course,
                         TotalGrade = totalGrade,
-                        //FinalGradeCode = gradeCode,
                         LearningPathId = learningPath.Id,
                         StudentId = student.Id,
                         IsFinalized = true

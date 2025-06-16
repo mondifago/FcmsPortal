@@ -85,6 +85,9 @@ namespace FcmsPortal.Services
         List<Curriculum> FilterCurriculum(List<Curriculum> curriculum, EducationLevel educationLevel, ClassLevel classLevel, Semester? semester = null);
         DailyAttendanceLogEntry SaveAttendance(int learningPathId, List<int> presentStudentIds, int teacherId, DateTime? attendanceDate = null);
         bool HasAttendanceBeenTaken(int learningPathId, DateTime date);
+        void SaveCourseGradingConfiguration(CourseGradingConfiguration configuration);
+        CourseGradingConfiguration GetCourseGradingConfiguration(int learningPathId, string courseName);
+        List<CourseGradingConfiguration> GetAllCourseGradingConfigurations(int learningPathId);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -1380,6 +1383,52 @@ namespace FcmsPortal.Services
 
             return learningPath.AttendanceLog
                 .Any(log => log.TimeStamp.Date == date.Date);
+        }
+
+        public void SaveCourseGradingConfiguration(CourseGradingConfiguration configuration)
+        {
+            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == configuration.LearningPathId);
+            if (learningPath == null) return;
+
+            var existingConfig = learningPath.CourseGradingConfigurations
+                .FirstOrDefault(c => c.Course == configuration.Course);
+
+            if (existingConfig != null)
+            {
+                existingConfig.HomeworkWeightPercentage = configuration.HomeworkWeightPercentage;
+                existingConfig.QuizWeightPercentage = configuration.QuizWeightPercentage;
+                existingConfig.FinalExamWeightPercentage = configuration.FinalExamWeightPercentage;
+            }
+            else
+            {
+                configuration.Id = GetNextCourseGradingConfigurationId();
+                learningPath.CourseGradingConfigurations.Add(configuration);
+            }
+        }
+
+        public CourseGradingConfiguration GetCourseGradingConfiguration(int learningPathId, string courseName)
+        {
+            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPathId);
+            if (learningPath == null) return null;
+
+            return learningPath.CourseGradingConfigurations
+                .FirstOrDefault(c => c.Course == courseName);
+        }
+
+        public List<CourseGradingConfiguration> GetAllCourseGradingConfigurations(int learningPathId)
+        {
+            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPathId);
+            if (learningPath == null) return new List<CourseGradingConfiguration>();
+
+            return learningPath.CourseGradingConfigurations.ToList();
+        }
+
+        private int GetNextCourseGradingConfigurationId()
+        {
+            var allConfigurations = _school.LearningPath
+                .SelectMany(lp => lp.CourseGradingConfigurations);
+
+            return allConfigurations.Any() ? allConfigurations.Max(c => c.Id) + 1 : 1;
         }
     }
 }
