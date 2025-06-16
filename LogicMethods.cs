@@ -765,31 +765,10 @@ public static class LogicMethods
     }
 
     /// <summary>
-    /// Methods for Class Session Collarboration
+    /// Methods for Class Session Discussion
     /// </summary>
 
-    // Add a student's graded homework to their cumulative course grade
-    public static void SubmitHomeworkGradeToStudent(Student student, HomeworkSubmission submission)
-    {
-        if (student == null)
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
 
-        if (submission == null || !submission.IsGraded)
-            throw new ArgumentException("Homework submission must be graded before submission to Course Grade.");
-
-        if (submission.HomeworkGrade == null)
-            throw new ArgumentException("Homework grade is missing.");
-
-        var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == submission.HomeworkGrade.Course);
-
-        if (courseGrade == null)
-        {
-            courseGrade = new CourseGrade { Course = submission.HomeworkGrade.Course };
-            student.CourseGrades.Add(courseGrade);
-        }
-
-        courseGrade.TestGrades.Add(submission.HomeworkGrade);
-    }
 
     //Start discussion 
     public static DiscussionThread StartDiscussion(int threadId, int firstPostId, Person author, string comment)
@@ -846,7 +825,7 @@ public static class LogicMethods
     }
 
     /// <summary>
-    /// Methods for Class Session Collarboration
+    /// Methods for Grading
     /// </summary>
 
     public static void ConfigureCourseGradingWeights(LearningPath learningPath, string course,
@@ -877,17 +856,37 @@ public static class LogicMethods
         }
     }
 
+    // Add a student's graded homework to their cumulative course grade
+    public static void SubmitHomeworkGradeToStudent(Student student, HomeworkSubmission submission)
+    {
+        if (student == null)
+            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+
+        if (submission == null || !submission.IsGraded)
+            throw new ArgumentException("Homework submission must be graded before submission to Course Grade.");
+
+        if (submission.HomeworkGrade == null)
+            throw new ArgumentException("Homework grade is missing.");
+
+        var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == submission.HomeworkGrade.Course);
+
+        if (courseGrade == null)
+        {
+            courseGrade = new CourseGrade { Course = submission.HomeworkGrade.Course };
+            student.CourseGrades.Add(courseGrade);
+        }
+
+        courseGrade.TestGrades.Add(submission.HomeworkGrade);
+    }
+
     // Grade a test (Quiz, Exam, or Homework) for a student and add it to the appropriate course
-    public static void AddTestGrade(Student student, string course, double score, GradeType gradeType, double weightPercentage, Staff teacher, Semester semester, string teacherRemark)
+    public static void AddTestGrade(Student student, string course, double score, GradeType gradeType, Staff teacher, Semester semester, string teacherRemark)
     {
         if (student == null)
             throw new ArgumentNullException(nameof(student), "Student cannot be null.");
 
         if (string.IsNullOrWhiteSpace(course))
             throw new ArgumentException("Course name is required.", nameof(course));
-
-        if (weightPercentage < 0 || weightPercentage > 100)
-            throw new ArgumentException("Weight percentage must be between 0 and 100.", nameof(weightPercentage));
 
         var testGrade = new TestGrade
         {
@@ -914,7 +913,7 @@ public static class LogicMethods
     // Compute Total Grade for a course at the end of the semester
     public static double ComputeTotalGrade(Student student, string course, LearningPath learningPath)
     {
-        var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == course);
+        var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == course && cg.LearningPathId == learningPath.Id);
         if (courseGrade == null || !courseGrade.TestGrades.Any())
             return 0;
 
@@ -922,7 +921,7 @@ public static class LogicMethods
             .FirstOrDefault(c => c.Course == course);
 
         if (gradingConfig == null)
-            return 0; // MVP: Return 0 instead of throwing exception
+            return 0; // MVP: Return 0 if no configuration
 
         var homeworkGrades = courseGrade.TestGrades.Where(tg => tg.GradeType == GradeType.Homework);
         var quizGrades = courseGrade.TestGrades.Where(tg => tg.GradeType == GradeType.Quiz);
@@ -939,20 +938,6 @@ public static class LogicMethods
         return Math.Round(weightedSum, FcmsConstants.GRADE_ROUNDING_DIGIT);
     }
 
-    //Assign Grade Code
-    public static string GetGradeCode(double totalGrade)
-    {
-        return totalGrade switch
-        {
-            >= FcmsConstants.A_GRADE_MIN => "A",
-            >= FcmsConstants.B_GRADE_MIN => "B",
-            >= FcmsConstants.C_GRADE_MIN => "C",
-            >= FcmsConstants.D_GRADE_MIN => "D",
-            >= FcmsConstants.E_GRADE_MIN => "E",
-            _ => "F",
-        };
-    }
-
     // Compute final semester grade for each course for each student in a learning path
     public static void FinalizeSemesterGrades(LearningPath learningPath)
     {
@@ -963,15 +948,16 @@ public static class LogicMethods
         {
             foreach (var course in CourseDefaults.GetCourseNames(learningPath.EducationLevel))
             {
-                double totalGrade = ComputeTotalGrade(student, course);
-                string gradeCode = GetGradeCode(totalGrade);
+                double totalGrade = ComputeTotalGrade(student, course, learningPath);
+                //string gradeCode = Util.GetGradeCode(totalGrade);
 
-                var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == course);
+                var courseGrade = student.CourseGrades.FirstOrDefault(cg => cg.Course == course && cg.LearningPathId == learningPath.Id);
 
                 if (courseGrade != null)
                 {
                     courseGrade.TotalGrade = totalGrade;
-                    courseGrade.FinalGradeCode = gradeCode;
+                    //courseGrade.FinalGradeCode = gradeCode;
+                    courseGrade.IsFinalized = true;
                 }
                 else
                 {
@@ -979,33 +965,36 @@ public static class LogicMethods
                     {
                         Course = course,
                         TotalGrade = totalGrade,
-                        FinalGradeCode = gradeCode
+                        //FinalGradeCode = gradeCode,
+                        LearningPathId = learningPath.Id,
+                        StudentId = student.Id,
+                        IsFinalized = true
                     });
                 }
             }
         }
     }
 
-
     // Compute Semester overall grade average for a student
-    public static double CalculateSemesterOverallGrade(Student student)
+    public static double CalculateSemesterOverallGrade(Student student, LearningPath learningPath)
     {
         if (student == null)
             throw new ArgumentNullException(nameof(student), "Student cannot be null.");
 
-        if (student.CourseGrades == null || student.CourseGrades.Count == 0)
-            throw new InvalidOperationException($"No grades found for student {student.Id}.");
+        var courses = CourseDefaults.GetCourseNames(learningPath.EducationLevel);
+        var courseGrades = new List<double>();
 
-        var courseGrades = student.CourseGrades
-            .Select(cg => ComputeTotalGrade(student, cg.Course))
-            .Where(totalGrade => totalGrade > 0)
-            .ToList();
+        foreach (var course in courses)
+        {
+            double courseTotal = ComputeTotalGrade(student, course, learningPath);
+            if (courseTotal > 0)
+                courseGrades.Add(courseTotal);
+        }
 
         if (courseGrades.Count == 0)
-            throw new InvalidOperationException($"Student {student.Id} has no valid course grades.");
+            return 0;
 
-        double overallSemesterAverage = courseGrades.Sum() / courseGrades.Count;
-        return overallSemesterAverage;
+        return Math.Round(courseGrades.Average(), FcmsConstants.GRADE_ROUNDING_DIGIT);
     }
 
 
@@ -1015,23 +1004,42 @@ public static class LogicMethods
         if (student == null)
             throw new ArgumentNullException(nameof(student), "Student cannot be null.");
 
-        if (learningPaths == null || learningPaths.Count == 0)
-            throw new ArgumentException("Learning paths list cannot be null or empty.", nameof(learningPaths));
+        if (learningPaths == null || learningPaths.Count < 3)
+            return 0;
 
         var relevantLearningPaths = learningPaths
             .Where(lp => lp.Students.Contains(student))
-            .OrderByDescending(lp => lp.Schedule.Min(se => se.DateTime.Year))
+            .OrderByDescending(lp => lp.SemesterStartDate)
             .Take(3)
             .ToList();
 
-        if (relevantLearningPaths.Count < FcmsConstants.NUMBER_OF_SEMESTERS)
-            throw new InvalidOperationException($"Student {student.Id} has fewer than 3 semesters recorded for promotion.");
+        if (relevantLearningPaths.Count < 3)
+            return 0;
 
-        var semesterGrades = relevantLearningPaths
-            .Select(lp => CalculateSemesterOverallGrade(student))
-            .ToList();
+        var courses = CourseDefaults.GetCourseNames(relevantLearningPaths.First().EducationLevel);
+        var coursePromotionGrades = new List<double>();
 
-        return semesterGrades.Average();
+        foreach (var course in courses)
+        {
+            var courseSemesterGrades = new List<double>();
+
+            foreach (var learningPath in relevantLearningPaths)
+            {
+                double courseGrade = ComputeTotalGrade(student, course, learningPath);
+                courseSemesterGrades.Add(courseGrade);
+            }
+
+            if (courseSemesterGrades.Any())
+            {
+                double coursePromotionGrade = courseSemesterGrades.Average();
+                coursePromotionGrades.Add(coursePromotionGrade);
+            }
+        }
+
+        if (coursePromotionGrades.Count == 0)
+            return 0;
+
+        return Math.Round(coursePromotionGrades.Average(), FcmsConstants.GRADE_ROUNDING_DIGIT);
     }
 
     //method to arrange CalculateSemesterOverallGrade() of all students in a learning path in descending order
@@ -1041,10 +1049,10 @@ public static class LogicMethods
             throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
 
         if (learningPath.Students == null || learningPath.Students.Count == 0)
-            throw new InvalidOperationException("No students found in this learning path.");
+            return new List<(Student, double)>();
 
         var studentGrades = learningPath.Students
-            .Select(student => (Student: student, SemesterGrade: CalculateSemesterOverallGrade(student)))
+            .Select(student => (Student: student, SemesterGrade: CalculateSemesterOverallGrade(student, learningPath)))
             .OrderByDescending(sg => sg.SemesterGrade)
             .ToList();
 
@@ -1087,7 +1095,6 @@ public static class LogicMethods
 
     public static List<CourseGrade> GetCourseGradesByLearningPathId(School school, int learningPathId)
     {
-        // Find all course grades related to the specific learning path
         return school.Students
             .SelectMany(s => s.CourseGrades)
             .Where(cg => cg.LearningPathId == learningPathId)
@@ -1103,38 +1110,19 @@ public static class LogicMethods
             RankedStudents = new List<StudentGradeSummary>()
         };
 
-        // Get all grades for this learning path
-        var grades = GetCourseGradesByLearningPathId(school, learningPath.Id);
-
-        // Group grades by student and calculate overall grade
-        var studentGrades = new Dictionary<Student, double>();
-
-        foreach (var grade in grades)
+        foreach (var student in learningPath.Students)
         {
-            var student = school.Students.FirstOrDefault(s => s.Id == grade.StudentId);
-            if (student == null) continue;
+            double semesterOverallGrade = CalculateSemesterOverallGrade(student, learningPath);
 
-            if (!studentGrades.ContainsKey(student))
-            {
-                studentGrades[student] = 0;
-            }
-
-            studentGrades[student] += grade.TotalGrade;
-        }
-
-        // Create ranked list
-        foreach (var entry in studentGrades)
-        {
-            report.StudentSemesterGrades[entry.Key] = entry.Value;
+            report.StudentSemesterGrades[student] = semesterOverallGrade;
 
             report.RankedStudents.Add(new StudentGradeSummary
             {
-                Student = entry.Key,
-                SemesterOverallGrade = entry.Value
+                Student = student,
+                SemesterOverallGrade = semesterOverallGrade
             });
         }
 
-        // Sort ranked students by grade (descending)
         report.RankedStudents = report.RankedStudents
             .OrderByDescending(sg => sg.SemesterOverallGrade)
             .ToList();
