@@ -108,7 +108,6 @@ namespace FcmsPortal
                 Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3],
                 TestGrades = new List<TestGrade>(),
                 TotalGrade = 0,
-                AttendancePercentage = 0,
                 FinalGradeCode = "",
                 StudentId = student1.Id,
                 LearningPathId = 1001
@@ -365,7 +364,7 @@ namespace FcmsPortal
                 // Create the homework grade
                 var homeworkGrade = new TestGrade
                 {
-                    Course = classSession1.Course, // Biology
+                    //ourse = classSession1.Course, // Biology
                     Score = 70,
                     GradeType = GradeType.Homework,
                     Teacher = staff2, // Mr. Een (Biology teacher)

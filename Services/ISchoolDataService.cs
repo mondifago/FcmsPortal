@@ -69,7 +69,6 @@ namespace FcmsPortal.Services
         ClassSession GetClassSessionById(int classSessionId);
         int GetNextClassSessionId();
         CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId);
-        void SaveCourseGrade(CourseGrade grade);
         LearningPathGradeReport GetGradeReportForLearningPath(int learningPathId);
         void UpdateGradeReport(LearningPathGradeReport report);
         Payment AddPayment(Payment payment);
@@ -92,6 +91,8 @@ namespace FcmsPortal.Services
         void DeleteCourseGradingConfiguration(int learningPathId, string courseName);
         List<string> GetCoursesWithoutGradingConfiguration(int learningPathId);
         bool ValidateGradingConfigurationWeights(double homeworkWeight, double quizWeight, double examWeight);
+        CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId, string course);
+        void SaveCourseGrade(CourseGrade grade);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -1093,18 +1094,36 @@ namespace FcmsPortal.Services
             if (student == null) return;
 
             var existingGrade = student.CourseGrades.FirstOrDefault(g =>
-                g.LearningPathId == grade.LearningPathId);
+                g.LearningPathId == grade.LearningPathId && g.Course == grade.Course);
 
             if (existingGrade != null)
             {
                 existingGrade.TotalGrade = grade.TotalGrade;
                 existingGrade.FinalGradeCode = grade.FinalGradeCode;
                 existingGrade.TestGrades = grade.TestGrades;
-                existingGrade.AttendancePercentage = grade.AttendancePercentage;
+                existingGrade.IsFinalized = grade.IsFinalized;
+                existingGrade.GradingConfiguration = grade.GradingConfiguration;
+
+                if (!existingGrade.IsFinalized && existingGrade.GradingConfiguration != null)
+                {
+                    LogicMethods.RecalculateCourseGrade(existingGrade);
+                }
             }
             else
             {
+                if (grade.GradingConfiguration == null)
+                {
+                    var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == grade.LearningPathId);
+                    grade.GradingConfiguration = learningPath?.CourseGradingConfigurations
+                        .FirstOrDefault(c => c.Course == grade.Course);
+                }
+
                 student.CourseGrades.Add(grade);
+
+                if (grade.GradingConfiguration != null)
+                {
+                    LogicMethods.RecalculateCourseGrade(grade);
+                }
             }
         }
 
@@ -1121,14 +1140,17 @@ namespace FcmsPortal.Services
             var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == report.Id);
             if (learningPath == null) return;
 
-            var existingReports = _school.Students
+            var courseGrades = _school.Students
                 .SelectMany(s => s.CourseGrades)
                 .Where(cg => cg.LearningPathId == report.Id)
                 .ToList();
 
-            foreach (var grade in existingReports)
+            foreach (var grade in courseGrades)
             {
-                // Update any grade-specific finalization flags
+                if (report.IsFinalized)
+                {
+                    grade.IsFinalized = true;
+                }
             }
 
             var existingReport = _school.GradeReports?.FirstOrDefault(r => r.Id == report.Id);
@@ -1143,6 +1165,7 @@ namespace FcmsPortal.Services
                 _school.GradeReports.Add(report);
             }
         }
+
 
         public void AddStudentToLearningPath(LearningPath learningPath, Student student)
         {
@@ -1408,6 +1431,26 @@ namespace FcmsPortal.Services
                 configuration.Id = GetNextCourseGradingConfigurationId();
                 learningPath.CourseGradingConfigurations.Add(configuration);
             }
+
+            UpdateCourseGradeConfigurations(learningPath.Id, configuration.Course, configuration);
+        }
+
+        private void UpdateCourseGradeConfigurations(int learningPathId, string course, CourseGradingConfiguration config)
+        {
+            var affectedCourseGrades = _school.Students
+                .SelectMany(s => s.CourseGrades)
+                .Where(cg => cg.LearningPathId == learningPathId && cg.Course == course)
+                .ToList();
+
+            foreach (var courseGrade in affectedCourseGrades)
+            {
+                courseGrade.GradingConfiguration = config;
+
+                if (!courseGrade.IsFinalized)
+                {
+                    LogicMethods.RecalculateCourseGrade(courseGrade);
+                }
+            }
         }
 
         public CourseGradingConfiguration GetCourseGradingConfiguration(int learningPathId, string courseName)
@@ -1419,6 +1462,7 @@ namespace FcmsPortal.Services
                 .FirstOrDefault(c => c.Course == courseName);
         }
 
+
         public List<CourseGradingConfiguration> GetAllCourseGradingConfigurations(int learningPathId)
         {
             var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPathId);
@@ -1427,12 +1471,14 @@ namespace FcmsPortal.Services
             return learningPath.CourseGradingConfigurations.ToList();
         }
 
+
         private int GetNextCourseGradingConfigurationId()
         {
             var allConfigurations = _school.LearningPath
                 .SelectMany(lp => lp.CourseGradingConfigurations);
 
-            return allConfigurations.Any() ? allConfigurations.Max(c => c.Id) + 1 : 1;
+            return allConfigurations.Any() ?
+                allConfigurations.Max(c => c.Id) + 1 : 1;
         }
 
         public bool HasCourseGradingConfiguration(int learningPathId, string courseName)
@@ -1470,5 +1516,13 @@ namespace FcmsPortal.Services
             return Math.Abs(homeworkWeight + quizWeight + examWeight - 100.0) <= 0.01;
         }
 
+        public CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId, string course)
+        {
+            var student = _school.Students.FirstOrDefault(s => s.Id == studentId);
+            if (student == null) return null;
+
+            return student.CourseGrades.FirstOrDefault(cg =>
+                cg.LearningPathId == learningPathId && cg.Course == course);
+        }
     }
 }
