@@ -857,7 +857,7 @@ public static class LogicMethods
     }
 
     // Grade a test (Quiz, Exam, or Homework) for a student and add it to the appropriate course
-    public static void AddTestGrade(Student student, string course, double score, GradeType gradeType, Staff teacher, Semester semester, string teacherRemark)
+    public static void AddTestGrade(Student student, string course, double score, GradeType gradeType, Staff teacher, string teacherRemark, LearningPath learningPath)
     {
         if (student == null)
             throw new ArgumentNullException(nameof(student), "Student cannot be null.");
@@ -871,7 +871,7 @@ public static class LogicMethods
             Score = score,
             GradeType = gradeType,
             Teacher = teacher,
-            Semester = semester,
+            LearningPathId = learningPath.Id,
             Date = DateTime.Now,
             TeacherRemark = teacherRemark
         };

@@ -29,4 +29,5 @@ public class Student
     public LearningPath CurrentLearningPath { get; set; } = new();
     [NotMapped]
     public List<LearningPath> CompletedLearningPaths { get; set; } = new();
+    public List<FileAttachment> FinalResultAttachments { get; set; } = new();
 }
