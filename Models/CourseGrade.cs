@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public string Course { get; set; }
         public List<TestGrade> TestGrades { get; set; } = new();
+        public CourseGradingConfiguration GradingConfiguration { get; set; }
         public double TotalGrade { get; set; }
         public string FinalGradeCode { get; set; }
         public int StudentId { get; set; }
