@@ -369,18 +369,15 @@ namespace FcmsPortal
                     GradeType = GradeType.Homework,
                     Teacher = staff2, // Mr. Een (Biology teacher)
                     Date = DateTime.Now.AddDays(-1), // Graded yesterday
-                    TeacherRemark = "Good understanding of enzyme functions. Your explanation shows you grasp the basic concepts well. Try to include more specific examples of where each enzyme is produced in the body for extra points."
+                    TeacherRemark = "Good understanding of enzyme functions. "
                 };
 
                 // Update the submission with grade
                 joeSubmission.HomeworkGrade = homeworkGrade;
                 joeSubmission.IsGraded = true;
-                joeSubmission.FeedbackComment = "Good understanding of enzyme functions. Your explanation shows you grasp the basic concepts well. Try to include more specific examples of where each enzyme is produced in the body for extra points.";
+                joeSubmission.FeedbackComment = homeworkGrade.TeacherRemark;
 
-                // Add the grade to Joe's course grades using the corrected method
-                //LogicMethods.SubmitHomeworkGradeToStudent(student1, joeSubmission);
             }
-
 
             classSession1.StudyMaterials = new List<FileAttachment>();
             classSession1.DiscussionThreads = new List<DiscussionThread>();
@@ -644,6 +641,15 @@ namespace FcmsPortal
             learningPath1.ExamsStartDate = new DateTime(2025, 07, 01);
             learningPath1.Schedule = new List<ScheduleEntry> { scheduleEntry1, scheduleEntry2, scheduleEntry3, scheduleEntry4 };
             var learning1Students = LogicMethods.GetStudentsByLevel(fcmSchool, EducationLevel.SeniorCollege, ClassLevel.SC_3);
+            LogicMethods.AddTestGrade(
+                     student1,
+                     classSession1.Course,
+                     70,
+                     GradeType.Homework,
+                     staff2,
+                     "Good understanding of enzyme functions. ",
+                     learningPath1
+                 );
             fcmSchool.LearningPath.Add(learningPath1);
 
             LearningPath learningPath2 = new LearningPath();
