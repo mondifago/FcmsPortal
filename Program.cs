@@ -361,22 +361,17 @@ namespace FcmsPortal
             var joeSubmission = homework1.Submissions.FirstOrDefault(s => s.Student.Id == student1.Id);
             if (joeSubmission != null)
             {
-                // Create the homework grade
                 var homeworkGrade = new TestGrade
                 {
-                    //ourse = classSession1.Course, // Biology
                     Score = 70,
                     GradeType = GradeType.Homework,
-                    Teacher = staff2, // Mr. Een (Biology teacher)
-                    Date = DateTime.Now.AddDays(-1), // Graded yesterday
+                    Teacher = staff2,
+                    Date = DateTime.Now,
                     TeacherRemark = "Good understanding of enzyme functions. "
                 };
-
-                // Update the submission with grade
                 joeSubmission.HomeworkGrade = homeworkGrade;
                 joeSubmission.IsGraded = true;
                 joeSubmission.FeedbackComment = homeworkGrade.TeacherRemark;
-
             }
 
             classSession1.StudyMaterials = new List<FileAttachment>();

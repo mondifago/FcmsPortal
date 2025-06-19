@@ -1007,25 +1007,24 @@ namespace FcmsPortal.Services
 
             if (submission.Id <= 0)
             {
-                int nextId = 1;
+                int maxId = 0;
                 foreach (var learningPath in _school.LearningPath)
                 {
                     foreach (var schedule in learningPath.Schedule)
                     {
                         if (schedule.ClassSession?.HomeworkDetails?.Submissions != null)
                         {
-                            var maxId = schedule.ClassSession.HomeworkDetails.Submissions
-                                .Where(s => s.Id >= nextId)
+                            var localMaxId = schedule.ClassSession.HomeworkDetails.Submissions
                                 .Select(s => s.Id)
                                 .DefaultIfEmpty(0)
                                 .Max();
 
-                            if (maxId >= nextId)
-                                nextId = maxId + 1;
+                            if (localMaxId > maxId)
+                                maxId = localMaxId;
                         }
                     }
                 }
-                submission.Id = nextId;
+                submission.Id = maxId + 1;
             }
 
             submission.Homework = homework;
