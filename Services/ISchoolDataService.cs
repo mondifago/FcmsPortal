@@ -96,6 +96,7 @@ namespace FcmsPortal.Services
         void ArchiveStudent(Student student);
         List<Student> GetArchivedStudents();
         void RestoreStudentFromArchive(int studentId);
+        List<GradesReport> GetGradesReports(string academicYear, string semester);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -1568,6 +1569,11 @@ namespace FcmsPortal.Services
                 _archivedStudents.Remove(archivedStudent);
                 _school.Students.Add(archivedStudent);
             }
+        }
+
+        public List<GradesReport> GetGradesReports(string academicYear, string semester)
+        {
+            return LogicMethods.GetGradesReports(_school, academicYear, semester);
         }
     }
 }
