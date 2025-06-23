@@ -62,5 +62,6 @@ namespace FcmsPortal.Models
         [Phone(ErrorMessage = "Please enter a valid phone number")]
         public string EmergencyContact { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
+        public bool IsArchived { get; set; } = false;
     }
 }

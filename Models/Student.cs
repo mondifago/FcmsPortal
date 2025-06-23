@@ -30,4 +30,5 @@ public class Student
     [NotMapped]
     public List<LearningPath> CompletedLearningPaths { get; set; } = new();
     public List<FileAttachment> FinalResultAttachments { get; set; } = new();
+    public DateTime? ArchivedDate { get; set; }
 }
