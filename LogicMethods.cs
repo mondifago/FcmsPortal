@@ -1265,4 +1265,52 @@ public static class LogicMethods
             TimeSubmitted = scheduleEntry.DateTime
         };
     }
+
+    public static List<GradesReport> GetGradesReports(School school, string academicYear, string semester)
+    {
+        var reports = new List<GradesReport>();
+
+        if (string.IsNullOrEmpty(academicYear) || string.IsNullOrEmpty(semester))
+            return reports;
+
+        var submittedLearningPaths = school.LearningPath
+            .Where(lp => lp.AcademicYear == academicYear &&
+                         lp.Semester.ToString() == semester &&
+                         (lp.ApprovalStatus == PrincipalApprovalStatus.Review ||
+                          lp.ApprovalStatus == PrincipalApprovalStatus.Approved))
+            .ToList();
+
+        foreach (var learningPath in submittedLearningPaths)
+        {
+            var teacher = GetPrimaryTeacherForLearningPath(school, learningPath);
+
+            reports.Add(new GradesReport
+            {
+                LearningPathId = learningPath.Id,
+                LearningPathName = GetLearningPathDisplayName(learningPath),
+                DateSubmitted = DateTime.Now,
+                SubmittedBy = $"{teacher.Person.FirstName} {teacher.Person.LastName}",
+                NumberOfStudents = learningPath.Students?.Count ?? 0,
+                Status = learningPath.ApprovalStatus
+            });
+        }
+
+        return reports.OrderByDescending(r => r.DateSubmitted).ToList();
+    }
+
+    private static Staff GetPrimaryTeacherForLearningPath(School school, LearningPath learningPath)
+    {
+        var recentTeacher = learningPath.Schedule?
+            .Where(s => s.ClassSession?.Teacher != null)
+            .OrderByDescending(s => s.DateTime)
+            .FirstOrDefault()?.ClassSession?.Teacher;
+
+        if (recentTeacher != null)
+            return recentTeacher;
+
+        return school.Staff?.FirstOrDefault() ?? new Staff
+        {
+            Person = new Person { FirstName = "Unknown", LastName = "Teacher" }
+        };
+    }
 }
