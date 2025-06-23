@@ -93,6 +93,9 @@ namespace FcmsPortal.Services
         bool ValidateGradingConfigurationWeights(double homeworkWeight, double quizWeight, double examWeight);
         CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId, string course);
         void SaveCourseGrade(CourseGrade grade);
+        void ArchiveStudent(Student student);
+        List<Student> GetArchivedStudents();
+        void RestoreStudentFromArchive(int studentId);
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -103,6 +106,7 @@ namespace FcmsPortal.Services
         private int _nextAttachmentId = 1;
         private List<Payment> _payments = new List<Payment>();
         private List<SchoolFees> _schoolFees = new List<SchoolFees>();
+        private List<Student> _archivedStudents = new List<Student>();
 
         public SchoolDataService(IWebHostEnvironment environment)
         {
@@ -1522,6 +1526,48 @@ namespace FcmsPortal.Services
 
             return student.CourseGrades.FirstOrDefault(cg =>
                 cg.LearningPathId == learningPathId && cg.Course == course);
+        }
+
+        public void ArchiveStudent(Student student)
+        {
+            if (student == null) return;
+
+            foreach (var learningPath in _school.LearningPath)
+            {
+                learningPath.Students.RemoveAll(s => s.Id == student.Id);
+                learningPath.StudentsWithAccess.RemoveAll(s => s.Id == student.Id);
+            }
+
+            _school.Students.RemoveAll(s => s.Id == student.Id);
+
+            student.Person.IsArchived = true;
+            student.ArchivedDate = DateTime.Now;
+            _archivedStudents.Add(student);
+
+            // TODO: 
+            // 1. Create an Archive database table
+            // 2. Move student data to archive table
+            // 3. Generate graduation certificate
+            // 4. Send graduation notification
+            // 5. Update school statistics
+        }
+
+        public List<Student> GetArchivedStudents()
+        {
+            return _archivedStudents.ToList();
+        }
+
+        public void RestoreStudentFromArchive(int studentId)
+        {
+            var archivedStudent = _archivedStudents.FirstOrDefault(s => s.Id == studentId);
+            if (archivedStudent != null)
+            {
+                archivedStudent.Person.IsArchived = false;
+                archivedStudent.ArchivedDate = null;
+
+                _archivedStudents.Remove(archivedStudent);
+                _school.Students.Add(archivedStudent);
+            }
         }
     }
 }
