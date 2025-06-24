@@ -64,6 +64,7 @@ namespace FcmsPortal.Services
         bool DeleteHomework(int id);
         HomeworkSubmission GetHomeworkSubmissionById(int id);
         HomeworkSubmission AddHomeworkSubmission(HomeworkSubmission submission);
+        int GetNextHomeworkId();
         void UpdateHomeworkSubmission(HomeworkSubmission submission);
         bool UpdateClassSession(ClassSession classSession);
         ClassSession GetClassSessionById(int classSessionId);
@@ -109,10 +110,47 @@ namespace FcmsPortal.Services
         private List<SchoolFees> _schoolFees = new List<SchoolFees>();
         private List<Student> _archivedStudents = new List<Student>();
 
+        private static readonly object _idLock = new object();
+        private static readonly Dictionary<string, int> _entityCounters = new Dictionary<string, int>();
         public SchoolDataService(IWebHostEnvironment environment)
         {
             _school = Program.CreateSchool();
             _environment = environment;
+        }
+
+        private int GetNextId(string entityType, Func<int> getCurrentMaxId)
+        {
+            lock (_idLock)
+            {
+                // Initialize counter if not exists
+                if (!_entityCounters.ContainsKey(entityType))
+                {
+                    _entityCounters[entityType] = getCurrentMaxId();
+                }
+
+                // Increment and return
+                _entityCounters[entityType]++;
+                return _entityCounters[entityType];
+            }
+        }
+
+        private void ResetIdCounter(string entityType)
+        {
+            lock (_idLock)
+            {
+                if (_entityCounters.ContainsKey(entityType))
+                {
+                    _entityCounters.Remove(entityType);
+                }
+            }
+        }
+
+        private void InitializeIdCounters()
+        {
+            // Pre-populate the ID counters to avoid the initial max ID calculation
+            GetNextId("Homework", () => GetMaxHomeworkId());
+            GetNextId("HomeworkSubmission", () => GetMaxHomeworkSubmissionId());
+            // Add other entity types as needed
         }
 
         public School GetSchool() => _school;
@@ -958,6 +996,7 @@ namespace FcmsPortal.Services
                         schedule.ClassSession.HomeworkDetails.AssignedDate = homework.AssignedDate;
                         schedule.ClassSession.HomeworkDetails.DueDate = homework.DueDate;
                         schedule.ClassSession.HomeworkDetails.Question = homework.Question;
+                        schedule.ClassSession.HomeworkDetails.Submissions = homework.Submissions;
                         return;
                     }
                 }
@@ -1012,24 +1051,8 @@ namespace FcmsPortal.Services
 
             if (submission.Id <= 0)
             {
-                int maxId = 0;
-                foreach (var learningPath in _school.LearningPath)
-                {
-                    foreach (var schedule in learningPath.Schedule)
-                    {
-                        if (schedule.ClassSession?.HomeworkDetails?.Submissions != null)
-                        {
-                            var localMaxId = schedule.ClassSession.HomeworkDetails.Submissions
-                                .Select(s => s.Id)
-                                .DefaultIfEmpty(0)
-                                .Max();
-
-                            if (localMaxId > maxId)
-                                maxId = localMaxId;
-                        }
-                    }
-                }
-                submission.Id = maxId + 1;
+                // Use thread-safe ID generation
+                submission.Id = GetNextId("HomeworkSubmission", () => GetMaxHomeworkSubmissionId());
             }
 
             submission.Homework = homework;
@@ -1037,6 +1060,65 @@ namespace FcmsPortal.Services
             homework.Submissions.Add(submission);
 
             return submission;
+        }
+
+        private int GetMaxHomeworkSubmissionId()
+        {
+            int maxId = 0;
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.HomeworkDetails?.Submissions != null)
+                    {
+                        var localMaxId = schedule.ClassSession.HomeworkDetails.Submissions
+                            .Select(s => s.Id)
+                            .DefaultIfEmpty(0)
+                            .Max();
+
+                        if (localMaxId > maxId)
+                            maxId = localMaxId;
+                    }
+                }
+            }
+            return maxId;
+        }
+
+        public int GetNextHomeworkId()
+        {
+            return GetNextId("Homework", () =>
+            {
+                int maxId = 0;
+                foreach (var learningPath in _school.LearningPath)
+                {
+                    foreach (var schedule in learningPath.Schedule)
+                    {
+                        if (schedule.ClassSession?.HomeworkDetails != null)
+                        {
+                            if (schedule.ClassSession.HomeworkDetails.Id > maxId)
+                                maxId = schedule.ClassSession.HomeworkDetails.Id;
+                        }
+                    }
+                }
+                return maxId;
+            });
+        }
+
+        private int GetMaxHomeworkId()
+        {
+            int maxId = 0;
+            foreach (var learningPath in _school.LearningPath)
+            {
+                foreach (var schedule in learningPath.Schedule)
+                {
+                    if (schedule.ClassSession?.HomeworkDetails != null)
+                    {
+                        if (schedule.ClassSession.HomeworkDetails.Id > maxId)
+                            maxId = schedule.ClassSession.HomeworkDetails.Id;
+                    }
+                }
+            }
+            return maxId;
         }
 
         public void UpdateHomeworkSubmission(HomeworkSubmission submission)

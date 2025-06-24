@@ -328,7 +328,7 @@ namespace FcmsPortal
 
             //create a biology class session and assign a teacher to it
             var classSession1 = new ClassSession();
-            classSession1.Id = 1;
+            classSession1.Id = 2025;
             classSession1.Course = CourseDefaults.GetCourseNames(EducationLevel.SeniorCollege)[3];
             classSession1.Topic = "Digestive System";
             classSession1.Description = "Function of Organs in Digestive System";
@@ -337,7 +337,7 @@ namespace FcmsPortal
             classSession1.Teacher = staff2;
 
             var homework1 = new Homework();
-            homework1.Id = 1;
+            homework1.Id = 2025;
             homework1.Title = "Digestive System Homework";
             homework1.AssignedDate = DateTime.Today;
             homework1.DueDate = DateTime.Today.AddDays(7);
@@ -346,7 +346,7 @@ namespace FcmsPortal
             homework1.Submissions = new List<HomeworkSubmission>();
 
             var homeworkSubmission1 = new HomeworkSubmission();
-            homeworkSubmission1.Id = 1;
+            homeworkSubmission1.Id = 2025;
             homeworkSubmission1.Homework = homework1;
             homeworkSubmission1.Student = student1;
             homeworkSubmission1.SubmissionDate = DateTime.Today.AddDays(1);
