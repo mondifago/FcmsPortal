@@ -98,6 +98,9 @@ namespace FcmsPortal.Services
         List<Student> GetArchivedStudents();
         void RestoreStudentFromArchive(int studentId);
         List<GradesReport> GetGradesReports(string academicYear, string semester);
+        int GetNextTestGradeId();
+        int GetNextCourseGradeId();
+        int GetNextCourseGradingConfigurationId();
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -116,19 +119,18 @@ namespace FcmsPortal.Services
         {
             _school = Program.CreateSchool();
             _environment = environment;
+            InitializeIdCounters();
         }
 
         private int GetNextId(string entityType, Func<int> getCurrentMaxId)
         {
             lock (_idLock)
             {
-                // Initialize counter if not exists
                 if (!_entityCounters.ContainsKey(entityType))
                 {
                     _entityCounters[entityType] = getCurrentMaxId();
                 }
 
-                // Increment and return
                 _entityCounters[entityType]++;
                 return _entityCounters[entityType];
             }
@@ -150,6 +152,9 @@ namespace FcmsPortal.Services
             // Pre-populate the ID counters to avoid the initial max ID calculation
             GetNextId("Homework", () => GetMaxHomeworkId());
             GetNextId("HomeworkSubmission", () => GetMaxHomeworkSubmissionId());
+            GetNextId("TestGrade", () => GetMaxTestGradeId());
+            GetNextId("CourseGrade", () => GetMaxCourseGradeId());
+            GetNextId("CourseGradingConfiguration", () => GetMaxCourseGradingConfigurationId());
             // Add other entity types as needed
         }
 
@@ -1558,14 +1563,23 @@ namespace FcmsPortal.Services
         }
 
 
-        private int GetNextCourseGradingConfigurationId()
+        public int GetNextCourseGradingConfigurationId()
+        {
+            return GetNextId("CourseGradingConfiguration", () =>
+            {
+                var allConfigurations = _school.LearningPath
+                    .SelectMany(lp => lp.CourseGradingConfigurations);
+                return allConfigurations.Any() ? allConfigurations.Max(c => c.Id) : 0;
+            });
+        }
+
+        private int GetMaxCourseGradingConfigurationId()
         {
             var allConfigurations = _school.LearningPath
                 .SelectMany(lp => lp.CourseGradingConfigurations);
-
-            return allConfigurations.Any() ?
-                allConfigurations.Max(c => c.Id) + 1 : 1;
+            return allConfigurations.Any() ? allConfigurations.Max(c => c.Id) : 0;
         }
+
 
         public bool HasCourseGradingConfiguration(int learningPathId, string courseName)
         {
@@ -1609,6 +1623,37 @@ namespace FcmsPortal.Services
 
             return student.CourseGrades.FirstOrDefault(cg =>
                 cg.LearningPathId == learningPathId && cg.Course == course);
+        }
+
+        private int GetMaxTestGradeId()
+        {
+            int maxId = 0;
+            foreach (var student in _school.Students)
+            {
+                foreach (var courseGrade in student.CourseGrades)
+                {
+                    foreach (var testGrade in courseGrade.TestGrades)
+                    {
+                        if (testGrade.Id > maxId)
+                            maxId = testGrade.Id;
+                    }
+                }
+            }
+            return maxId;
+        }
+
+        private int GetMaxCourseGradeId()
+        {
+            int maxId = 0;
+            foreach (var student in _school.Students)
+            {
+                foreach (var courseGrade in student.CourseGrades)
+                {
+                    if (courseGrade.Id > maxId)
+                        maxId = courseGrade.Id;
+                }
+            }
+            return maxId;
         }
 
         public void ArchiveStudent(Student student)
@@ -1656,6 +1701,16 @@ namespace FcmsPortal.Services
         public List<GradesReport> GetGradesReports(string academicYear, string semester)
         {
             return LogicMethods.GetGradesReports(_school, academicYear, semester);
+        }
+
+        public int GetNextTestGradeId()
+        {
+            return GetNextId("TestGrade", () => GetMaxTestGradeId());
+        }
+
+        public int GetNextCourseGradeId()
+        {
+            return GetNextId("CourseGrade", () => GetMaxCourseGradeId());
         }
     }
 }

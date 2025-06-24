@@ -643,7 +643,9 @@ namespace FcmsPortal
                      GradeType.Homework,
                      staff2,
                      "Good understanding of enzyme functions. ",
-                     learningPath1
+                     learningPath1,
+                     1001,
+                    2001
                  );
             fcmSchool.LearningPath.Add(learningPath1);
 
