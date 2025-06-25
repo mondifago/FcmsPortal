@@ -1315,4 +1315,109 @@ public static class LogicMethods
             Person = new Person { FirstName = "Unknown", LastName = "Teacher" }
         };
     }
+
+    /// <summary>
+    /// Methods for Student Progression and Class Level Management
+    /// </summary>
+
+    public static bool IsLastClassInEducationLevel(EducationLevel educationLevel, ClassLevel classLevel)
+    {
+        var classLevelMapping = new ClassLevelMapping();
+        var mappings = classLevelMapping.GetClassLevelsByEducationLevel();
+        if (mappings.TryGetValue(educationLevel, out var levels))
+        {
+            return levels.LastOrDefault() == classLevel;
+        }
+        return false;
+    }
+
+    public static ClassLevel? GetNextClassLevel(EducationLevel educationLevel, ClassLevel currentClassLevel)
+    {
+        var classLevelMapping = new ClassLevelMapping();
+        var mappings = classLevelMapping.GetClassLevelsByEducationLevel();
+        if (mappings.TryGetValue(educationLevel, out var levels))
+        {
+            var currentIndex = levels.IndexOf(currentClassLevel);
+            if (currentIndex >= 0 && currentIndex < levels.Count - 1)
+            {
+                return levels[currentIndex + 1];
+            }
+        }
+        return null;
+    }
+
+    public static (EducationLevel?, ClassLevel?) GetNextEducationLevelAndClass(EducationLevel currentEducationLevel, ClassLevel currentClassLevel)
+    {
+        var classLevelMapping = new ClassLevelMapping();
+        var mappings = classLevelMapping.GetClassLevelsByEducationLevel();
+        if (mappings.TryGetValue(currentEducationLevel, out var currentLevels))
+        {
+            if (currentLevels.LastOrDefault() == currentClassLevel)
+            {
+                if (currentEducationLevel == EducationLevel.Kindergarten)
+                {
+                    return (EducationLevel.Primary, ClassLevel.PRI_1);
+                }
+                if (currentEducationLevel == EducationLevel.Primary)
+                {
+                    return (EducationLevel.JuniorCollege, ClassLevel.JC_1);
+                }
+                if (currentEducationLevel == EducationLevel.JuniorCollege)
+                {
+                    return (EducationLevel.SeniorCollege, ClassLevel.SC_1);
+                }
+                if (currentEducationLevel == EducationLevel.SeniorCollege)
+                {
+                    return (null, null);
+                }
+            }
+        }
+        return (null, null);
+    }
+
+    public static bool ShouldArchiveStudent(EducationLevel educationLevel, ClassLevel classLevel)
+    {
+        return educationLevel == EducationLevel.SeniorCollege && classLevel == ClassLevel.SC_3;
+    }
+
+    public static string GetPromotionButtonText(EducationLevel educationLevel, ClassLevel classLevel)
+    {
+        if (IsLastClassInEducationLevel(educationLevel, classLevel))
+        {
+            return "Graduate";
+        }
+        return "Promote";
+    }
+
+
+    /// <summary>
+    /// Methods for Grade Statistics
+    /// </summary>
+
+    public static int GetGradeCountByType(LearningPath learningPath, string course, GradeType gradeType)
+    {
+        return learningPath.Students
+            .SelectMany(s => s.CourseGrades
+                .Where(cg => cg.Course == course && cg.LearningPathId == learningPath.Id)
+                .SelectMany(cg => cg.TestGrades))
+            .Where(tg => tg.GradeType == gradeType)
+            .GroupBy(tg => tg.Date.Date)
+            .Count();
+    }
+
+    public static int GetHomeworkCount(LearningPath learningPath, string course)
+    {
+        return GetGradeCountByType(learningPath, course, GradeType.Homework);
+    }
+
+    public static int GetQuizCount(LearningPath learningPath, string course)
+    {
+        return GetGradeCountByType(learningPath, course, GradeType.Quiz);
+    }
+
+    public static int GetExamCount(LearningPath learningPath, string course)
+    {
+        return GetGradeCountByType(learningPath, course, GradeType.FinalExam);
+    }
+
 }
