@@ -1420,4 +1420,40 @@ public static class LogicMethods
         return GetGradeCountByType(learningPath, course, GradeType.FinalExam);
     }
 
+    public static (string CourseName, double Grade) GetHighestCourseGrade(Student student, int learningPathId)
+    {
+        var courseGrades = student.CourseGrades
+            .Where(cg => cg.LearningPathId == learningPathId && cg.TotalGrade > 0)
+            .OrderByDescending(cg => cg.TotalGrade)
+            .FirstOrDefault();
+
+        return courseGrades != null
+            ? (courseGrades.Course, courseGrades.TotalGrade)
+            : ("N/A", 0);
+    }
+
+    public static (string CourseName, double Grade) GetLowestCourseGrade(Student student, int learningPathId)
+    {
+        var courseGrades = student.CourseGrades
+            .Where(cg => cg.LearningPathId == learningPathId && cg.TotalGrade > 0)
+            .OrderBy(cg => cg.TotalGrade)
+            .FirstOrDefault();
+
+        return courseGrades != null
+            ? (courseGrades.Course, courseGrades.TotalGrade)
+            : ("N/A", 0);
+    }
+
+    public static double CalculateWeightedContribution(CourseGrade courseGrade, GradeType gradeType, double weightPercentage)
+    {
+        if (courseGrade == null) return FcmsConstants.DEFAULT_COMPLETION_RATE;
+
+        var grades = courseGrade.TestGrades.Where(g => g.GradeType == gradeType).ToList();
+        if (!grades.Any()) return FcmsConstants.DEFAULT_COMPLETION_RATE;
+
+        var average = grades.Average(g => g.Score);
+        var contribution = (average / FcmsConstants.PERCENTAGE_MULTIPLIER) * weightPercentage;
+
+        return Math.Round(contribution, FcmsConstants.GRADE_ROUNDING_DIGIT);
+    }
 }
