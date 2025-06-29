@@ -391,7 +391,7 @@ namespace FcmsPortal.Services
         {
             int maxId = 0;
 
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 foreach (var schedule in learningPath.Schedule)
                 {
@@ -459,7 +459,7 @@ namespace FcmsPortal.Services
 
         public ClassSession GetClassSessionById(int classSessionId)
         {
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 foreach (var schedule in learningPath.Schedule)
                 {
@@ -476,7 +476,7 @@ namespace FcmsPortal.Services
         {
             int nextId = 1;
 
-            var allSessions = _school.LearningPath
+            var allSessions = _school.LearningPaths
                 .SelectMany(lp => lp.Schedule
                     .Where(s => s.ClassSession != null)
                     .Select(s => s.ClassSession))
@@ -583,28 +583,28 @@ namespace FcmsPortal.Services
             return Task.CompletedTask;
         }
 
-        public IEnumerable<LearningPath> GetLearningPaths() => _school.LearningPath;
+        public IEnumerable<LearningPath> GetLearningPaths() => _school.LearningPaths;
 
         public LearningPath GetLearningPathById(int id)
         {
-            return _school.LearningPath.FirstOrDefault(lp => lp.Id == id);
+            return _school.LearningPaths.FirstOrDefault(lp => lp.Id == id);
         }
 
         public IEnumerable<LearningPath> GetAllLearningPaths()
         {
-            return _school.LearningPath;
+            return _school.LearningPaths;
         }
 
         public bool DeleteLearningPath(int id)
         {
-            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == id);
+            var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == id);
             if (learningPath == null)
             {
                 return false;
             }
-            var learningPaths = _school.LearningPath.ToList();
+            var learningPaths = _school.LearningPaths.ToList();
             learningPaths.Remove(learningPath);
-            _school.LearningPath = learningPaths;
+            _school.LearningPaths = learningPaths;
             return true;
         }
 
@@ -612,17 +612,17 @@ namespace FcmsPortal.Services
         {
             if (learningPath.Id <= 0)
             {
-                learningPath.Id = _school.LearningPath.Any() ? _school.LearningPath.Max(lp => lp.Id) + 1 : 1;
+                learningPath.Id = _school.LearningPaths.Any() ? _school.LearningPaths.Max(lp => lp.Id) + 1 : 1;
             }
-            var learningPaths = _school.LearningPath.ToList();
+            var learningPaths = _school.LearningPaths.ToList();
             learningPaths.Add(learningPath);
-            _school.LearningPath = learningPaths;
+            _school.LearningPaths = learningPaths;
             return learningPath;
         }
 
         public void UpdateLearningPath(LearningPath learningPath)
         {
-            var existingLearningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPath.Id);
+            var existingLearningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == learningPath.Id);
             if (existingLearningPath != null)
             {
                 existingLearningPath.SemesterStartDate = learningPath.SemesterStartDate;
@@ -641,7 +641,7 @@ namespace FcmsPortal.Services
 
         public LearningPath GetLearningPathByScheduleEntry(int scheduleEntryId)
         {
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 if (learningPath.Schedule != null && learningPath.Schedule.Any(s => s.Id == scheduleEntryId))
                 {
@@ -653,7 +653,7 @@ namespace FcmsPortal.Services
 
         public LearningPath GetLearningPathByClassSessionId(int classSessionId)
         {
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 foreach (var schedule in learningPath.Schedule)
                 {
@@ -936,7 +936,7 @@ namespace FcmsPortal.Services
 
         public bool IsScheduleFromLearningPath(int scheduleEntryId)
         {
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 if (learningPath.Schedule != null && learningPath.Schedule.Any(s => s.Id == scheduleEntryId))
                 {
@@ -948,7 +948,7 @@ namespace FcmsPortal.Services
 
         public Homework GetHomeworkById(int id)
         {
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 foreach (var schedule in learningPath.Schedule)
                 {
@@ -990,7 +990,7 @@ namespace FcmsPortal.Services
             if (homework == null)
                 return;
 
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 foreach (var schedule in learningPath.Schedule)
                 {
@@ -1010,7 +1010,7 @@ namespace FcmsPortal.Services
 
         public bool DeleteHomework(int id)
         {
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 foreach (var schedule in learningPath.Schedule)
                 {
@@ -1027,7 +1027,7 @@ namespace FcmsPortal.Services
 
         public HomeworkSubmission GetHomeworkSubmissionById(int id)
         {
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 foreach (var schedule in learningPath.Schedule)
                 {
@@ -1070,7 +1070,7 @@ namespace FcmsPortal.Services
         private int GetMaxHomeworkSubmissionId()
         {
             int maxId = 0;
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 foreach (var schedule in learningPath.Schedule)
                 {
@@ -1094,7 +1094,7 @@ namespace FcmsPortal.Services
             return GetNextId("Homework", () =>
             {
                 int maxId = 0;
-                foreach (var learningPath in _school.LearningPath)
+                foreach (var learningPath in _school.LearningPaths)
                 {
                     foreach (var schedule in learningPath.Schedule)
                     {
@@ -1112,7 +1112,7 @@ namespace FcmsPortal.Services
         private int GetMaxHomeworkId()
         {
             int maxId = 0;
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 foreach (var schedule in learningPath.Schedule)
                 {
@@ -1146,7 +1146,7 @@ namespace FcmsPortal.Services
             {
                 var found = false;
 
-                foreach (var learningPath in _school.LearningPath)
+                foreach (var learningPath in _school.LearningPaths)
                 {
                     foreach (var schedule in learningPath.Schedule)
                     {
@@ -1204,7 +1204,7 @@ namespace FcmsPortal.Services
             {
                 if (grade.GradingConfiguration == null)
                 {
-                    var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == grade.LearningPathId);
+                    var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == grade.LearningPathId);
                     grade.GradingConfiguration = learningPath?.CourseGradingConfigurations
                         .FirstOrDefault(c => c.Course == grade.Course);
                 }
@@ -1220,7 +1220,7 @@ namespace FcmsPortal.Services
 
         public LearningPathGradeReport GetGradeReportForLearningPath(int learningPathId)
         {
-            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPathId);
+            var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == learningPathId);
             if (learningPath == null) return null;
 
             return LogicMethods.GenerateGradeReportForLearningPath(_school, learningPath);
@@ -1228,7 +1228,7 @@ namespace FcmsPortal.Services
 
         public void UpdateGradeReport(LearningPathGradeReport report)
         {
-            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == report.Id);
+            var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == report.Id);
             if (learningPath == null) return;
 
             var courseGrades = _school.Students
@@ -1505,7 +1505,7 @@ namespace FcmsPortal.Services
 
         public void SaveCourseGradingConfiguration(CourseGradingConfiguration configuration)
         {
-            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == configuration.LearningPathId);
+            var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == configuration.LearningPathId);
             if (learningPath == null) return;
 
             var existingConfig = learningPath.CourseGradingConfigurations
@@ -1546,7 +1546,7 @@ namespace FcmsPortal.Services
 
         public CourseGradingConfiguration GetCourseGradingConfiguration(int learningPathId, string courseName)
         {
-            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPathId);
+            var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == learningPathId);
             if (learningPath == null) return null;
 
             return learningPath.CourseGradingConfigurations
@@ -1556,7 +1556,7 @@ namespace FcmsPortal.Services
 
         public List<CourseGradingConfiguration> GetAllCourseGradingConfigurations(int learningPathId)
         {
-            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPathId);
+            var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == learningPathId);
             if (learningPath == null) return new List<CourseGradingConfiguration>();
 
             return learningPath.CourseGradingConfigurations.ToList();
@@ -1567,7 +1567,7 @@ namespace FcmsPortal.Services
         {
             return GetNextId("CourseGradingConfiguration", () =>
             {
-                var allConfigurations = _school.LearningPath
+                var allConfigurations = _school.LearningPaths
                     .SelectMany(lp => lp.CourseGradingConfigurations);
                 return allConfigurations.Any() ? allConfigurations.Max(c => c.Id) : 0;
             });
@@ -1575,7 +1575,7 @@ namespace FcmsPortal.Services
 
         private int GetMaxCourseGradingConfigurationId()
         {
-            var allConfigurations = _school.LearningPath
+            var allConfigurations = _school.LearningPaths
                 .SelectMany(lp => lp.CourseGradingConfigurations);
             return allConfigurations.Any() ? allConfigurations.Max(c => c.Id) : 0;
         }
@@ -1588,7 +1588,7 @@ namespace FcmsPortal.Services
 
         public void DeleteCourseGradingConfiguration(int learningPathId, string courseName)
         {
-            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPathId);
+            var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == learningPathId);
             if (learningPath == null) return;
 
             var config = learningPath.CourseGradingConfigurations
@@ -1602,7 +1602,7 @@ namespace FcmsPortal.Services
 
         public List<string> GetCoursesWithoutGradingConfiguration(int learningPathId)
         {
-            var learningPath = _school.LearningPath.FirstOrDefault(lp => lp.Id == learningPathId);
+            var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == learningPathId);
             if (learningPath == null) return new List<string>();
 
             var allCourses = CourseDefaults.GetCourseNames(learningPath.EducationLevel);
@@ -1660,7 +1660,7 @@ namespace FcmsPortal.Services
         {
             if (student == null) return;
 
-            foreach (var learningPath in _school.LearningPath)
+            foreach (var learningPath in _school.LearningPaths)
             {
                 learningPath.Students.RemoveAll(s => s.Id == student.Id);
                 learningPath.StudentsWithAccess.RemoveAll(s => s.Id == student.Id);

@@ -36,10 +36,10 @@ public static class LogicMethods
     //Gets a list of all distinct EducationLevels found in the school's LearningPaths
     public static List<EducationLevel> GetExistingEducationLevels(School school)
     {
-        if (school?.LearningPath == null || !school.LearningPath.Any())
+        if (school?.LearningPaths == null || !school.LearningPaths.Any())
             return new List<EducationLevel>();
 
-        return school.LearningPath
+        return school.LearningPaths
             .Select(lp => lp.EducationLevel)
             .Distinct()
             .OrderBy(el => el)
@@ -49,10 +49,10 @@ public static class LogicMethods
     //Gets a list of all distinct ClassLevels found in the school's LearningPaths
     public static List<ClassLevel> GetExistingClassLevels(this School school)
     {
-        if (school?.LearningPath == null || !school.LearningPath.Any())
+        if (school?.LearningPaths == null || !school.LearningPaths.Any())
             return new List<ClassLevel>();
 
-        return school.LearningPath
+        return school.LearningPaths
             .Select(lp => lp.ClassLevel)
             .Distinct()
             .OrderBy(cl => cl)
@@ -74,7 +74,7 @@ public static class LogicMethods
     }
 
     /// <summary>
-    /// Gets a list of all distinct ClassLevels for a specific EducationLevel from the school's Existing LearningPath
+    /// Gets a list of all distinct ClassLevels for a specific EducationLevel from the school's Existing LearningPaths
     /// </summary>
     /// <param name="school">The school to analyze</param>
     /// <param name="educationLevel">The education level to filter by</param>
@@ -97,7 +97,7 @@ public static class LogicMethods
             throw new ArgumentException($"Student with Id {student.Id} is already registered in the school.");
         }
 
-        if (school.LearningPath.Any(lp => lp.Students.Any(s => s.Id == student.Id)))
+        if (school.LearningPaths.Any(lp => lp.Students.Any(s => s.Id == student.Id)))
         {
             throw new ArgumentException($"Student with Id {student.Id} is already enrolled in a learning path.");
         }
@@ -145,6 +145,19 @@ public static class LogicMethods
         guardian.Wards.Remove(student);
     }
 
+    public static void RemoveStudentFromAllLearningPaths(School school, Student student)
+    {
+        if (school?.LearningPaths != null && student != null)
+        {
+            foreach (var learningPath in school.LearningPaths)
+            {
+                if (learningPath.Students != null)
+                {
+                    learningPath.Students.RemoveAll(s => s.Id == student.Id);
+                }
+            }
+        }
+    }
 
     //retrieve all guardians registered to school
     public static List<Guardian> GetAllGuardians(School school)
@@ -241,10 +254,10 @@ public static class LogicMethods
     //Retrieves the schedule entry that contains a specific class session
     public static ScheduleEntry? GetScheduleEntryForClassSession(School school, int classSessionId)
     {
-        if (school?.LearningPath == null)
+        if (school?.LearningPaths == null)
             return null;
 
-        foreach (var learningPath in school.LearningPath)
+        foreach (var learningPath in school.LearningPaths)
         {
             if (learningPath.Schedule == null)
                 continue;
@@ -258,7 +271,6 @@ public static class LogicMethods
             }
         }
 
-        // Ensure all code paths return a value
         return null;
     }
 
@@ -1275,7 +1287,7 @@ public static class LogicMethods
         if (string.IsNullOrEmpty(academicYear) || string.IsNullOrEmpty(semester))
             return reports;
 
-        var submittedLearningPaths = school.LearningPath
+        var submittedLearningPaths = school.LearningPaths
             .Where(lp => lp.AcademicYear == academicYear &&
                          lp.Semester.ToString() == semester &&
                          (lp.ApprovalStatus == PrincipalApprovalStatus.Review ||

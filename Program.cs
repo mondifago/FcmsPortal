@@ -27,7 +27,7 @@ namespace FcmsPortal
             fcmSchool.Name = "Future Champions Model School";
             fcmSchool.Staff = new List<Staff>();
             fcmSchool.Students = new List<Student>();
-            fcmSchool.LearningPath = new List<LearningPath>();
+            fcmSchool.LearningPaths = new List<LearningPath>();
             fcmSchool.SchoolCalendar = new List<CalendarModel>();
             fcmSchool.Guardians = new List<Guardian>();
             fcmSchool.LogoUrl = "";
@@ -647,7 +647,7 @@ namespace FcmsPortal
                      1001,
                     2001
                  );
-            fcmSchool.LearningPath.Add(learningPath1);
+            fcmSchool.LearningPaths.Add(learningPath1);
 
             LearningPath learningPath2 = new LearningPath();
             learningPath2.Id = 1002;
@@ -662,7 +662,7 @@ namespace FcmsPortal
             learningPath2.AcademicYearStart = new DateTime(2025, 01, 01);
             learningPath2.Schedule = new List<ScheduleEntry> { };
             var learning2Students = LogicMethods.GetStudentsByLevel(fcmSchool, EducationLevel.Kindergarten, ClassLevel.KG_Nursery);
-            fcmSchool.LearningPath.Add(learningPath2);
+            fcmSchool.LearningPaths.Add(learningPath2);
 
             return fcmSchool;
         }
@@ -675,7 +675,7 @@ namespace FcmsPortal
             fcmSchool.Name = "FCM School";
             fcmSchool.Staff = new List<Staff>();
             fcmSchool.Students = new List<Student>();
-            fcmSchool.LearningPath = new List<LearningPath>();
+            fcmSchool.LearningPaths = new List<LearningPath>();
             fcmSchool.SchoolCalendar = new List<CalendarModel>();
             fcmSchool.Guardians = new List<Guardian>();
             fcmSchool.Address = address;
