@@ -7,7 +7,6 @@ namespace FcmsPortal.Models
     public class Person
     {
         public int Id { get; set; }
-        [Url(ErrorMessage = "Invalid URL format.")]
         public string? ProfilePictureUrl { get; set; }
         [Required(ErrorMessage = "First Name is required.")]
         [StringLength(30, MinimumLength = 2)]
