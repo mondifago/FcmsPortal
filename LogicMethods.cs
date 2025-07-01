@@ -1023,42 +1023,28 @@ public static class LogicMethods
         if (student == null)
             throw new ArgumentNullException(nameof(student), "Student cannot be null.");
 
-        if (learningPaths == null || learningPaths.Count < 3)
+        if (learningPaths == null || learningPaths.Count == 0)
             return 0;
 
         var relevantLearningPaths = learningPaths
             .Where(lp => lp.Students.Contains(student))
-            .OrderByDescending(lp => lp.SemesterStartDate)
-            .Take(3)
+            .OrderBy(lp => lp.Semester)
             .ToList();
 
-        if (relevantLearningPaths.Count < 3)
+        if (relevantLearningPaths.Count == 0)
             return 0;
 
-        var courses = CourseDefaults.GetCourseNames(relevantLearningPaths.First().EducationLevel);
-        var coursePromotionGrades = new List<double>();
+        double totalGrade = 0;
 
-        foreach (var course in courses)
+        foreach (var learningPath in relevantLearningPaths)
         {
-            var courseSemesterGrades = new List<double>();
-
-            foreach (var learningPath in relevantLearningPaths)
-            {
-                double courseGrade = ComputeTotalGrade(student, course, learningPath);
-                courseSemesterGrades.Add(courseGrade);
-            }
-
-            if (courseSemesterGrades.Any())
-            {
-                double coursePromotionGrade = courseSemesterGrades.Average();
-                coursePromotionGrades.Add(coursePromotionGrade);
-            }
+            double semesterGrade = CalculateSemesterOverallGrade(student, learningPath);
+            totalGrade += semesterGrade;
         }
 
-        if (coursePromotionGrades.Count == 0)
-            return 0;
-
-        return Math.Round(coursePromotionGrades.Average(), FcmsConstants.GRADE_ROUNDING_DIGIT);
+        // TODO: When archive is implemented, fetch completed semester grades from archive
+        // For now, using active learning paths
+        return Math.Round(totalGrade / 3, FcmsConstants.GRADE_ROUNDING_DIGIT);
     }
 
     //method to arrange CalculateSemesterOverallGrade() of all students in a learning path in descending order
