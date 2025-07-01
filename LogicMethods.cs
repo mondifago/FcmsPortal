@@ -1468,4 +1468,33 @@ public static class LogicMethods
 
         return Math.Round(contribution, FcmsConstants.GRADE_ROUNDING_DIGIT);
     }
+
+    // Get previous learning paths for a student in the same education and class level
+    public static List<LearningPath> GetStudentPreviousLearningPaths(Student student, School school, EducationLevel educationLevel, ClassLevel classLevel)
+    {
+        if (student == null || school == null)
+            return new List<LearningPath>();
+
+        return school.LearningPaths
+            .Where(lp => lp.EducationLevel == educationLevel &&
+                         lp.ClassLevel == classLevel &&
+                         lp.Students.Any(s => s.Id == student.Id))
+            .OrderBy(lp => lp.Semester)
+            .ToList();
+    }
+
+    // Get semester grades for all semesters for display in finalize grades
+    public static List<double> GetStudentAllSemesterGrades(Student student, School school, EducationLevel educationLevel, ClassLevel classLevel)
+    {
+        var learningPaths = GetStudentPreviousLearningPaths(student, school, educationLevel, classLevel);
+        var semesterGrades = new List<double>();
+
+        foreach (var lp in learningPaths.OrderBy(l => l.Semester))
+        {
+            var grade = CalculateSemesterOverallGrade(student, lp);
+            semesterGrades.Add(grade);
+        }
+
+        return semesterGrades;
+    }
 }
