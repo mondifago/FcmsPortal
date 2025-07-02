@@ -18,6 +18,10 @@
         public const double C_GRADE_MIN = 50.0;
         public const double D_GRADE_MIN = 40.0;
         public const double E_GRADE_MIN = 30.0;
+        public const double PASSING_GRADE = 40.0;
+        public const double DEFAULT_HOMEWORK_WEIGHT = 20.0;
+        public const double DEFAULT_QUIZ_WEIGHT = 20.0;
+        public const double DEFAULT_EXAM_WEIGHT = 60.0;
         public const double PAYMENT_THRESHOLD_FACTOR = 0.5;
         public const double PERCENTAGE_MULTIPLIER = 100.0;
         public const double DEFAULT_COMPLETION_RATE = 0.0;
