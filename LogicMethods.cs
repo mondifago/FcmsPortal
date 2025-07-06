@@ -1179,7 +1179,22 @@ public static class LogicMethods
     public static double CalculateAttendanceRate(int presentCount, int totalCount)
     {
         if (totalCount == 0) return 0;
-        return Math.Round((double)presentCount / totalCount * 100, 1);
+        return Math.Round((double)presentCount / totalCount * FcmsConstants.PERCENTAGE_MULTIPLIER, 1);
+    }
+
+    public static (int presentDays, int totalDays, double attendanceRate) CalculateStudentAttendance(
+    List<DailyAttendanceLogEntry> attendanceLog, int studentId)
+    {
+        if (attendanceLog == null || !attendanceLog.Any())
+            return (0, 0, 0);
+
+        var totalDays = attendanceLog.Count;
+        var presentDays = attendanceLog.Count(log =>
+            log.PresentStudents?.Any(s => s.Id == studentId) == true);
+
+        var rate = CalculateAttendanceRate(presentDays, totalDays);
+
+        return (presentDays, totalDays, rate);
     }
 
     // Get attendance data for a specific date across multiple learning paths
