@@ -35,6 +35,7 @@ namespace FcmsPortal
             fcmSchool.PhoneNumber = "08012345678";
             fcmSchool.WebsiteUrl = "www.fcms.com";
             fcmSchool.Address = address;
+            address.Id = 1;
             address.Street = "120 City Road";
             address.City = "Asaba";
             address.State = "Delta State";

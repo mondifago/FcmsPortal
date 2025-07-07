@@ -7,6 +7,12 @@ namespace FcmsPortal.Services
     public interface ISchoolDataService
     {
         School GetSchool();
+        List<Address> GetAddresses();
+        Address AddAddress(Address address);
+        void UpdateAddress(Address address);
+        void DeleteAddress(int id);
+        Address GetAddressById(int id);
+        int GetNextAddressId();
         Staff AddStaff(Staff staff);
         Guardian AddGuardian(Guardian guardian);
         Student AddStudent(Student student);
@@ -118,6 +124,7 @@ namespace FcmsPortal.Services
         private List<Payment> _payments = new List<Payment>();
         private List<SchoolFees> _schoolFees = new List<SchoolFees>();
         private List<Student> _archivedStudents = new List<Student>();
+        private List<Address> _addresses = new List<Address>();
 
         private static readonly object _idLock = new object();
         private static readonly Dictionary<string, int> _entityCounters = new Dictionary<string, int>();
@@ -156,6 +163,7 @@ namespace FcmsPortal.Services
         private void InitializeIdCounters()
         {
             // Pre-populate the ID counters to avoid the initial max ID calculation
+            _entityCounters["Address"] = _addresses.Any() ? _addresses.Max(a => a.Id) : 0;
             GetNextId("Homework", () => GetMaxHomeworkId());
             GetNextId("HomeworkSubmission", () => GetMaxHomeworkSubmissionId());
             GetNextId("TestGrade", () => GetMaxTestGradeId());
@@ -202,6 +210,54 @@ namespace FcmsPortal.Services
         public Guardian GetGuardianByStudentId(int studentId)
         {
             return _school.Guardians.FirstOrDefault(g => g.Wards.Any(w => w.Id == studentId));
+        }
+
+        public List<Address> GetAddresses()
+        {
+            return _addresses;
+        }
+
+        public Address AddAddress(Address address)
+        {
+            if (address.Id <= 0)
+            {
+                address.Id = GetNextAddressId();
+            }
+            _addresses.Add(address);
+            return address;
+        }
+
+        public int GetNextAddressId()
+        {
+            return GetNextId("Address", () => _addresses.Any() ? _addresses.Max(a => a.Id) : 0);
+        }
+
+        public void UpdateAddress(Address address)
+        {
+            var existingAddress = _addresses.FirstOrDefault(a => a.Id == address.Id);
+            if (existingAddress != null)
+            {
+                existingAddress.Street = address.Street;
+                existingAddress.City = address.City;
+                existingAddress.State = address.State;
+                existingAddress.PostalCode = address.PostalCode;
+                existingAddress.Country = address.Country;
+                existingAddress.AddressType = address.AddressType;
+            }
+        }
+
+        public void DeleteAddress(int id)
+        {
+            var address = _addresses.FirstOrDefault(a => a.Id == id);
+            if (address != null)
+            {
+                _addresses.Remove(address);
+            }
+        }
+
+        public Address GetAddressById(int id)
+        {
+            return _addresses.FirstOrDefault(a => a.Id == id);
         }
 
         public void UpdateGuardian(Guardian guardian)
