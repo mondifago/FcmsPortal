@@ -7,11 +7,7 @@ namespace FcmsPortal.Services
     public interface ISchoolDataService
     {
         School GetSchool();
-        List<Address> GetAddresses();
         Address AddAddress(Address address);
-        void UpdateAddress(Address address);
-        void DeleteAddress(int id);
-        Address GetAddressById(int id);
         int GetNextAddressId();
         Staff AddStaff(Staff staff);
         Guardian AddGuardian(Guardian guardian);
@@ -20,8 +16,6 @@ namespace FcmsPortal.Services
         IEnumerable<Student> GetStudents();
         IEnumerable<Staff> GetStaff();
         IEnumerable<Guardian> GetGuardians();
-        IEnumerable<Student> GetStudentsByClassLevel(ClassLevel classLevel);
-        IEnumerable<Staff> GetTeachersByEducationLevel(EducationLevel educationLevel);
         Guardian GetGuardianById(int id);
         Staff GetStaffById(int id);
         Student GetStudentById(int id);
@@ -34,12 +28,10 @@ namespace FcmsPortal.Services
         bool DeleteStudent(int studentId);
         bool DeleteStaff(int staffId);
         bool DeleteGuardian(int guardianId);
-        bool RemoveClassSessionFromScheduleEntry(int learningPathId, int scheduleEntryId);
         Task<int> GetNextThreadId(int classSessionId);
         Task<int> GetNextPostId();
         Task AddDiscussionThread(DiscussionThread thread, int classSessionId);
         Task UpdateDiscussionThread(DiscussionThread thread, int classSessionId);
-        Task<DiscussionThread> GetDiscussionThread(int threadId, int classSessionId);
         Task<FileAttachment> UploadFileAsync(IBrowserFile file, string category);
         Task DeleteFileAsync(FileAttachment attachment);
         Task<List<FileAttachment>> GetAttachmentsAsync(string category, int referenceId);
@@ -51,9 +43,6 @@ namespace FcmsPortal.Services
         bool DeleteLearningPath(int id);
         ScheduleEntry AddScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry);
         IEnumerable<ScheduleEntry> GetAllSchoolCalendarSchedules();
-        IEnumerable<ScheduleEntry> GetScheduleEntriesByLearningPath(int learningPathId);
-        IEnumerable<ScheduleEntry> GetScheduleEntriesByDate(int learningPathId, DateTime date);
-        ScheduleEntry GetScheduleEntryById(int learningPathId, int scheduleEntryId);
         bool UpdateScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry);
         bool DeleteScheduleEntry(int learningPathId, int scheduleEntryId);
         ScheduleEntry AddGeneralScheduleEntry(ScheduleEntry scheduleEntry);
@@ -61,8 +50,6 @@ namespace FcmsPortal.Services
         void RemoveScheduleFromSchoolCalendar(ScheduleEntry scheduleEntry);
         bool UpdateGeneralCalendarScheduleEntry(ScheduleEntry scheduleEntry);
         bool DeleteGeneralCalendarScheduleEntry(int scheduleEntryId);
-        ScheduleEntry GetGeneralCalendarScheduleEntryById(int scheduleEntryId);
-        bool IsScheduleFromLearningPath(int scheduleEntryId);
         int GetNextScheduleId();
         Homework GetHomeworkById(int id);
         HomeworkSubmission SubmitHomework(int homeworkId, Student student, string answer);
@@ -75,9 +62,6 @@ namespace FcmsPortal.Services
         bool UpdateClassSession(ClassSession classSession);
         ClassSession GetClassSessionById(int classSessionId);
         int GetNextClassSessionId();
-        CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId);
-        LearningPathGradeReport GetGradeReportForLearningPath(int learningPathId);
-        void UpdateGradeReport(LearningPathGradeReport report);
         Payment AddPayment(Payment payment);
         void UpdatePayment(Payment payment);
         void DeletePayment(int id);
@@ -94,15 +78,9 @@ namespace FcmsPortal.Services
         void SaveCourseGradingConfiguration(CourseGradingConfiguration configuration);
         CourseGradingConfiguration GetCourseGradingConfiguration(int learningPathId, string courseName);
         List<CourseGradingConfiguration> GetAllCourseGradingConfigurations(int learningPathId);
-        bool HasCourseGradingConfiguration(int learningPathId, string courseName);
-        void DeleteCourseGradingConfiguration(int learningPathId, string courseName);
         List<string> GetCoursesWithoutGradingConfiguration(int learningPathId);
-        bool ValidateGradingConfigurationWeights(double homeworkWeight, double quizWeight, double examWeight);
-        CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId, string course);
-        void SaveCourseGrade(CourseGrade grade);
         void ArchiveStudent(Student student);
         List<Student> GetArchivedStudents();
-        void RestoreStudentFromArchive(int studentId);
         List<GradesReport> GetGradesReports(string academicYear, string semester);
         int GetNextTestGradeId();
         int GetNextCourseGradeId();
@@ -112,7 +90,6 @@ namespace FcmsPortal.Services
         LearningPath GetTemplate(EducationLevel educationLevel, ClassLevel classLevel, Semester semester);
         bool HasTemplate(EducationLevel educationLevel, ClassLevel classLevel, Semester semester);
         LearningPath ApplyTemplateToNewLearningPath(LearningPath template, DateTime newAcademicYearStart);
-
     }
 
     public class SchoolDataService : ISchoolDataService
@@ -168,7 +145,6 @@ namespace FcmsPortal.Services
             GetNextId("HomeworkSubmission", () => GetMaxHomeworkSubmissionId());
             GetNextId("TestGrade", () => GetMaxTestGradeId());
             GetNextId("CourseGrade", () => GetMaxCourseGradeId());
-            GetNextId("CourseGradingConfiguration", () => GetMaxCourseGradingConfigurationId());
             // Add other entity types as needed
         }
 
@@ -179,18 +155,6 @@ namespace FcmsPortal.Services
         public IEnumerable<Staff> GetStaff() => _school.Staff;
 
         public IEnumerable<Guardian> GetGuardians() => _school.Guardians;
-
-        public IEnumerable<Student> GetStudentsByClassLevel(ClassLevel classLevel)
-        {
-            return _school.Students.Where(s => s.Person.ClassLevel == classLevel);
-        }
-
-        public IEnumerable<Staff> GetTeachersByEducationLevel(EducationLevel educationLevel)
-        {
-            return _school.Staff.Where(s =>
-                s.JobRole == JobRole.Teacher &&
-                s.Person.EducationLevel == educationLevel);
-        }
 
         public Guardian GetGuardianById(int id)
         {
@@ -212,11 +176,6 @@ namespace FcmsPortal.Services
             return _school.Guardians.FirstOrDefault(g => g.Wards.Any(w => w.Id == studentId));
         }
 
-        public List<Address> GetAddresses()
-        {
-            return _addresses;
-        }
-
         public Address AddAddress(Address address)
         {
             if (address.Id <= 0)
@@ -230,34 +189,6 @@ namespace FcmsPortal.Services
         public int GetNextAddressId()
         {
             return GetNextId("Address", () => _addresses.Any() ? _addresses.Max(a => a.Id) : 0);
-        }
-
-        public void UpdateAddress(Address address)
-        {
-            var existingAddress = _addresses.FirstOrDefault(a => a.Id == address.Id);
-            if (existingAddress != null)
-            {
-                existingAddress.Street = address.Street;
-                existingAddress.City = address.City;
-                existingAddress.State = address.State;
-                existingAddress.PostalCode = address.PostalCode;
-                existingAddress.Country = address.Country;
-                existingAddress.AddressType = address.AddressType;
-            }
-        }
-
-        public void DeleteAddress(int id)
-        {
-            var address = _addresses.FirstOrDefault(a => a.Id == id);
-            if (address != null)
-            {
-                _addresses.Remove(address);
-            }
-        }
-
-        public Address GetAddressById(int id)
-        {
-            return _addresses.FirstOrDefault(a => a.Id == id);
         }
 
         public void UpdateGuardian(Guardian guardian)
@@ -510,15 +441,6 @@ namespace FcmsPortal.Services
             await Task.CompletedTask;
         }
 
-        public async Task<DiscussionThread> GetDiscussionThread(int threadId, int classSessionId)
-        {
-            var classSession = GetClassSessionById(classSessionId);
-            if (classSession == null || classSession.DiscussionThreads == null)
-                return null;
-
-            return classSession.DiscussionThreads.FirstOrDefault(t => t.Id == threadId);
-        }
-
         public ClassSession GetClassSessionById(int classSessionId)
         {
             foreach (var learningPath in _school.LearningPaths)
@@ -742,27 +664,6 @@ namespace FcmsPortal.Services
             return scheduleEntry;
         }
 
-        public IEnumerable<ScheduleEntry> GetScheduleEntriesByLearningPath(int learningPathId)
-        {
-            var learningPath = GetLearningPathById(learningPathId);
-            if (learningPath == null)
-                return Enumerable.Empty<ScheduleEntry>();
-
-            return learningPath.Schedule.ToList();
-        }
-
-        public IEnumerable<ScheduleEntry> GetScheduleEntriesByDate(int learningPathId, DateTime date)
-        {
-            var learningPath = GetLearningPathById(learningPathId);
-            if (learningPath == null)
-                return Enumerable.Empty<ScheduleEntry>();
-
-            return learningPath.Schedule
-                .Where(s => s.DateTime.Date == date.Date)
-                .OrderBy(s => s.DateTime.TimeOfDay)
-                .ToList();
-        }
-
         public IEnumerable<ScheduleEntry> GetAllSchoolCalendarSchedules()
         {
             var allSchedules = new List<ScheduleEntry>();
@@ -779,15 +680,6 @@ namespace FcmsPortal.Services
             }
 
             return allSchedules;
-        }
-
-        public ScheduleEntry GetScheduleEntryById(int learningPathId, int scheduleEntryId)
-        {
-            var learningPath = GetLearningPathById(learningPathId);
-            if (learningPath == null)
-                return null;
-
-            return learningPath.Schedule.FirstOrDefault(s => s.Id == scheduleEntryId);
         }
 
         public bool UpdateScheduleEntry(int learningPathId, ScheduleEntry scheduleEntry)
@@ -925,20 +817,6 @@ namespace FcmsPortal.Services
             }
         }
 
-        public bool RemoveClassSessionFromScheduleEntry(int learningPathId, int scheduleEntryId)
-        {
-            var learningPath = GetLearningPathById(learningPathId);
-            if (learningPath == null)
-                return false;
-
-            var scheduleEntry = learningPath.Schedule.FirstOrDefault(s => s.Id == scheduleEntryId);
-            if (scheduleEntry == null)
-                return false;
-
-            scheduleEntry.ClassSession = null;
-            return UpdateScheduleEntry(learningPathId, scheduleEntry);
-        }
-
         public bool UpdateGeneralCalendarScheduleEntry(ScheduleEntry scheduleEntry)
         {
             if (_school.SchoolCalendar == null)
@@ -974,35 +852,6 @@ namespace FcmsPortal.Services
                         calendar.ScheduleEntries.Remove(scheduleToRemove);
                         return true;
                     }
-                }
-            }
-            return false;
-        }
-
-        public ScheduleEntry GetGeneralCalendarScheduleEntryById(int scheduleEntryId)
-        {
-            if (_school.SchoolCalendar == null)
-                return null;
-
-            foreach (var calendar in _school.SchoolCalendar)
-            {
-                if (calendar.ScheduleEntries != null)
-                {
-                    var schedule = calendar.ScheduleEntries.FirstOrDefault(s => s.Id == scheduleEntryId);
-                    if (schedule != null)
-                        return schedule;
-                }
-            }
-            return null;
-        }
-
-        public bool IsScheduleFromLearningPath(int scheduleEntryId)
-        {
-            foreach (var learningPath in _school.LearningPaths)
-            {
-                if (learningPath.Schedule != null && learningPath.Schedule.Any(s => s.Id == scheduleEntryId))
-                {
-                    return true;
                 }
             }
             return false;
@@ -1234,91 +1083,6 @@ namespace FcmsPortal.Services
                 return false;
             }
         }
-
-        public CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId)
-        {
-            return LogicMethods.GetCourseGradesByLearningPathId(_school, learningPathId)
-                .FirstOrDefault(g => g.StudentId == studentId);
-        }
-
-        public void SaveCourseGrade(CourseGrade grade)
-        {
-            var student = _school.Students.FirstOrDefault(s => s.Id == grade.StudentId);
-            if (student == null) return;
-
-            var existingGrade = student.CourseGrades.FirstOrDefault(g =>
-                g.LearningPathId == grade.LearningPathId && g.Course == grade.Course);
-
-            if (existingGrade != null)
-            {
-                existingGrade.TotalGrade = grade.TotalGrade;
-                existingGrade.FinalGradeCode = grade.FinalGradeCode;
-                existingGrade.TestGrades = grade.TestGrades;
-                existingGrade.IsFinalized = grade.IsFinalized;
-                existingGrade.GradingConfiguration = grade.GradingConfiguration;
-
-                if (!existingGrade.IsFinalized && existingGrade.GradingConfiguration != null)
-                {
-                    LogicMethods.RecalculateCourseGrade(existingGrade);
-                }
-            }
-            else
-            {
-                if (grade.GradingConfiguration == null)
-                {
-                    var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == grade.LearningPathId);
-                    grade.GradingConfiguration = learningPath?.CourseGradingConfigurations
-                        .FirstOrDefault(c => c.Course == grade.Course);
-                }
-
-                student.CourseGrades.Add(grade);
-
-                if (grade.GradingConfiguration != null)
-                {
-                    LogicMethods.RecalculateCourseGrade(grade);
-                }
-            }
-        }
-
-        public LearningPathGradeReport GetGradeReportForLearningPath(int learningPathId)
-        {
-            var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == learningPathId);
-            if (learningPath == null) return null;
-
-            return LogicMethods.GenerateGradeReportForLearningPath(_school, learningPath);
-        }
-
-        public void UpdateGradeReport(LearningPathGradeReport report)
-        {
-            var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == report.Id);
-            if (learningPath == null) return;
-
-            var courseGrades = _school.Students
-                .SelectMany(s => s.CourseGrades)
-                .Where(cg => cg.LearningPathId == report.Id)
-                .ToList();
-
-            foreach (var grade in courseGrades)
-            {
-                if (report.IsFinalized)
-                {
-                    grade.IsFinalized = true;
-                }
-            }
-
-            var existingReport = _school.GradeReports?.FirstOrDefault(r => r.Id == report.Id);
-            if (existingReport != null)
-            {
-                existingReport.IsFinalized = report.IsFinalized;
-                existingReport.RankedStudents = report.RankedStudents;
-                existingReport.StudentSemesterGrades = report.StudentSemesterGrades;
-            }
-            else if (_school.GradeReports != null)
-            {
-                _school.GradeReports.Add(report);
-            }
-        }
-
 
         public void AddStudentToLearningPath(LearningPath learningPath, Student student)
         {
@@ -1635,32 +1399,7 @@ namespace FcmsPortal.Services
             });
         }
 
-        private int GetMaxCourseGradingConfigurationId()
-        {
-            var allConfigurations = _school.LearningPaths
-                .SelectMany(lp => lp.CourseGradingConfigurations);
-            return allConfigurations.Any() ? allConfigurations.Max(c => c.Id) : 0;
-        }
 
-
-        public bool HasCourseGradingConfiguration(int learningPathId, string courseName)
-        {
-            return GetCourseGradingConfiguration(learningPathId, courseName) != null;
-        }
-
-        public void DeleteCourseGradingConfiguration(int learningPathId, string courseName)
-        {
-            var learningPath = _school.LearningPaths.FirstOrDefault(lp => lp.Id == learningPathId);
-            if (learningPath == null) return;
-
-            var config = learningPath.CourseGradingConfigurations
-                .FirstOrDefault(c => c.Course == courseName);
-
-            if (config != null)
-            {
-                learningPath.CourseGradingConfigurations.Remove(config);
-            }
-        }
 
         public List<string> GetCoursesWithoutGradingConfiguration(int learningPathId)
         {
@@ -1671,20 +1410,6 @@ namespace FcmsPortal.Services
             var configuredCourses = learningPath.CourseGradingConfigurations.Select(c => c.Course).ToList();
 
             return allCourses.Except(configuredCourses).ToList();
-        }
-
-        public bool ValidateGradingConfigurationWeights(double homeworkWeight, double quizWeight, double examWeight)
-        {
-            return Math.Abs(homeworkWeight + quizWeight + examWeight - 100.0) <= 0.01;
-        }
-
-        public CourseGrade GetStudentGradeInLearningPath(int learningPathId, int studentId, string course)
-        {
-            var student = _school.Students.FirstOrDefault(s => s.Id == studentId);
-            if (student == null) return null;
-
-            return student.CourseGrades.FirstOrDefault(cg =>
-                cg.LearningPathId == learningPathId && cg.Course == course);
         }
 
         private int GetMaxTestGradeId()
@@ -1744,19 +1469,6 @@ namespace FcmsPortal.Services
         public List<Student> GetArchivedStudents()
         {
             return _archivedStudents.ToList();
-        }
-
-        public void RestoreStudentFromArchive(int studentId)
-        {
-            var archivedStudent = _archivedStudents.FirstOrDefault(s => s.Id == studentId);
-            if (archivedStudent != null)
-            {
-                archivedStudent.Person.IsArchived = false;
-                archivedStudent.ArchivedDate = null;
-
-                _archivedStudents.Remove(archivedStudent);
-                _school.Students.Add(archivedStudent);
-            }
         }
 
         public List<GradesReport> GetGradesReports(string academicYear, string semester)
