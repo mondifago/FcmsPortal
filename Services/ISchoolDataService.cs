@@ -1737,7 +1737,6 @@ namespace FcmsPortal.Services
             // TODO: 
             // 1. Create an Archive database table
             // 2. Move student data to archive table
-            // 3. Generate graduation certificate
             // 4. Send graduation notification
             // 5. Update school statistics
         }
@@ -1779,13 +1778,10 @@ namespace FcmsPortal.Services
         {
             if (learningPath == null) return;
 
-            // Generate template key
             string templateKey = GenerateTemplateKey(learningPath.EducationLevel, learningPath.ClassLevel, learningPath.Semester);
 
-            // Remove existing template if it exists
             _school.LearningPaths.RemoveAll(lp => lp.IsTemplate && lp.TemplateKey == templateKey);
 
-            // Create template copy
             var template = new LearningPath
             {
                 Id = GetNextId("LearningPath", () => _school.LearningPaths.Count > 0 ? _school.LearningPaths.Max(lp => lp.Id) : 0),
@@ -1801,7 +1797,6 @@ namespace FcmsPortal.Services
                 TemplateKey = templateKey,
                 ApprovalStatus = PrincipalApprovalStatus.Approved,
 
-                // Copy schedule structure (filtering out generative content)
                 Schedule = learningPath.Schedule.Select(s => new ScheduleEntry
                 {
                     Id = GetNextScheduleId(),
@@ -1817,7 +1812,6 @@ namespace FcmsPortal.Services
                         Description = s.ClassSession.Description,
                         LessonPlan = s.ClassSession.LessonPlan,
                         Teacher = s.ClassSession.Teacher,
-                        // Exclude: HomeworkDetails, TeacherRemarks, StudyMaterials, DiscussionThreads
                         StudyMaterials = new List<FileAttachment>(),
                         DiscussionThreads = new List<DiscussionThread>()
                     } : null
@@ -1851,11 +1845,9 @@ namespace FcmsPortal.Services
         {
             if (template == null || !template.IsTemplate) return null;
 
-            // Calculate date adjustment offset
             var templateYearStart = template.AcademicYearStart;
             var dateOffset = newAcademicYearStart - templateYearStart;
 
-            // Create new learning path from template
             var newLearningPath = new LearningPath
             {
                 EducationLevel = template.EducationLevel,
@@ -1870,7 +1862,6 @@ namespace FcmsPortal.Services
                 TemplateKey = null,
                 ApprovalStatus = PrincipalApprovalStatus.Pending,
 
-                // Copy and adjust schedule dates
                 Schedule = template.Schedule.Select(s => new ScheduleEntry
                 {
                     Title = s.Title,
@@ -1884,7 +1875,6 @@ namespace FcmsPortal.Services
                         Description = s.ClassSession.Description,
                         LessonPlan = s.ClassSession.LessonPlan,
                         Teacher = s.ClassSession.Teacher,
-                        // Fresh collections for new learning path
                         StudyMaterials = new List<FileAttachment>(),
                         DiscussionThreads = new List<DiscussionThread>()
                     } : null

@@ -73,13 +73,6 @@ public static class LogicMethods
             : new List<ClassLevel>();
     }
 
-    /// <summary>
-    /// Gets a list of all distinct ClassLevels for a specific EducationLevel from the school's Existing LearningPaths
-    /// </summary>
-    /// <param name="school">The school to analyze</param>
-    /// <param name="educationLevel">The education level to filter by</param>
-    /// <returns>List of distinct ClassLevels for the specified EducationLevel</returns>
-
     //Add student to school, which automatically adds guardian as well if the guardian is not previously added
     public static void AddStudentToSchool(School school, Student student)
     {
@@ -367,10 +360,8 @@ public static class LogicMethods
 
         bool hasAccess = HasMetPaymentThreshold(student);
 
-        // Remove if already in list
         learningPath.StudentsWithAccess.RemoveAll(s => s.Id == student.Id);
 
-        // Add only if payment threshold met
         if (hasAccess)
         {
             learningPath.StudentsWithAccess.Add(student);
@@ -730,57 +721,9 @@ public static class LogicMethods
         return totalPaid;
     }
 
-    //Grant student full access to schedule entries in learning path 
-    public static void GrantAccessToSchedules(Student student, LearningPath learningPath)
-    {
-        if (student == null) throw new ArgumentNullException(nameof(student));
-        if (learningPath == null) throw new ArgumentNullException(nameof(learningPath));
-
-        if (HasMetPaymentThreshold(student) && !learningPath.StudentsWithAccess.Contains(student))
-        {
-            learningPath.StudentsWithAccess.Add(student);
-        }
-    }
-
-    //handle changes to Total amount of school fees
-    public static void HandleFeeChangeForLearningPath(LearningPath learningPath, double newTotalFeeAmount)
-    {
-        if (learningPath == null)
-        {
-            throw new ArgumentNullException(nameof(learningPath));
-        }
-
-        if (newTotalFeeAmount < 0)
-        {
-            throw new ArgumentException("Total fee amount cannot be negative.", nameof(newTotalFeeAmount));
-        }
-
-        foreach (var student in learningPath.Students)
-        {
-            var schoolFees = student.Person?.SchoolFees;
-            if (schoolFees == null) continue;
-
-            schoolFees.TotalAmount = newTotalFeeAmount;
-
-            if (HasMetPaymentThreshold(student))
-            {
-                GrantAccessToSchedules(student, learningPath);
-            }
-            else
-            {
-                if (learningPath.StudentsWithAccess.Contains(student))
-                {
-                    learningPath.StudentsWithAccess.Remove(student);
-                }
-            }
-        }
-    }
-
     /// <summary>
     /// Methods for Class Session Discussion
     /// </summary>
-
-
 
     //Start discussion 
     public static DiscussionThread StartDiscussion(int threadId, int firstPostId, Person author, string comment)
@@ -839,34 +782,6 @@ public static class LogicMethods
     /// <summary>
     /// Methods for Grading
     /// </summary>
-
-    public static void ConfigureCourseGradingWeights(LearningPath learningPath, string course,
-    double homeworkWeight, double quizWeight, double examWeight)
-    {
-        if (Math.Abs(homeworkWeight + quizWeight + examWeight - FcmsConstants.TOTAL_SCORE) > 0.01)
-            throw new ArgumentException("Weight percentages must sum to 100%");
-
-        var existingConfig = learningPath.CourseGradingConfigurations
-            .FirstOrDefault(c => c.Course == course);
-
-        if (existingConfig != null)
-        {
-            existingConfig.HomeworkWeightPercentage = homeworkWeight;
-            existingConfig.QuizWeightPercentage = quizWeight;
-            existingConfig.FinalExamWeightPercentage = examWeight;
-        }
-        else
-        {
-            learningPath.CourseGradingConfigurations.Add(new CourseGradingConfiguration
-            {
-                Course = course,
-                LearningPathId = learningPath.Id,
-                HomeworkWeightPercentage = homeworkWeight,
-                QuizWeightPercentage = quizWeight,
-                FinalExamWeightPercentage = examWeight
-            });
-        }
-    }
 
     // Grade a test (Quiz, Exam, or Homework) for a student and add it to the appropriate course
     public static void AddTestGrade(Student student, string course, double score, GradeType gradeType,
@@ -942,22 +857,6 @@ public static class LogicMethods
                             (examAvg * config.FinalExamWeightPercentage / 100);
 
         courseGrade.TotalGrade = Math.Round(weightedSum, FcmsConstants.GRADE_ROUNDING_DIGIT);
-    }
-
-    // Compute Total Grade for a course at the end of the semester
-    public static double ComputeTotalGrade(Student student, string course, LearningPath learningPath)
-    {
-        var courseGrade = student.CourseGrades.FirstOrDefault(cg =>
-            cg.Course == course && cg.LearningPathId == learningPath.Id);
-
-        if (courseGrade == null || !courseGrade.TestGrades.Any())
-            return 0;
-
-        if (courseGrade.GradingConfiguration == null)
-            return 0;
-
-        RecalculateCourseGrade(courseGrade);
-        return courseGrade.TotalGrade;
     }
 
     // Compute final semester grade for each course for each student in a learning path
@@ -1042,9 +941,7 @@ public static class LogicMethods
             totalGrade += semesterGrade;
         }
 
-        // TODO: When archive is implemented, fetch completed semester grades from archive
-        // For now, using active learning paths
-        return Math.Round(totalGrade / 3, FcmsConstants.GRADE_ROUNDING_DIGIT);
+        return Math.Round(totalGrade / FcmsConstants.NUMBER_OF_SEMESTERS, FcmsConstants.GRADE_ROUNDING_DIGIT);
     }
 
     //method to arrange CalculateSemesterOverallGrade() of all students in a learning path in descending order
@@ -1062,38 +959,6 @@ public static class LogicMethods
             .ToList();
 
         return studentGrades;
-    }
-
-    // Retrieve all grades of all students for a particular course
-    public static List<TestGrade> GetAllGradesForCourse(string courseName, List<Student> students)
-    {
-        if (string.IsNullOrWhiteSpace(courseName))
-            throw new ArgumentException("Course name cannot be null or empty.", nameof(courseName));
-
-        if (students == null || !students.Any())
-            return new List<TestGrade>();
-
-        return students
-            .SelectMany(student => student.CourseGrades
-                .Where(course => course.Course == courseName)
-                .SelectMany(course => course.TestGrades))
-            .ToList();
-    }
-
-
-    // Retrieve the homework grades of a student for a particular course
-    public static List<TestGrade> GetHomeworkScoresForCourse(Student student, string courseName)
-    {
-        if (student == null)
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-        if (string.IsNullOrWhiteSpace(courseName))
-            throw new ArgumentException("Course name cannot be null or empty.", nameof(courseName));
-
-        return student.CourseGrades
-            .Where(course => course.Course == courseName)
-            .SelectMany(course => course.TestGrades
-                .Where(grade => grade.GradeType == GradeType.Homework))
-            .ToList();
     }
 
     public static List<CourseGrade> GetCourseGradesByLearningPathId(School school, int learningPathId)
@@ -1392,16 +1257,6 @@ public static class LogicMethods
     {
         return educationLevel == EducationLevel.SeniorCollege && classLevel == ClassLevel.SC_3;
     }
-
-    public static string GetPromotionButtonText(EducationLevel educationLevel, ClassLevel classLevel)
-    {
-        if (IsLastClassInEducationLevel(educationLevel, classLevel))
-        {
-            return "Graduate";
-        }
-        return "Promote";
-    }
-
 
     /// <summary>
     /// Methods for Grade Statistics
