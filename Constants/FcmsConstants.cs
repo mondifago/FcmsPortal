@@ -10,6 +10,7 @@
         public const int BYTES_IN_KILOBYTE = 1024;
         public const int KILOBYTES_IN_MEGABYTE = 1024;
         public const int MAX_FILE_SIZE_MB = 3;
+        public const int DAYS_IN_YEAR = 365;
         public const long MAX_FILE_SIZE = MAX_FILE_SIZE_MB * BYTES_IN_KILOBYTE * KILOBYTES_IN_MEGABYTE;
         public const double BYTES_IN_MEGABYTE = BYTES_IN_KILOBYTE * KILOBYTES_IN_MEGABYTE;
         public const double TOTAL_SCORE = 100.0;
