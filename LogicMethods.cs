@@ -6,9 +6,12 @@ namespace FcmsPortal;
 
 public static class LogicMethods
 {
+    #region INITIAL SETUP METHODS
     /// <summary>
-    /// Methods involved in Initial Setup
-    /// </summary>
+    /// Methods involved in Initial Setup and Data Filtering
+    /// </summary> 
+
+
     // Filter students based on specified education level and class level
     public static List<Student> GetStudentsByLevel(School school, EducationLevel educationLevel, ClassLevel classLevel)
     {
@@ -167,10 +170,13 @@ public static class LogicMethods
         }
         return school.Guardians;
     }
+    #endregion
 
+    #region SCHEDULING METHODS
     /// <summary>
-    /// Methods involved in Scheduling
+    /// Methods for Schedule Management and Calendar Operations
     /// </summary>
+
     // Method to Generate Recurring Schedule Entries
     public static List<ScheduleEntry> GenerateRecurringSchedules(ScheduleEntry baseEntry)
     {
@@ -267,8 +273,26 @@ public static class LogicMethods
         return null;
     }
 
+    public static ClassSessionReport CreateClassSessionReport(ScheduleEntry scheduleEntry, LearningPath learningPath)
+    {
+        if (scheduleEntry?.ClassSession == null || learningPath == null)
+            return null;
+
+        return new ClassSessionReport
+        {
+            ClassSessionId = scheduleEntry.ClassSession.Id,
+            LearningPathName = GetLearningPathDisplayName(learningPath),
+            Course = scheduleEntry.ClassSession.Course,
+            Topic = scheduleEntry.ClassSession.Topic,
+            SubmittedBy = scheduleEntry.ClassSession.Teacher?.Person?.LastName ?? "Unknown",
+            TimeSubmitted = scheduleEntry.DateTime
+        };
+    }
+    #endregion
+
+    #region CURRICULUM METHODS
     /// <summary>
-    /// Methods for Curriculum
+    /// Methods for Curriculum Generation and Management
     /// </summary>
 
     //Generate Curriculum from Learning Paths 
@@ -312,9 +336,11 @@ public static class LogicMethods
 
         return curriculumByClass.Values.ToList();
     }
+    #endregion
 
+    #region PAYMENT METHODS
     /// <summary>
-    /// Methods for Payment
+    /// Methods for Payment Processing, Fee Management and Financial Reporting
     /// </summary>
 
     //Assign fees for all students in a specific learning path
@@ -720,9 +746,11 @@ public static class LogicMethods
 
         return totalPaid;
     }
+    #endregion
 
+    #region DISCUSSION METHODS
     /// <summary>
-    /// Methods for Class Session Discussion
+    /// Methods for Class Session Discussion and Collaboration
     /// </summary>
 
     //Start discussion 
@@ -778,9 +806,11 @@ public static class LogicMethods
         thread.Replies.Add(reply);
         thread.UpdateLastUpdated();
     }
+    #endregion
 
+    #region GRADING METHODS
     /// <summary>
-    /// Methods for Grading
+    /// Methods for Grading, Grade Calculations and Academic Performance
     /// </summary>
 
     // Grade a test (Quiz, Exam, or Homework) for a student and add it to the appropriate course
@@ -961,45 +991,150 @@ public static class LogicMethods
         return studentGrades;
     }
 
-    public static List<CourseGrade> GetCourseGradesByLearningPathId(School school, int learningPathId)
+    // Get semester grades for all semesters for display in finalize grades
+    public static List<double> GetStudentAllSemesterGrades(Student student, School school, EducationLevel educationLevel, ClassLevel classLevel)
     {
-        return school.Students
-            .SelectMany(s => s.CourseGrades)
-            .Where(cg => cg.LearningPathId == learningPathId)
+        var learningPaths = GetStudentPreviousLearningPaths(student, school, educationLevel, classLevel);
+        var semesterGrades = new List<double>();
+
+        foreach (var lp in learningPaths.OrderBy(l => l.Semester))
+        {
+            var grade = CalculateSemesterOverallGrade(student, lp);
+            semesterGrades.Add(grade);
+        }
+
+        return semesterGrades;
+    }
+
+    // Get previous learning paths for a student in the same education and class level
+    private static List<LearningPath> GetStudentPreviousLearningPaths(Student student, School school, EducationLevel educationLevel, ClassLevel classLevel)
+    {
+        if (student == null || school == null)
+            return new List<LearningPath>();
+
+        return school.LearningPaths
+            .Where(lp => lp.EducationLevel == educationLevel &&
+                         lp.ClassLevel == classLevel &&
+                         lp.Students.Any(s => s.Id == student.Id))
+            .OrderBy(lp => lp.Semester)
             .ToList();
     }
-    public static LearningPathGradeReport GenerateGradeReportForLearningPath(School school, LearningPath learningPath)
+
+    public static int GetGradeCountByType(LearningPath learningPath, string course, GradeType gradeType)
     {
-        var report = new LearningPathGradeReport
+        return learningPath.Students
+            .SelectMany(s => s.CourseGrades
+                .Where(cg => cg.Course == course && cg.LearningPathId == learningPath.Id)
+                .SelectMany(cg => cg.TestGrades))
+            .Where(tg => tg.GradeType == gradeType)
+            .GroupBy(tg => tg.Date.Date)
+            .Count();
+    }
+
+    public static int GetHomeworkCount(LearningPath learningPath, string course)
+    {
+        return GetGradeCountByType(learningPath, course, GradeType.Homework);
+    }
+
+    public static int GetQuizCount(LearningPath learningPath, string course)
+    {
+        return GetGradeCountByType(learningPath, course, GradeType.Quiz);
+    }
+
+    public static int GetExamCount(LearningPath learningPath, string course)
+    {
+        return GetGradeCountByType(learningPath, course, GradeType.FinalExam);
+    }
+
+    public static (string CourseName, double Grade) GetHighestCourseGrade(Student student, int learningPathId)
+    {
+        var courseGrades = student.CourseGrades
+            .Where(cg => cg.LearningPathId == learningPathId && cg.TotalGrade > 0)
+            .OrderByDescending(cg => cg.TotalGrade)
+            .FirstOrDefault();
+
+        return courseGrades != null
+            ? (courseGrades.Course, courseGrades.TotalGrade)
+            : ("N/A", 0);
+    }
+
+    public static (string CourseName, double Grade) GetLowestCourseGrade(Student student, int learningPathId)
+    {
+        var courseGrades = student.CourseGrades
+            .Where(cg => cg.LearningPathId == learningPathId && cg.TotalGrade > 0)
+            .OrderBy(cg => cg.TotalGrade)
+            .FirstOrDefault();
+
+        return courseGrades != null
+            ? (courseGrades.Course, courseGrades.TotalGrade)
+            : ("N/A", 0);
+    }
+
+    public static double CalculateWeightedContribution(CourseGrade courseGrade, GradeType gradeType, double weightPercentage)
+    {
+        if (courseGrade == null) return FcmsConstants.DEFAULT_COMPLETION_RATE;
+
+        var grades = courseGrade.TestGrades.Where(g => g.GradeType == gradeType).ToList();
+        if (!grades.Any()) return FcmsConstants.DEFAULT_COMPLETION_RATE;
+
+        var average = grades.Average(g => g.Score);
+        var contribution = (average / FcmsConstants.PERCENTAGE_MULTIPLIER) * weightPercentage;
+
+        return Math.Round(contribution, FcmsConstants.GRADE_ROUNDING_DIGIT);
+    }
+
+    public static List<GradesReport> GetGradesReports(School school, string academicYear, string semester)
+    {
+        var reports = new List<GradesReport>();
+
+        if (string.IsNullOrEmpty(academicYear) || string.IsNullOrEmpty(semester))
+            return reports;
+
+        var submittedLearningPaths = school.LearningPaths
+            .Where(lp => lp.AcademicYear == academicYear &&
+                         lp.Semester.ToString() == semester &&
+                         (lp.ApprovalStatus == PrincipalApprovalStatus.Review ||
+                          lp.ApprovalStatus == PrincipalApprovalStatus.Approved))
+            .ToList();
+
+        foreach (var learningPath in submittedLearningPaths)
         {
-            Id = learningPath.Id,
-            LearningPath = learningPath,
-            Semester = learningPath.Semester,
-            RankedStudents = new List<StudentGradeSummary>()
-        };
+            var teacher = GetPrimaryTeacherForLearningPath(school, learningPath);
 
-        foreach (var student in learningPath.Students)
-        {
-            double semesterOverallGrade = CalculateSemesterOverallGrade(student, learningPath);
-
-            report.StudentSemesterGrades[student] = semesterOverallGrade;
-
-            report.RankedStudents.Add(new StudentGradeSummary
+            reports.Add(new GradesReport
             {
-                Student = student,
-                SemesterOverallGrade = semesterOverallGrade
+                LearningPathId = learningPath.Id,
+                LearningPathName = GetLearningPathDisplayName(learningPath),
+                DateSubmitted = DateTime.Now,
+                SubmittedBy = $"{teacher.Person.FirstName} {teacher.Person.LastName}",
+                NumberOfStudents = learningPath.Students?.Count ?? 0,
+                Status = learningPath.ApprovalStatus
             });
         }
 
-        report.RankedStudents = report.RankedStudents
-            .OrderByDescending(sg => sg.SemesterOverallGrade)
-            .ToList();
-
-        return report;
+        return reports.OrderByDescending(r => r.DateSubmitted).ToList();
     }
 
+    private static Staff GetPrimaryTeacherForLearningPath(School school, LearningPath learningPath)
+    {
+        var recentTeacher = learningPath.Schedule?
+            .Where(s => s.ClassSession?.Teacher != null)
+            .OrderByDescending(s => s.DateTime)
+            .FirstOrDefault()?.ClassSession?.Teacher;
+
+        if (recentTeacher != null)
+            return recentTeacher;
+
+        return school.Staff?.FirstOrDefault() ?? new Staff
+        {
+            Person = new Person { FirstName = "Unknown", LastName = "Teacher" }
+        };
+    }
+    #endregion
+
+    #region ATTENDANCE METHODS
     /// <summary>
-    /// Methods for Attendance
+    /// Methods for Attendance Management and Reporting
     /// </summary>
 
     // Take attendance for a learning path on a specific date
@@ -1129,73 +1264,11 @@ public static class LogicMethods
     {
         return $"{learningPath.EducationLevel} - {learningPath.ClassLevel} ({learningPath.AcademicYear} {learningPath.Semester})";
     }
+    #endregion
 
-    public static ClassSessionReport CreateClassSessionReport(ScheduleEntry scheduleEntry, LearningPath learningPath)
-    {
-        if (scheduleEntry?.ClassSession == null || learningPath == null)
-            return null;
-
-        return new ClassSessionReport
-        {
-            ClassSessionId = scheduleEntry.ClassSession.Id,
-            LearningPathName = GetLearningPathDisplayName(learningPath),
-            Course = scheduleEntry.ClassSession.Course,
-            Topic = scheduleEntry.ClassSession.Topic,
-            SubmittedBy = scheduleEntry.ClassSession.Teacher?.Person?.LastName ?? "Unknown",
-            TimeSubmitted = scheduleEntry.DateTime
-        };
-    }
-
-    public static List<GradesReport> GetGradesReports(School school, string academicYear, string semester)
-    {
-        var reports = new List<GradesReport>();
-
-        if (string.IsNullOrEmpty(academicYear) || string.IsNullOrEmpty(semester))
-            return reports;
-
-        var submittedLearningPaths = school.LearningPaths
-            .Where(lp => lp.AcademicYear == academicYear &&
-                         lp.Semester.ToString() == semester &&
-                         (lp.ApprovalStatus == PrincipalApprovalStatus.Review ||
-                          lp.ApprovalStatus == PrincipalApprovalStatus.Approved))
-            .ToList();
-
-        foreach (var learningPath in submittedLearningPaths)
-        {
-            var teacher = GetPrimaryTeacherForLearningPath(school, learningPath);
-
-            reports.Add(new GradesReport
-            {
-                LearningPathId = learningPath.Id,
-                LearningPathName = GetLearningPathDisplayName(learningPath),
-                DateSubmitted = DateTime.Now,
-                SubmittedBy = $"{teacher.Person.FirstName} {teacher.Person.LastName}",
-                NumberOfStudents = learningPath.Students?.Count ?? 0,
-                Status = learningPath.ApprovalStatus
-            });
-        }
-
-        return reports.OrderByDescending(r => r.DateSubmitted).ToList();
-    }
-
-    private static Staff GetPrimaryTeacherForLearningPath(School school, LearningPath learningPath)
-    {
-        var recentTeacher = learningPath.Schedule?
-            .Where(s => s.ClassSession?.Teacher != null)
-            .OrderByDescending(s => s.DateTime)
-            .FirstOrDefault()?.ClassSession?.Teacher;
-
-        if (recentTeacher != null)
-            return recentTeacher;
-
-        return school.Staff?.FirstOrDefault() ?? new Staff
-        {
-            Person = new Person { FirstName = "Unknown", LastName = "Teacher" }
-        };
-    }
-
+    #region SEMESTER TRANSITION METHODS
     /// <summary>
-    /// Methods for Student Progression and Class Level Management
+    /// Methods for Student Progression, Class Level Management and Archiving
     /// </summary>
 
     public static bool IsLastClassInEducationLevel(EducationLevel educationLevel, ClassLevel classLevel)
@@ -1257,100 +1330,5 @@ public static class LogicMethods
     {
         return educationLevel == EducationLevel.SeniorCollege && classLevel == ClassLevel.SC_3;
     }
-
-    /// <summary>
-    /// Methods for Grade Statistics
-    /// </summary>
-
-    public static int GetGradeCountByType(LearningPath learningPath, string course, GradeType gradeType)
-    {
-        return learningPath.Students
-            .SelectMany(s => s.CourseGrades
-                .Where(cg => cg.Course == course && cg.LearningPathId == learningPath.Id)
-                .SelectMany(cg => cg.TestGrades))
-            .Where(tg => tg.GradeType == gradeType)
-            .GroupBy(tg => tg.Date.Date)
-            .Count();
-    }
-
-    public static int GetHomeworkCount(LearningPath learningPath, string course)
-    {
-        return GetGradeCountByType(learningPath, course, GradeType.Homework);
-    }
-
-    public static int GetQuizCount(LearningPath learningPath, string course)
-    {
-        return GetGradeCountByType(learningPath, course, GradeType.Quiz);
-    }
-
-    public static int GetExamCount(LearningPath learningPath, string course)
-    {
-        return GetGradeCountByType(learningPath, course, GradeType.FinalExam);
-    }
-
-    public static (string CourseName, double Grade) GetHighestCourseGrade(Student student, int learningPathId)
-    {
-        var courseGrades = student.CourseGrades
-            .Where(cg => cg.LearningPathId == learningPathId && cg.TotalGrade > 0)
-            .OrderByDescending(cg => cg.TotalGrade)
-            .FirstOrDefault();
-
-        return courseGrades != null
-            ? (courseGrades.Course, courseGrades.TotalGrade)
-            : ("N/A", 0);
-    }
-
-    public static (string CourseName, double Grade) GetLowestCourseGrade(Student student, int learningPathId)
-    {
-        var courseGrades = student.CourseGrades
-            .Where(cg => cg.LearningPathId == learningPathId && cg.TotalGrade > 0)
-            .OrderBy(cg => cg.TotalGrade)
-            .FirstOrDefault();
-
-        return courseGrades != null
-            ? (courseGrades.Course, courseGrades.TotalGrade)
-            : ("N/A", 0);
-    }
-
-    public static double CalculateWeightedContribution(CourseGrade courseGrade, GradeType gradeType, double weightPercentage)
-    {
-        if (courseGrade == null) return FcmsConstants.DEFAULT_COMPLETION_RATE;
-
-        var grades = courseGrade.TestGrades.Where(g => g.GradeType == gradeType).ToList();
-        if (!grades.Any()) return FcmsConstants.DEFAULT_COMPLETION_RATE;
-
-        var average = grades.Average(g => g.Score);
-        var contribution = (average / FcmsConstants.PERCENTAGE_MULTIPLIER) * weightPercentage;
-
-        return Math.Round(contribution, FcmsConstants.GRADE_ROUNDING_DIGIT);
-    }
-
-    // Get previous learning paths for a student in the same education and class level
-    public static List<LearningPath> GetStudentPreviousLearningPaths(Student student, School school, EducationLevel educationLevel, ClassLevel classLevel)
-    {
-        if (student == null || school == null)
-            return new List<LearningPath>();
-
-        return school.LearningPaths
-            .Where(lp => lp.EducationLevel == educationLevel &&
-                         lp.ClassLevel == classLevel &&
-                         lp.Students.Any(s => s.Id == student.Id))
-            .OrderBy(lp => lp.Semester)
-            .ToList();
-    }
-
-    // Get semester grades for all semesters for display in finalize grades
-    public static List<double> GetStudentAllSemesterGrades(Student student, School school, EducationLevel educationLevel, ClassLevel classLevel)
-    {
-        var learningPaths = GetStudentPreviousLearningPaths(student, school, educationLevel, classLevel);
-        var semesterGrades = new List<double>();
-
-        foreach (var lp in learningPaths.OrderBy(l => l.Semester))
-        {
-            var grade = CalculateSemesterOverallGrade(student, lp);
-            semesterGrades.Add(grade);
-        }
-
-        return semesterGrades;
-    }
+    #endregion
 }
