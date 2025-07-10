@@ -1,13 +1,10 @@
 ﻿using FcmsPortal.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 namespace FcmsPortal.Models
 
 {
     public class Guardian
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
         public Person Person { get; set; } = new Person();

@@ -1,30 +1,44 @@
 ﻿using FcmsPortal.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace FcmsPortal.Models
 {
     public class ScheduleEntry
     {
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Date and time are required.")]
         public DateTime DateTime { get; set; }
+
+        [Required(ErrorMessage = "Duration is required.")]
         public TimeSpan Duration { get; set; }
-        public string Venue { get; set; }
-        public ClassSession ClassSession { get; set; }
-        public string Title { get; set; }
-        public string Event { get; set; }
-        public string Meeting { get; set; }
-        public bool IsRecurring { get; set; } = false; // Flag for recurrence
-        public RecurrenceType? RecurrencePattern { get; set; } // Daily, Weekly, Monthly
-        public List<DayOfWeek> DaysOfWeek { get; set; }  // For weekly patterns
-        public int? DayOfMonth { get; set; }  // For monthly patterns
-        public int RecurrenceInterval { get; set; } = 1; // Interval between recurrences
-        public DateTime? EndDate { get; set; } // End date for recurrence
 
+        [Required(ErrorMessage = "Venue is required.")]
+        [StringLength(50, ErrorMessage = "Venue must be 50 characters or fewer.")]
+        public string Venue { get; set; } = string.Empty;
 
-        public ScheduleType GetScheduleType()
-        {
-            if (ClassSession != null) return ScheduleType.ClassSession;
-            if (!string.IsNullOrEmpty(Event)) return ScheduleType.Event;
-            return ScheduleType.Meeting;
-        }
+        public ClassSession? ClassSession { get; set; }
+
+        [StringLength(50, ErrorMessage = "Title must be 50 characters or fewer.")]
+        public string Title { get; set; } = string.Empty;
+
+        [StringLength(50, ErrorMessage = "Event name must be 50 characters or fewer.")]
+        public string Event { get; set; } = string.Empty;
+
+        [StringLength(50, ErrorMessage = "Meeting name must be 50 characters or fewer.")]
+        public string Meeting { get; set; } = string.Empty;
+
+        public bool IsRecurring { get; set; } = false;
+
+        public RecurrenceType? RecurrencePattern { get; set; }
+
+        public List<DayOfWeek> DaysOfWeek { get; set; } = new();
+
+        public int? DayOfMonth { get; set; }
+
+        [Range(1, 365, ErrorMessage = "Recurrence interval must be at least 1.")]
+        public int RecurrenceInterval { get; set; } = 1;
+
+        public DateTime? EndDate { get; set; }
     }
 }

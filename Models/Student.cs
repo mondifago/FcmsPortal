@@ -5,8 +5,6 @@ namespace FcmsPortal.Models;
 
 public class Student
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     [Required]
     public Person Person { get; set; } = new Person();
@@ -17,7 +15,7 @@ public class Student
     [Required]
     public int GuardianId { get; set; }
     [ForeignKey("GuardianId")]
-    public Guardian Guardian { get; set; }
+    public Guardian? Guardian { get; set; }
     public List<CourseGrade> CourseGrades { get; set; } = new();
     [InverseProperty("StudentsPresent")]
     public List<DailyAttendanceLogEntry> AttendedSessions { get; set; } = new();

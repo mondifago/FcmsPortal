@@ -5,7 +5,7 @@ namespace FcmsPortal.Models
     public class CourseGradingConfiguration
     {
         public int Id { get; set; }
-        public string Course { get; set; }
+        public string Course { get; set; } = string.Empty;
         public int LearningPathId { get; set; }
         [Range(0, 100, ErrorMessage = "Homework weight must be between 0 and 100")]
         public double HomeworkWeightPercentage { get; set; }
@@ -15,6 +15,6 @@ namespace FcmsPortal.Models
 
         [Range(0, 100, ErrorMessage = "Exam weight must be between 0 and 100")]
         public double FinalExamWeightPercentage { get; set; }
-        public LearningPath LearningPath { get; set; }
+        public LearningPath? LearningPath { get; set; }
     }
 }

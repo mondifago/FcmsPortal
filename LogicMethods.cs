@@ -273,7 +273,7 @@ public static class LogicMethods
         return null;
     }
 
-    public static ClassSessionReport CreateClassSessionReport(ScheduleEntry scheduleEntry, LearningPath learningPath)
+    public static ClassSessionReport? CreateClassSessionReport(ScheduleEntry? scheduleEntry, LearningPath? learningPath)
     {
         if (scheduleEntry?.ClassSession == null || learningPath == null)
             return null;
@@ -288,6 +288,7 @@ public static class LogicMethods
             TimeSubmitted = scheduleEntry.DateTime
         };
     }
+
     #endregion
 
     #region CURRICULUM METHODS
