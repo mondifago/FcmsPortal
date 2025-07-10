@@ -328,8 +328,8 @@ public static class LogicMethods
             }
 
             var classSessions = lp.Schedule
-                .Where(s => s.ClassSession != null)
                 .Select(s => s.ClassSession)
+                .OfType<ClassSession>()
                 .ToList();
 
             semesterCurriculum.ClassSessions.AddRange(classSessions);

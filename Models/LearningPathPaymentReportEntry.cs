@@ -2,9 +2,9 @@
 {
     public class LearningPathPaymentReportEntry
     {
-        public string AcademicYear { get; set; }
-        public string Semester { get; set; }
-        public string LearningPathName { get; set; }
+        public string AcademicYear { get; set; } = string.Empty;
+        public string Semester { get; set; } = string.Empty;
+        public string LearningPathName { get; set; } = string.Empty;
         public DateTime SemesterStartDate { get; set; }
         public DateTime SemesterEndDate { get; set; }
         public DateTime ReportGeneratedDateAndTime { get; set; }

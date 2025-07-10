@@ -10,7 +10,7 @@ public class Staff
     [Required]
     public Person Person { get; set; } = new Person();
     public JobRole JobRole { get; set; }
-    [MaxLength(100)]
+    [MaxLength(50)]
     public string? JobDescription { get; set; }
     [MaxLength(50)]
     public List<string>? Qualifications { get; set; }
