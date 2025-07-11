@@ -359,7 +359,7 @@ namespace FcmsPortal
             // Assign the single homework to the class session
             classSession1.HomeworkDetails = homework1;
 
-            var joeSubmission = homework1.Submissions.FirstOrDefault(s => s.Student.Id == student1.Id);
+            var joeSubmission = homework1.Submissions.FirstOrDefault(s => s.Student != null && s.Student.Id == student1.Id);
             if (joeSubmission != null)
             {
                 var homeworkGrade = new TestGrade
