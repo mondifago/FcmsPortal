@@ -8,9 +8,11 @@ namespace FcmsPortal.Models
         public int Id { get; set; }
         [Required]
         public Person Person { get; set; } = new Person();
+
+        [Required(ErrorMessage = "RelationShip with Student is Required")]
+        [MaxLength(50)]
         public Relationship RelationshipToStudent { get; set; }
-        [Required]
-        [StringLength(15, MinimumLength = 2, ErrorMessage = "Occupation must be between 2 and 15 characters.")]
+
         public string Occupation { get; set; } = string.Empty;
         public List<Student> Wards { get; set; } = new();
     }

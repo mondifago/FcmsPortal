@@ -1,24 +1,30 @@
 using FcmsPortal.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models;
 
 public class Staff
 {
     public int Id { get; set; }
+
     [Required]
-    public Person Person { get; set; } = new Person();
+    public Person Person { get; set; } = new();
+
+    [Required(ErrorMessage = "Job Role is Required")]
     public JobRole JobRole { get; set; }
+
+    [Required(ErrorMessage = "Job Description is Required")]
     [MaxLength(50)]
-    public string? JobDescription { get; set; }
-    [MaxLength(50)]
-    public List<string>? Qualifications { get; set; }
-    [MaxLength(50)]
-    public List<string>? WorkExperience { get; set; }
-    [Required]
-    [Column(TypeName = "date")]
+    public string JobDescription { get; set; } = string.Empty;
+
+    public List<string> Qualifications { get; set; } = new();
+
+    public List<string> WorkExperience { get; set; } = new();
+
+    [Required(ErrorMessage = "Date of Employment is Required")]
     public DateTime DateOfEmployment { get; set; }
+
+    [Required(ErrorMessage = "Area Of Specialization is Required")]
     [MaxLength(50)]
-    public string? AreaOfSpecialization { get; set; }
+    public string AreaOfSpecialization { get; set; } = string.Empty;
 }

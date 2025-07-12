@@ -959,8 +959,11 @@ public static class LogicMethods
     }
 
     // Get semester grades for all semesters for display in finalize grades
-    public static List<double> GetStudentAllSemesterGrades(Student student, School school, EducationLevel educationLevel, ClassLevel classLevel)
+    public static List<double> GetStudentAllSemesterGrades(Student? student, School? school, EducationLevel educationLevel, ClassLevel classLevel)
     {
+        if (school?.LearningPaths == null || student == null)
+            return new List<double>();
+
         var learningPaths = GetStudentPreviousLearningPaths(student, school, educationLevel, classLevel);
         var semesterGrades = new List<double>();
 
@@ -972,6 +975,7 @@ public static class LogicMethods
 
         return semesterGrades;
     }
+
 
     // Get previous learning paths for a student in the same education and class level
     private static List<LearningPath> GetStudentPreviousLearningPaths(Student student, School school, EducationLevel educationLevel, ClassLevel classLevel)
