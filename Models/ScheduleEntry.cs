@@ -23,10 +23,10 @@ namespace FcmsPortal.Models
         public string Title { get; set; } = string.Empty;
 
         [StringLength(50, ErrorMessage = "Event name must be 50 characters or fewer.")]
-        public string Event { get; set; } = string.Empty;
+        public string? Event { get; set; }
 
         [StringLength(50, ErrorMessage = "Meeting name must be 50 characters or fewer.")]
-        public string Meeting { get; set; } = string.Empty;
+        public string? Meeting { get; set; }
 
         public bool IsRecurring { get; set; } = false;
 
