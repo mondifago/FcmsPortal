@@ -6,8 +6,6 @@ namespace FcmsPortal.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Course name is required.")]
-        [StringLength(50, ErrorMessage = "Course name must be 50 characters or fewer.")]
         public string Course { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Topic is required.")]
