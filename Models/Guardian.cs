@@ -10,7 +10,6 @@ namespace FcmsPortal.Models
         public Person Person { get; set; } = new Person();
 
         [Required(ErrorMessage = "RelationShip with Student is Required")]
-        [MaxLength(50)]
         public Relationship RelationshipToStudent { get; set; }
 
         public string Occupation { get; set; } = string.Empty;
