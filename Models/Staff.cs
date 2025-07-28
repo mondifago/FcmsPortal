@@ -24,7 +24,6 @@ public class Staff
     [Required(ErrorMessage = "Date of Employment is Required")]
     public DateTime DateOfEmployment { get; set; }
 
-    [Required(ErrorMessage = "Area Of Specialization is Required")]
     [MaxLength(50)]
     public string AreaOfSpecialization { get; set; } = string.Empty;
 }

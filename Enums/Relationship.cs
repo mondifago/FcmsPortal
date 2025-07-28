@@ -2,6 +2,7 @@
 {
     public enum Relationship
     {
+        None = 0,
         Father,
         Mother,
         FosterParent,
