@@ -5,6 +5,8 @@ namespace FcmsPortal.Models
     public class ClassSession
     {
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Course is required.")]
         public string Course { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Topic is required.")]
