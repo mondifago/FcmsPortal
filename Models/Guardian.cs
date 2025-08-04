@@ -1,7 +1,6 @@
 ﻿using FcmsPortal.Enums;
 using System.ComponentModel.DataAnnotations;
 namespace FcmsPortal.Models
-
 {
     public class Guardian
     {
