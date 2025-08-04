@@ -877,7 +877,6 @@ public static class LogicMethods
                 }
                 else
                 {
-                    // Create empty finalized course grade if no tests taken
                     var gradingConfig = learningPath.CourseGradingConfigurations
                         .FirstOrDefault(c => c.Course == course);
 
@@ -1100,6 +1099,36 @@ public static class LogicMethods
         {
             Person = new Person { FirstName = "Unknown", LastName = "Teacher" }
         };
+    }
+
+    public static LearningPathGradeReport GenerateLearningPathGradeReport(LearningPath learningPath)
+    {
+        if (learningPath == null)
+            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
+
+        var report = new LearningPathGradeReport
+        {
+            LearningPath = learningPath,
+            Semester = learningPath.Semester,
+            IsFinalized = false
+        };
+
+        foreach (var student in learningPath.Students)
+        {
+            var semesterGrade = CalculateSemesterOverallGrade(student, learningPath);
+            report.StudentSemesterGrades[student] = semesterGrade;
+        }
+
+        report.RankedStudents = report.StudentSemesterGrades
+            .Select(kvp => new StudentGradeSummary
+            {
+                Student = kvp.Key,
+                SemesterOverallGrade = kvp.Value
+            })
+            .OrderByDescending(sg => sg.SemesterOverallGrade)
+            .ToList();
+
+        return report;
     }
     #endregion
 
