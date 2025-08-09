@@ -5,6 +5,8 @@ namespace FcmsPortal.Models
     public class Guardian
     {
         public int Id { get; set; }
+        public int SchoolId { get; set; }
+        public School School { get; set; } = null!;
         public Person Person { get; set; } = new Person();
 
         [Required(ErrorMessage = "RelationShip with Student is Required")]
