@@ -3,6 +3,7 @@
     public class SchoolFees
     {
         public int Id { get; set; }
+        public int PersonId { get; set; }
         public double TotalAmount { get; set; }
         public double Balance => TotalAmount - TotalPaid;
         public double TotalPaid => Payments.Sum(payment => payment.Amount);
