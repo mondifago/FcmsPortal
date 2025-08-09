@@ -7,6 +7,8 @@ namespace FcmsPortal.Models
     public class LearningPath
     {
         public int Id { get; set; }
+        public int SchoolId { get; set; }
+        public School School { get; set; } = null!;
 
         [Required(ErrorMessage = "Education level is required.")]
         public EducationLevel EducationLevel { get; set; }
