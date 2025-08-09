@@ -6,6 +6,8 @@ namespace FcmsPortal.Models;
 public class Staff
 {
     public int Id { get; set; }
+    public int SchoolId { get; set; }
+    public School School { get; set; } = null!;
 
     [Required]
     public Person Person { get; set; } = new();
