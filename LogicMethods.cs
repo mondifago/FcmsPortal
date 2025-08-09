@@ -727,8 +727,6 @@ public static class LogicMethods
         var now = DateTime.UtcNow;
         var firstPost = new DiscussionPost
         {
-            Id = firstPostId,
-            DiscussionThreadId = threadId,
             Author = author,
             Comment = comment,
             CreatedAt = now
@@ -736,7 +734,6 @@ public static class LogicMethods
 
         var discussionThread = new DiscussionThread
         {
-            Id = threadId,
             FirstPost = firstPost,
             Replies = new List<DiscussionPost>(),
             CreatedAt = now,
@@ -759,7 +756,6 @@ public static class LogicMethods
         var now = DateTime.UtcNow;
         var reply = new DiscussionPost
         {
-            Id = replyId,
             DiscussionThreadId = thread.Id,
             Author = author,
             Comment = comment,
