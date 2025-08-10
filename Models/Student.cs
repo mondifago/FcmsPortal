@@ -17,10 +17,6 @@ public class Student
     [ForeignKey("GuardianId")]
     public Guardian? Guardian { get; set; }
     public List<CourseGrade> CourseGrades { get; set; } = new();
-    [InverseProperty("StudentsPresent")]
-    public List<DailyAttendanceLogEntry> AttendedSessions { get; set; } = new();
-    [InverseProperty("StudentsAbsent")]
-    public List<DailyAttendanceLogEntry> AbsentSessions { get; set; } = new();
     [Required]
     public int CurrentLearningPathId { get; set; }
     [ForeignKey("CurrentLearningPathId")]
