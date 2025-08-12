@@ -447,7 +447,9 @@ public static class LogicMethods
             OutstandingBalance = student.Person.SchoolFees.Balance,
             StudentPaymentCompletionRate = paymentCompletionRate,
             StudentTimelyCompletionRate = timelyCompletionRate,
-            StudentAddress = GetAddressDetails(student.Person),
+            StudentAddress = student.Person?.Address != null
+            ? $"{student.Person.Address.Street}, {student.Person.Address.City}, {student.Person.Address.State}, {student.Person.Address.Country}"
+            : string.Empty,
             PaymentDetails = GetPaymentDetails(payments)
         };
     }
@@ -1329,17 +1331,6 @@ public static class LogicMethods
     #endregion
 
     #region UTILITY METHODS
-    private static string GetAddressDetails(Person person)
-    {
-        if (person?.Addresses == null || !person.Addresses.Any())
-            return string.Empty;
-
-        var primary = person.Addresses.FirstOrDefault(a => a.AddressType == AddressType.Home)
-                   ?? person.Addresses.First();
-
-        return $"{primary.Street}, {primary.City}, {primary.State}, {primary.Country}";
-    }
-
     private static List<PaymentDetails> GetPaymentDetails(List<Payment> payments)
     {
         return payments.Select(p => new PaymentDetails
