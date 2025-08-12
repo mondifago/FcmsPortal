@@ -7,7 +7,8 @@ namespace FcmsPortal.Models
         public int Id { get; set; }
         public int SchoolId { get; set; }
         public School School { get; set; } = null!;
-        public Person Person { get; set; } = new Person();
+        public int PersonId { get; set; }
+        public Person Person { get; set; } = null!;
 
         [Required(ErrorMessage = "RelationShip with Student is Required")]
         public Relationship RelationshipToStudent { get; set; }

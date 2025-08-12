@@ -21,6 +21,7 @@ namespace FcmsPortal.Models
         [Range(1, int.MaxValue, ErrorMessage = "Reference must be a positive number.")]
         public int Reference { get; set; }
         public int SchoolFeesId { get; set; }
+        public SchoolFees SchoolFees { get; set; } = null!;
         public Semester Semester { get; set; }
         public DateTime AcademicYearStart { get; set; }
         public int LearningPathId { get; set; }

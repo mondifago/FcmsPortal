@@ -1,5 +1,4 @@
-﻿using FcmsPortal.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FcmsPortal.Models
 {
@@ -22,7 +21,5 @@ namespace FcmsPortal.Models
 
         [Required(ErrorMessage = "Country is required.")]
         public string Country { get; set; } = string.Empty;
-
-        public AddressType AddressType { get; set; }
     }
 }

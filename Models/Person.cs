@@ -45,14 +45,14 @@ namespace FcmsPortal.Models
         [StringLength(50, ErrorMessage = "LGA of Origin cannot exceed 50 characters.")]
         public string LgaOfOrigin { get; set; } = string.Empty;
         [Required]
-        public List<Address> Addresses { get; set; } = new List<Address>();
+        public int AddressId { get; set; }
+        public Address Address { get; set; } = null!;
         [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
         [Required]
         [Phone]
         public string PhoneNumber { get; set; } = string.Empty;
-        public CalendarModel PersonalCalendar { get; set; } = new CalendarModel();
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
         public SchoolFees? SchoolFees { get; set; }

@@ -25,8 +25,8 @@ namespace FcmsPortal.Models
         public string WebsiteUrl { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "School address is required.")]
-        public Address Address { get; set; } = new();
-
+        public int AddressId { get; set; }
+        public Address Address { get; set; } = null!;
         public List<Staff> Staff { get; set; } = new();
         public List<Student> Students { get; set; } = new();
         public List<Guardian> Guardians { get; set; } = new();

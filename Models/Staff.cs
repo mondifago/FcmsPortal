@@ -10,7 +10,8 @@ public class Staff
     public School School { get; set; } = null!;
 
     [Required]
-    public Person Person { get; set; } = new();
+    public int PersonId { get; set; }
+    public Person Person { get; set; } = null!;
 
     [Required(ErrorMessage = "Job Role is Required")]
     public JobRole JobRole { get; set; }
@@ -19,9 +20,8 @@ public class Staff
     [MaxLength(50)]
     public string JobDescription { get; set; } = string.Empty;
 
-    public List<string> Qualifications { get; set; } = new();
-
-    public List<string> WorkExperience { get; set; } = new();
+    public string Qualifications { get; set; } = string.Empty;
+    public string WorkExperience { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Date of Employment is Required")]
     public DateTime DateOfEmployment { get; set; }

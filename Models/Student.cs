@@ -7,7 +7,8 @@ public class Student
 {
     public int Id { get; set; }
     [Required]
-    public Person Person { get; set; } = new Person();
+    public int PersonId { get; set; }
+    public Person Person { get; set; } = null!;
     [MaxLength(10)]
     public string? PositionAmongSiblings { get; set; }
     [MaxLength(30)]

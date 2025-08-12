@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int PersonId { get; set; }
+        public Person Person { get; set; } = null!;
         public double TotalAmount { get; set; }
         public double Balance => TotalAmount - TotalPaid;
         public double TotalPaid => Payments.Sum(payment => payment.Amount);
