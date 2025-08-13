@@ -404,7 +404,7 @@ public static class LogicMethods
         }
 
         var payments = student.Person.SchoolFees.Payments ?? new List<Payment>();
-        var currentLearningPath = student.CurrentLearningPath;
+        var currentLearningPath = student.LearningPath;
         var latestPayment = payments.OrderByDescending(p => p.Date).FirstOrDefault();
 
         string academicYear = string.Empty;
@@ -504,7 +504,7 @@ public static class LogicMethods
 
         foreach (var student in students)
         {
-            if (student?.CurrentLearningPath != null &&
+            if (student?.LearningPath != null &&
                 student?.Person?.SchoolFees?.Payments != null &&
                 student.Person.SchoolFees.Payments.Any())
             {
@@ -515,8 +515,8 @@ public static class LogicMethods
                 if (latestPayment != null)
                 {
                     var rate = CalculateTimelyCompletionRate(
-                        student.CurrentLearningPath.SemesterStartDate,
-                        student.CurrentLearningPath.SemesterEndDate,
+                        student.LearningPath.SemesterStartDate,
+                        student.LearningPath.SemesterEndDate,
                         latestPayment.Date);
 
                     timelyRates.Add(rate);
@@ -559,7 +559,7 @@ public static class LogicMethods
 
         foreach (var student in students)
         {
-            var currentPath = student.CurrentLearningPath;
+            var currentPath = student.LearningPath;
             if (currentPath == null)
                 continue;
 

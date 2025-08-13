@@ -19,11 +19,10 @@ public class Student
     public Guardian? Guardian { get; set; }
     public List<CourseGrade> CourseGrades { get; set; } = new();
     [Required]
-    public int CurrentLearningPathId { get; set; }
-    [ForeignKey("CurrentLearningPathId")]
-    public LearningPath CurrentLearningPath { get; set; } = new();
+    public int LearningPathId { get; set; }
+    [ForeignKey("LearningPathId")]
+    public LearningPath LearningPath { get; set; } = new();
     [NotMapped]
-    public List<LearningPath> CompletedLearningPaths { get; set; } = new();
     public List<FileAttachment> FinalResultAttachments { get; set; } = new();
     public DateTime? ArchivedDate { get; set; }
 }
