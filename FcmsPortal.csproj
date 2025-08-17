@@ -19,6 +19,7 @@
 	  <PackageReference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" Version="2.3.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="6.0.0-preview.4.21253.5" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.7" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0-preview.6.25358.103" />
 	  <PackageReference Include="Microsoft.JSInterop" Version="9.0.7" />
   </ItemGroup>

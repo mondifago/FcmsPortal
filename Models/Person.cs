@@ -45,7 +45,6 @@ namespace FcmsPortal.Models
         [StringLength(50, ErrorMessage = "LGA of Origin cannot exceed 50 characters.")]
         public string LgaOfOrigin { get; set; } = string.Empty;
         [Required]
-        public int AddressId { get; set; }
         public Address Address { get; set; } = null!;
         [Required]
         [EmailAddress]
