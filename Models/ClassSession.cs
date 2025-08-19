@@ -17,8 +17,9 @@ namespace FcmsPortal.Models
         public string Description { get; set; } = string.Empty;
 
         public string LessonPlan { get; set; } = string.Empty;
-
-        public Staff? Teacher { get; set; } = new();
+        [Required(ErrorMessage = "Teacher is required.")]
+        public int TeacherId { get; set; }
+        public Staff Teacher { get; set; } = new();
 
         public Homework? HomeworkDetails { get; set; }
 

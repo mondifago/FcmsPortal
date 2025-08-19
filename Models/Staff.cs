@@ -28,4 +28,5 @@ public class Staff
 
     [MaxLength(50)]
     public string AreaOfSpecialization { get; set; } = string.Empty;
+    public List<ClassSession> ClassSessions { get; set; } = new();
 }
