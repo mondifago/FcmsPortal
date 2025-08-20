@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
 {
@@ -17,8 +18,12 @@ namespace FcmsPortal.Models
         public string Description { get; set; } = string.Empty;
 
         public string LessonPlan { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "Teacher is required.")]
-        public Staff? Teacher { get; set; }
+        public int TeacherId { get; set; }
+
+        [ForeignKey("TeacherId")]
+        public Staff Teacher { get; set; }
 
         public Homework? HomeworkDetails { get; set; }
 
