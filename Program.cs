@@ -4,19 +4,6 @@ namespace FcmsPortal
 {
     public class Program
     {
-        /// <summary>
-        /// create one school
-        /// create 3 students
-        /// create admin staff
-        /// retrieve SC_3 students from school list
-        /// retrieve Senior college teachers from school list
-        /// create two biology class sessions and assign it to a teacher
-        /// create two geography class sessions and assign it to a teacher
-        /// create an admin staff
-        /// </summary>
-        /// <param name="args"></param>
-        /// 
-
         static void Main(string[] args)
         {
             // create a school with name and address
