@@ -23,7 +23,7 @@ namespace FcmsPortal.Models
         public int TeacherId { get; set; }
 
         [ForeignKey("TeacherId")]
-        public Staff Teacher { get; set; }
+        public Staff? Teacher { get; set; }
 
         public Homework? HomeworkDetails { get; set; }
 
