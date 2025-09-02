@@ -1,5 +1,6 @@
 ﻿using FcmsPortal.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
 {
@@ -16,8 +17,12 @@ namespace FcmsPortal.Models
         [Required(ErrorMessage = "Venue is required.")]
         [StringLength(50, ErrorMessage = "Venue must be 50 characters or fewer.")]
         public string Venue { get; set; } = string.Empty;
-
+        public int? ClassSessionId { get; set; }
+        [ForeignKey("ClassSessionId")]
         public ClassSession? ClassSession { get; set; }
+        public int? LearningPathId { get; set; }
+        [ForeignKey("LearningPathId")]
+        public LearningPath? LearningPath { get; set; }
 
         [StringLength(50, ErrorMessage = "Title must be 50 characters or fewer.")]
         public string Title { get; set; } = string.Empty;
