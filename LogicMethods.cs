@@ -171,13 +171,11 @@ public static class LogicMethods
         }
 
         DateTime currentDate = baseEntry.DateTime;
-        int idCounter = 0;
 
         while (currentDate.Date <= baseEntry.EndDate?.Date)
         {
             var newEntry = new ScheduleEntry
             {
-                Id = baseEntry.Id + idCounter++,
                 DateTime = currentDate,
                 Duration = baseEntry.Duration,
                 Venue = baseEntry.Venue,
