@@ -36,6 +36,11 @@ public static class LogicMethods
             .ToList();
     }
 
+    public static Staff? GetFirstTeacherByEducationLevel(School school, EducationLevel educationLevel)
+    {
+        return GetTeachersByEducationLevel(school, educationLevel).FirstOrDefault();
+    }
+
     //Gets a list of all distinct EducationLevels found in the school's LearningPaths
     public static List<EducationLevel> GetExistingEducationLevels(School school)
     {
@@ -1128,14 +1133,11 @@ public static class LogicMethods
             throw new ArgumentNullException(nameof(presentStudents), "Present students list cannot be null.");
 
         var targetDate = attendanceDate ?? DateTime.Now;
-
         var allStudents = learningPath.Students ?? new List<Student>();
-
         var absentStudents = allStudents.Where(s => !presentStudents.Any(p => p.Id == s.Id)).ToList();
 
         var attendanceLogEntry = new DailyAttendanceLogEntry
         {
-            Id = (learningPath.AttendanceLog?.Count ?? 0) + 1,
             LearningPathId = learningPath.Id,
             LearningPath = learningPath,
             TeacherId = teacher.Id,
