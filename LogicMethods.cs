@@ -698,62 +698,6 @@ public static class LogicMethods
     }
     #endregion
 
-    #region DISCUSSION METHODS
-    /// <summary>
-    /// Methods for Class Session Discussion and Collaboration
-    /// </summary>
-
-    //Start discussion 
-    public static DiscussionThread StartDiscussion(int threadId, int firstPostId, Person author, string comment)
-    {
-        if (author == null)
-            throw new ArgumentNullException(nameof(author), "Author cannot be null.");
-        if (string.IsNullOrWhiteSpace(comment))
-            throw new ArgumentException("Comment cannot be empty.", nameof(comment));
-
-        var now = DateTime.UtcNow;
-        var firstPost = new DiscussionPost
-        {
-            PersonId = author.Id, // Use PersonId instead of full Author object
-            Author = author,
-            Comment = comment,
-            CreatedAt = now
-        };
-
-        var discussionThread = new DiscussionThread
-        {
-            FirstPost = firstPost,
-            Replies = new List<DiscussionPost>(),
-            CreatedAt = now,
-            LastUpdatedAt = now
-        };
-
-        return discussionThread;
-    }
-
-    //Add reply to discussion
-    public static void AddReply(DiscussionThread thread, int replyId, Person author, string comment)
-    {
-        if (thread == null)
-            throw new ArgumentNullException(nameof(thread), "Discussion thread cannot be null.");
-        if (author == null)
-            throw new ArgumentNullException(nameof(author), "Author cannot be null.");
-        if (string.IsNullOrWhiteSpace(comment))
-            throw new ArgumentException("Comment cannot be empty.", nameof(comment));
-
-        var reply = new DiscussionPost
-        {
-            PersonId = author.Id, // Use PersonId instead of full Author object
-            Author = author,
-            Comment = comment,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        thread.Replies.Add(reply);
-        thread.UpdateLastUpdated();
-    }
-    #endregion
-
     #region GRADING METHODS
     /// <summary>
     /// Methods for Grading, Grade Calculations and Academic Performance
