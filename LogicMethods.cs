@@ -1120,41 +1120,6 @@ public static class LogicMethods
     /// Methods for Attendance Management and Reporting
     /// </summary>
 
-    // Take attendance for a learning path on a specific date
-    public static DailyAttendanceLogEntry TakeAttendanceForLearningPath(LearningPath learningPath, List<Student> presentStudents, Staff teacher, DateTime? attendanceDate = null)
-    {
-        if (learningPath == null)
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-
-        if (teacher == null)
-            throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
-
-        if (presentStudents == null)
-            throw new ArgumentNullException(nameof(presentStudents), "Present students list cannot be null.");
-
-        var targetDate = attendanceDate ?? DateTime.Now;
-        var allStudents = learningPath.Students ?? new List<Student>();
-        var absentStudents = allStudents.Where(s => !presentStudents.Any(p => p.Id == s.Id)).ToList();
-
-        var attendanceLogEntry = new DailyAttendanceLogEntry
-        {
-            LearningPathId = learningPath.Id,
-            LearningPath = learningPath,
-            TeacherId = teacher.Id,
-            Teacher = teacher,
-            PresentStudents = presentStudents,
-            AbsentStudents = absentStudents,
-            TimeStamp = targetDate
-        };
-
-        if (learningPath.AttendanceLog == null)
-            learningPath.AttendanceLog = new List<DailyAttendanceLogEntry>();
-
-        learningPath.AttendanceLog.Add(attendanceLogEntry);
-
-        return attendanceLogEntry;
-    }
-
     // Calculate attendance rate as a percentage
     public static double CalculateAttendanceRate(int presentCount, int totalCount)
     {
