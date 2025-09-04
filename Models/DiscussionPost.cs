@@ -6,11 +6,12 @@ namespace FcmsPortal.Models
     {
         public int Id { get; set; }
         public int DiscussionThreadId { get; set; }
+        public DiscussionThread DiscussionThread { get; set; } = null!;
         public int PersonId { get; set; }
         public Person Author { get; set; } = null!;
 
         [Required(ErrorMessage = "Comment is required.")]
-        [StringLength(100, ErrorMessage = "Comment must be 100 characters or fewer.")]
+        [StringLength(50, ErrorMessage = "Comment must be 50 characters or fewer.")]
         public string Comment { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? EditedAt { get; set; }
