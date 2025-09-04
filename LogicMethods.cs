@@ -714,6 +714,7 @@ public static class LogicMethods
         var now = DateTime.UtcNow;
         var firstPost = new DiscussionPost
         {
+            PersonId = author.Id, // Use PersonId instead of full Author object
             Author = author,
             Comment = comment,
             CreatedAt = now
@@ -740,13 +741,12 @@ public static class LogicMethods
         if (string.IsNullOrWhiteSpace(comment))
             throw new ArgumentException("Comment cannot be empty.", nameof(comment));
 
-        var now = DateTime.UtcNow;
         var reply = new DiscussionPost
         {
-            DiscussionThreadId = thread.Id,
+            PersonId = author.Id, // Use PersonId instead of full Author object
             Author = author,
             Comment = comment,
-            CreatedAt = now
+            CreatedAt = DateTime.UtcNow
         };
 
         thread.Replies.Add(reply);
