@@ -13,6 +13,6 @@ namespace FcmsPortal.Models
         [Required]
         [StringLength(50)]
         public string Comment { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
