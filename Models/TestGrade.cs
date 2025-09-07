@@ -6,6 +6,7 @@ namespace FcmsPortal.Models
     public class TestGrade
     {
         public int Id { get; set; }
+        public int? TeacherId { get; set; }
         public Staff? Teacher { get; set; }
         [Range(0, 100, ErrorMessage = "Score must be between 0 and 100.")]
         public double Score { get; set; }
