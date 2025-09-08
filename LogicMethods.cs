@@ -703,56 +703,6 @@ public static class LogicMethods
     /// Methods for Grading, Grade Calculations and Academic Performance
     /// </summary>
 
-    // Grade a test (Quiz, Exam, or Homework) for a student and add it to the appropriate course
-    public static void AddTestGrade(Student student, string course, double score, GradeType gradeType,
-     Staff teacher, string teacherRemark, LearningPath learningPath, int testGradeId, int? courseGradeId = null)
-    {
-        if (student == null)
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-        if (string.IsNullOrWhiteSpace(course))
-            throw new ArgumentException("Course name is required.", nameof(course));
-        if (learningPath == null)
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-
-        var courseGrade = student.CourseGrades.FirstOrDefault(cg =>
-            cg.Course == course && cg.LearningPathId == learningPath.Id);
-
-        if (courseGrade == null)
-        {
-            var gradingConfig = learningPath.CourseGradingConfigurations
-                .FirstOrDefault(c => c.Course == course);
-
-            courseGrade = new CourseGrade
-            {
-                Id = courseGradeId ?? 0,
-                Course = course,
-                StudentId = student.Id,
-                LearningPathId = learningPath.Id,
-                GradingConfiguration = gradingConfig
-            };
-            student.CourseGrades.Add(courseGrade);
-        }
-
-        var testGrade = new TestGrade
-        {
-            Id = testGradeId,
-            Score = score,
-            GradeType = gradeType,
-            Teacher = teacher,
-            Date = DateTime.Now,
-            TeacherRemark = teacherRemark,
-            CourseGradeId = courseGrade.Id,
-            CourseGrade = courseGrade
-        };
-
-        courseGrade.TestGrades.Add(testGrade);
-
-        if (courseGrade.GradingConfiguration != null)
-        {
-            RecalculateCourseGrade(courseGrade);
-        }
-    }
-
     // Recalculate the total grade for a course based on its test grades and configuration
     public static void RecalculateCourseGrade(CourseGrade courseGrade)
     {
@@ -915,32 +865,6 @@ public static class LogicMethods
                          lp.Students.Any(s => s.Id == student.Id))
             .OrderBy(lp => lp.Semester)
             .ToList();
-    }
-
-    public static int GetGradeCountByType(LearningPath learningPath, string course, GradeType gradeType)
-    {
-        return learningPath.Students
-            .SelectMany(s => s.CourseGrades
-                .Where(cg => cg.Course == course && cg.LearningPathId == learningPath.Id)
-                .SelectMany(cg => cg.TestGrades))
-            .Where(tg => tg.GradeType == gradeType)
-            .GroupBy(tg => tg.Date.Date)
-            .Count();
-    }
-
-    public static int GetHomeworkCount(LearningPath learningPath, string course)
-    {
-        return GetGradeCountByType(learningPath, course, GradeType.Homework);
-    }
-
-    public static int GetQuizCount(LearningPath learningPath, string course)
-    {
-        return GetGradeCountByType(learningPath, course, GradeType.Quiz);
-    }
-
-    public static int GetExamCount(LearningPath learningPath, string course)
-    {
-        return GetGradeCountByType(learningPath, course, GradeType.FinalExam);
     }
 
     public static (string CourseName, double Grade) GetHighestCourseGrade(Student student, int learningPathId)
