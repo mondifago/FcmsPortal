@@ -748,7 +748,6 @@ public static class LogicMethods
 
                 if (courseGrade != null)
                 {
-                    // Ensure final calculation and grade code
                     RecalculateCourseGrade(courseGrade);
                     courseGrade.IsFinalized = true;
                 }
@@ -913,7 +912,7 @@ public static class LogicMethods
 
         var submittedLearningPaths = school.LearningPaths
             .Where(lp => lp.AcademicYear == academicYear &&
-                         lp.Semester.ToString() == semester &&
+                         lp.Semester.ToString() == semester && !lp.IsTemplate &&
                          (lp.ApprovalStatus == PrincipalApprovalStatus.Review ||
                           lp.ApprovalStatus == PrincipalApprovalStatus.Approved))
             .ToList();
