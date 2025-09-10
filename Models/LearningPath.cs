@@ -50,7 +50,7 @@ namespace FcmsPortal.Models
 
         public List<ScheduleEntry> Schedule { get; set; } = new List<ScheduleEntry>();
         public List<Student> Students { get; set; } = new List<Student>();
-
+        public List<StudentReportCard> ReportCards { get; set; } = new List<StudentReportCard>();
         public List<Student> StudentsWithAccess { get; set; } = new List<Student>();
 
         public List<DailyAttendanceLogEntry> AttendanceLog { get; set; } = new List<DailyAttendanceLogEntry>();

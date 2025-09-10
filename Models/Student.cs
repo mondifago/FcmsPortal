@@ -26,5 +26,6 @@ public class Student
     public LearningPath? LearningPath { get; set; }
     [NotMapped]
     public List<FileAttachment> FinalResultAttachments { get; set; } = new();
+    public List<StudentReportCard> ReportCards { get; set; } = new();
     public DateTime? ArchivedDate { get; set; }
 }
