@@ -8,6 +8,7 @@ namespace FcmsPortal.Models
         public int StudentId { get; set; }
         public string StudentName { get; set; } = string.Empty;
         public int LearningPathId { get; set; }
+        public string LearningPathName { get; set; } = string.Empty;
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
         public Semester Semester { get; set; }
