@@ -5,10 +5,9 @@ namespace FcmsPortal.Models
     public class ArchivedStudentPayment
     {
         public int Id { get; set; }
-        public int OriginalStudentId { get; set; }
+        public int StudentId { get; set; }
         public string StudentName { get; set; } = string.Empty;
-        public int OriginalLearningPathId { get; set; }
-        public string LearningPathName { get; set; } = string.Empty;
+        public int LearningPathId { get; set; }
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
         public Semester Semester { get; set; }
