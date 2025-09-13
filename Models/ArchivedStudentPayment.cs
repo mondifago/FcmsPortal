@@ -18,7 +18,7 @@ namespace FcmsPortal.Models
         public double OutstandingBalance { get; set; }
         public double PaymentCompletionRate { get; set; }
         public double TimelyCompletionRate { get; set; }
-        public string PaymentDetailsJson { get; set; } = string.Empty;
         public DateTime ArchivedDate { get; set; }
+        public List<ArchivedPaymentDetail> PaymentDetails { get; set; } = new List<ArchivedPaymentDetail>();
     }
 }
