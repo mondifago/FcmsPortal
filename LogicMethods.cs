@@ -329,29 +329,6 @@ public static class LogicMethods
     /// Methods for Payment Processing, Fee Management and Financial Reporting
     /// </summary>
 
-    //Assign fees for all students in a specific learning path
-    public static void SetStudentFeesForLearningPath(LearningPath learningPath)
-    {
-        if (learningPath == null)
-        {
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-        }
-
-        if (learningPath.Students == null || !learningPath.Students.Any())
-        {
-            return;
-        }
-
-        foreach (var student in learningPath.Students)
-        {
-            if (student.Person.SchoolFees == null)
-            {
-                student.Person.SchoolFees = new SchoolFees();
-            }
-            student.Person.SchoolFees.TotalAmount = learningPath.FeePerSemester;
-        }
-    }
-
     //Check if student has made upto half the school fees payment
     public static bool HasMetPaymentThreshold(Student student)
     {
