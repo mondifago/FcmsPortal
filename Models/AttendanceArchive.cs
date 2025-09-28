@@ -11,7 +11,7 @@ namespace FcmsPortal.Models
         public string LearningPathName { get; set; } = string.Empty;
         public DateTime Date { get; set; }
         public bool IsPresent { get; set; }
-        public DateTime AcademicYearStart { get; set; }
+        public string AcademicYear { get; set; } = string.Empty;
         public Semester Semester { get; set; }
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
