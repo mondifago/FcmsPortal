@@ -14,7 +14,7 @@ public class Staff
     public Person Person { get; set; } = null!;
 
     [Required(ErrorMessage = "Job Role is Required")]
-    public JobRole JobRole { get; set; }
+    public UserRole JobRole { get; set; }
 
     [Required(ErrorMessage = "Job Description is Required")]
     [MaxLength(50)]
