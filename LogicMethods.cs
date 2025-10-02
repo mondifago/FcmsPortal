@@ -31,7 +31,7 @@ public static class LogicMethods
             throw new ArgumentNullException(nameof(school), "School cannot be null.");
 
         return school.Staff
-            .Where(staff => staff.JobRole == UserRole.Teacher &&
+            .Where(staff => staff.UserRole == UserRole.Teacher &&
                             staff.Person.EducationLevel == educationLevel)
             .ToList();
     }

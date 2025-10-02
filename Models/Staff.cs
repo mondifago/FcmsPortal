@@ -13,8 +13,8 @@ public class Staff
     public int PersonId { get; set; }
     public Person Person { get; set; } = null!;
 
-    [Required(ErrorMessage = "Job Role is Required")]
-    public UserRole JobRole { get; set; }
+    [Required(ErrorMessage = "User Role is Required")]
+    public UserRole UserRole { get; set; }
 
     [Required(ErrorMessage = "Job Description is Required")]
     [MaxLength(50)]
