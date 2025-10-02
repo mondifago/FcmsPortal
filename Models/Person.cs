@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
 {
-    public class Person : IdentityUser
+    public class Person : IdentityUser<int>
     {
-        public int Id { get; set; }
+
         public string? ProfilePictureUrl { get; set; }
         [Required(ErrorMessage = "First Name is required.")]
         [StringLength(30, MinimumLength = 2)]
@@ -47,12 +47,7 @@ namespace FcmsPortal.Models
         public string LgaOfOrigin { get; set; } = string.Empty;
         [Required]
         public Address Address { get; set; } = null!;
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
-        [Required]
-        [Phone]
-        public string PhoneNumber { get; set; } = string.Empty;
+
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
         public SchoolFees? SchoolFees { get; set; }
