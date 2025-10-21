@@ -11,19 +11,6 @@ public static class LogicMethods
     /// Methods involved in Initial Setup and Data Filtering
     /// </summary> 
 
-
-    // Filter students based on specified education level and class level
-    public static List<Student> GetStudentsByLevel(School school, EducationLevel educationLevel, ClassLevel classLevel)
-    {
-        if (school == null)
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
-
-        return school.Students
-            .Where(student => student.Person.EducationLevel == educationLevel
-                              && student.Person.ClassLevel == classLevel)
-            .ToList();
-    }
-
     //filter Teachers based on specified education level
     public static List<Staff> GetTeachersByEducationLevel(School school, EducationLevel educationLevel)
     {
@@ -34,11 +21,6 @@ public static class LogicMethods
             .Where(staff => staff.UserRole == UserRole.Teacher &&
                             staff.Person.EducationLevel == educationLevel)
             .ToList();
-    }
-
-    public static Staff? GetFirstTeacherByEducationLevel(School school, EducationLevel educationLevel)
-    {
-        return GetTeachersByEducationLevel(school, educationLevel).FirstOrDefault();
     }
 
     //Gets a list of all distinct EducationLevels found in the school's LearningPaths
@@ -79,35 +61,6 @@ public static class LogicMethods
         return classLevelMappings.TryGetValue(educationLevel, out var levels)
             ? levels
             : new List<ClassLevel>();
-    }
-
-    //Add student to school, which automatically adds guardian as well if the guardian is not previously added
-    public static void AddStudentToSchool(School school, Student student)
-    {
-        if (school == null)
-        {
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
-        }
-        if (student == null)
-        {
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-        }
-
-        if (school.Students.Any(s => s.Id == student.Id))
-        {
-            throw new ArgumentException($"Student with Id {student.Id} is already registered in the school.");
-        }
-
-        if (school.LearningPaths.Any(lp => lp.Students.Any(s => s.Id == student.Id)))
-        {
-            throw new ArgumentException($"Student with Id {student.Id} is already enrolled in a learning path.");
-        }
-
-        if (student.Guardian != null && !school.Guardians.Any(g => g.Id == student.Guardian.Id))
-        {
-            school.Guardians.Add(student.Guardian);
-        }
-        school.Students.Add(student);
     }
 
     //Remove student from Guardian Wards list
