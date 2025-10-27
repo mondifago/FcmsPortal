@@ -1107,4 +1107,16 @@ public static class LogicMethods
     }
 
     #endregion
+
+    public static Quote? GetRandomQuote(List<Quote> quotes)
+    {
+        if (quotes == null || !quotes.Any())
+            return null;
+
+        // Get a truly random quote each time
+        var random = new Random();
+        var index = random.Next(quotes.Count);
+
+        return quotes[index];
+    }
 }
