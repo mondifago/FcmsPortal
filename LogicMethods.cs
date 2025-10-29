@@ -81,20 +81,6 @@ public static class LogicMethods
         guardian.Wards.Remove(student);
     }
 
-    public static void RemoveStudentFromAllLearningPaths(School school, Student student)
-    {
-        if (school?.LearningPaths != null && student != null)
-        {
-            foreach (var learningPath in school.LearningPaths)
-            {
-                if (learningPath.Students != null)
-                {
-                    learningPath.Students.RemoveAll(s => s.Id == student.Id);
-                }
-            }
-        }
-    }
-
     //retrieve all guardians registered to school
     public static List<Guardian> GetAllGuardians(School school)
     {
