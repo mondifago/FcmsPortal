@@ -120,29 +120,6 @@ public static class LogicMethods
             .ToList();
     }
 
-    //Retrieves the schedule entry that contains a specific class session
-    public static ScheduleEntry? GetScheduleEntryForClassSession(School school, int classSessionId)
-    {
-        if (school?.LearningPaths == null)
-            return null;
-
-        foreach (var learningPath in school.LearningPaths)
-        {
-            if (learningPath.Schedule == null)
-                continue;
-
-            foreach (var schedule in learningPath.Schedule)
-            {
-                if (schedule.ClassSession?.Id == classSessionId)
-                {
-                    return schedule;
-                }
-            }
-        }
-
-        return null;
-    }
-
     public static ClassSessionReport? CreateClassSessionReport(ScheduleEntry? scheduleEntry, LearningPath? learningPath)
     {
         if (scheduleEntry?.ClassSession == null || learningPath == null)
