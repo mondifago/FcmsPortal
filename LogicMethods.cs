@@ -80,22 +80,6 @@ public static class LogicMethods
         }
         guardian.Wards.Remove(student);
     }
-
-    //retrieve all guardians registered to school
-    public static List<Guardian> GetAllGuardians(School school)
-    {
-        if (school == null)
-        {
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
-        }
-
-        if (school.Guardians == null || !school.Guardians.Any())
-        {
-            Console.WriteLine("No guardians found in the school.");
-            return new List<Guardian>();
-        }
-        return school.Guardians;
-    }
     #endregion
 
     #region SCHEDULING METHODS
@@ -749,7 +733,7 @@ public static class LogicMethods
         return studentGrades;
     }
 
-    // Get semester grades for all semesters for display in finalize grades
+    /* Get semester grades for all semesters for display in finalize grades
     public static List<double> GetStudentAllSemesterGrades(Student? student, School? school, EducationLevel educationLevel, ClassLevel classLevel)
     {
         if (school?.LearningPaths == null || student == null)
@@ -765,7 +749,7 @@ public static class LogicMethods
         }
 
         return semesterGrades;
-    }
+    }*/
 
 
     // Get previous learning paths for a student in the same education and class level
@@ -781,6 +765,7 @@ public static class LogicMethods
             .OrderBy(lp => lp.Semester)
             .ToList();
     }
+
 
     public static (string CourseName, double Grade) GetHighestCourseGrade(Student student, int learningPathId)
     {
@@ -1099,7 +1084,6 @@ public static class LogicMethods
         if (quotes == null || !quotes.Any())
             return null;
 
-        // Get a truly random quote each time
         var random = new Random();
         var index = random.Next(quotes.Count);
 
