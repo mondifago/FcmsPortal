@@ -11,44 +11,6 @@ public static class LogicMethods
     /// Methods involved in Initial Setup and Data Filtering
     /// </summary> 
 
-    //filter Teachers based on specified education level
-    public static List<Staff> GetTeachersByEducationLevel(School school, EducationLevel educationLevel)
-    {
-        if (school == null)
-            throw new ArgumentNullException(nameof(school), "School cannot be null.");
-
-        return school.Staff
-            .Where(staff => staff.UserRole == UserRole.Teacher &&
-                            staff.Person.EducationLevel == educationLevel)
-            .ToList();
-    }
-
-    //Gets a list of all distinct EducationLevels found in the school's LearningPaths
-    public static List<EducationLevel> GetExistingEducationLevels(School school)
-    {
-        if (school?.LearningPaths == null || !school.LearningPaths.Any())
-            return new List<EducationLevel>();
-
-        return school.LearningPaths
-            .Select(lp => lp.EducationLevel)
-            .Distinct()
-            .OrderBy(el => el)
-            .ToList();
-    }
-
-    //Gets a list of all distinct ClassLevels found in the school's LearningPaths
-    public static List<ClassLevel> GetExistingClassLevels(this School school)
-    {
-        if (school?.LearningPaths == null || !school.LearningPaths.Any())
-            return new List<ClassLevel>();
-
-        return school.LearningPaths
-            .Select(lp => lp.ClassLevel)
-            .Distinct()
-            .OrderBy(cl => cl)
-            .ToList();
-    }
-
     //Get a list of all distinct ClassLevels for a specific EducationLevel from the ClassLevelMapping service 
     public static List<ClassLevel> GetAvailableClassLevels(EducationLevel educationLevel)
     {
@@ -688,34 +650,6 @@ public static class LogicMethods
     }
 
 
-    //Compute promotion grade for student 
-    public static double CalculatePromotionGrade(Student student, List<LearningPath> learningPaths)
-    {
-        if (student == null)
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-
-        if (learningPaths == null || learningPaths.Count == 0)
-            return 0;
-
-        var relevantLearningPaths = learningPaths
-            .Where(lp => lp.Students.Contains(student))
-            .OrderBy(lp => lp.Semester)
-            .ToList();
-
-        if (relevantLearningPaths.Count == 0)
-            return 0;
-
-        double totalGrade = 0;
-
-        foreach (var learningPath in relevantLearningPaths)
-        {
-            double semesterGrade = CalculateSemesterOverallGrade(student, learningPath);
-            totalGrade += semesterGrade;
-        }
-
-        return Math.Round(totalGrade / FcmsConstants.NUMBER_OF_SEMESTERS, FcmsConstants.GRADE_ROUNDING_DIGIT);
-    }
-
     //method to arrange CalculateSemesterOverallGrade() of all students in a learning path in descending order
     public static List<(Student Student, double SemesterGrade)> RankStudentsBySemesterGrade(LearningPath learningPath)
     {
@@ -732,40 +666,6 @@ public static class LogicMethods
 
         return studentGrades;
     }
-
-    /* Get semester grades for all semesters for display in finalize grades
-    public static List<double> GetStudentAllSemesterGrades(Student? student, School? school, EducationLevel educationLevel, ClassLevel classLevel)
-    {
-        if (school?.LearningPaths == null || student == null)
-            return new List<double>();
-
-        var learningPaths = GetStudentPreviousLearningPaths(student, school, educationLevel, classLevel);
-        var semesterGrades = new List<double>();
-
-        foreach (var lp in learningPaths.OrderBy(l => l.Semester))
-        {
-            var grade = CalculateSemesterOverallGrade(student, lp);
-            semesterGrades.Add(grade);
-        }
-
-        return semesterGrades;
-    }*/
-
-
-    // Get previous learning paths for a student in the same education and class level
-    private static List<LearningPath> GetStudentPreviousLearningPaths(Student student, School school, EducationLevel educationLevel, ClassLevel classLevel)
-    {
-        if (student == null || school == null)
-            return new List<LearningPath>();
-
-        return school.LearningPaths
-            .Where(lp => lp.EducationLevel == educationLevel &&
-                         lp.ClassLevel == classLevel &&
-                         lp.Students.Any(s => s.Id == student.Id))
-            .OrderBy(lp => lp.Semester)
-            .ToList();
-    }
-
 
     public static (string CourseName, double Grade) GetHighestCourseGrade(Student student, int learningPathId)
     {
