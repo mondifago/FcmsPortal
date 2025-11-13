@@ -24,6 +24,8 @@ namespace FcmsPortal.Models
         public SchoolFees SchoolFees { get; set; } = null!;
         public Semester Semester { get; set; }
         public DateTime AcademicYearStart { get; set; }
+        public EducationLevel EducationLevel { get; set; }
+        public ClassLevel ClassLevel { get; set; }
         public int LearningPathId { get; set; }
 
         [NotMapped]
