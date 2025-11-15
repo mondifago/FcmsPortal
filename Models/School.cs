@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
 {
@@ -35,10 +34,7 @@ namespace FcmsPortal.Models
         [Required]
         public List<CalendarModel> SchoolCalendar { get; set; } = new();
 
-        public List<AcademicPeriod> AcademicPeriods { get; set; } = new();
-
-        [NotMapped]
-        public AcademicPeriod? CurrentAcademicPeriod =>
-            AcademicPeriods.FirstOrDefault(ap => ap.IsActive);
+        public int? CurrentAcademicPeriodId { get; set; }
+        public AcademicPeriod? CurrentAcademicPeriod { get; set; }
     }
 }

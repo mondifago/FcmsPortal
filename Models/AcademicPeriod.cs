@@ -9,10 +9,6 @@ namespace FcmsPortal.Models
         public int Id { get; set; }
 
         [Required]
-        public int SchoolId { get; set; }
-        public School School { get; set; } = null!;
-
-        [Required]
         public DateTime AcademicYearStart { get; set; }
 
         [Required]
@@ -26,15 +22,10 @@ namespace FcmsPortal.Models
 
         public DateTime? ExamsStartDate { get; set; }
 
-        public bool IsActive { get; set; } = false;
-        public bool IsArchived { get; set; } = false;
-
         [NotMapped]
         public string AcademicYear => $"{AcademicYearStart.Year}-{AcademicYearStart.Year + 1}";
 
         [NotMapped]
         public string DisplayName => $"{AcademicYear} - {Semester} Semester";
-
-        public List<LearningPath> LearningPaths { get; set; } = new();
     }
 }
