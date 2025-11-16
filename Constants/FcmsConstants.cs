@@ -5,6 +5,19 @@
         public const int SEMESTER_1_ENDMONTH = 4;
         public const int SEMESTER_2_ENDMONTH = 8;
         public const int SEMESTER_3_ENDMONTH = 12;
+
+        public const int SEMESTER_1_STARTMONTH = 1;
+        public const int SEMESTER_2_STARTMONTH = 5;
+        public const int SEMESTER_3_STARTMONTH = 9;
+
+        public const int SEMESTER_1_STARTDAY = 10;
+        public const int SEMESTER_2_STARTDAY = 10;
+        public const int SEMESTER_3_STARTDAY = 1;
+
+        public const int SEMESTER_1_ENDDAY = 30;
+        public const int SEMESTER_2_ENDDAY = 15;
+        public const int SEMESTER_3_ENDDAY = 15;
+
         public const int GRADE_ROUNDING_DIGIT = 2;
         public const int NUMBER_OF_SEMESTERS = 3;
         public const int BYTES_IN_KILOBYTE = 1024;

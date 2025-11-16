@@ -966,4 +966,76 @@ public static class LogicMethods
 
         return quotes[index];
     }
+
+    public static (Semester semester, DateTime startDate, DateTime endDate) GetDefaultSemesterDates()
+    {
+        int currentMonth = DateTime.Now.Month;
+
+        // First Semester: January - April
+        if (currentMonth >= FcmsConstants.SEMESTER_1_STARTMONTH && currentMonth <= FcmsConstants.SEMESTER_1_ENDMONTH)
+        {
+            return (
+                Semester.First,
+                new DateTime(DateTime.Now.Year,
+                    FcmsConstants.SEMESTER_1_STARTMONTH,
+                    FcmsConstants.SEMESTER_1_STARTDAY),
+                new DateTime(DateTime.Now.Year,
+                    FcmsConstants.SEMESTER_1_ENDMONTH,
+                    FcmsConstants.SEMESTER_1_ENDDAY)
+            );
+        }
+        // Second Semester: May - August
+        else if (currentMonth > FcmsConstants.SEMESTER_1_ENDMONTH &&
+                 currentMonth <= FcmsConstants.SEMESTER_2_ENDMONTH)
+        {
+            return (
+                Semester.Second,
+                new DateTime(DateTime.Now.Year,
+                    FcmsConstants.SEMESTER_2_STARTMONTH,
+                    FcmsConstants.SEMESTER_2_STARTDAY),
+                new DateTime(DateTime.Now.Year,
+                    FcmsConstants.SEMESTER_2_ENDMONTH,
+                    FcmsConstants.SEMESTER_2_ENDDAY)
+            );
+        }
+        // Third Semester: September - December
+        else
+        {
+            return (
+                Semester.Third,
+                new DateTime(DateTime.Now.Year,
+                    FcmsConstants.SEMESTER_3_STARTMONTH,
+                    FcmsConstants.SEMESTER_3_STARTDAY),
+                new DateTime(DateTime.Now.Year,
+                    FcmsConstants.SEMESTER_3_ENDMONTH,
+                    FcmsConstants.SEMESTER_3_ENDDAY)
+            );
+        }
+    }
+
+    public static (int academicYearStartYear, Semester semester, DateTime semesterStartDate, DateTime semesterEndDate, DateTime? examsStartDate)
+    GetAcademicPeriodFormDefaults(AcademicPeriod? currentPeriod)
+    {
+        if (currentPeriod != null)
+        {
+            return (
+                currentPeriod.AcademicYearStart.Year,
+                currentPeriod.Semester,
+                currentPeriod.SemesterStartDate,
+                currentPeriod.SemesterEndDate,
+                currentPeriod.ExamsStartDate
+            );
+        }
+        else
+        {
+            var (semester, startDate, endDate) = GetDefaultSemesterDates();
+            return (
+                DateTime.Now.Year,
+                semester,
+                startDate,
+                endDate,
+                null
+            );
+        }
+    }
 }
