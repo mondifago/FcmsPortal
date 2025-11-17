@@ -9,6 +9,7 @@ namespace FcmsPortal.Models
         public int Id { get; set; }
         public int SchoolId { get; set; }
         public School School { get; set; } = null!;
+        public int AcademicPeriodId { get; set; }
 
         [Required(ErrorMessage = "Education level is required.")]
         public EducationLevel EducationLevel { get; set; }
