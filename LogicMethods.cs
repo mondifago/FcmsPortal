@@ -535,6 +535,31 @@ public static class LogicMethods
 
         return totalPaid;
     }
+
+    public static LearningPathPaymentReportEntry GenerateArchivedLearningPathPaymentReport(ArchivedLearningPathPayment archive)
+    {
+        return new LearningPathPaymentReportEntry
+        {
+            LearningPathName = $"{archive.EducationLevel} - {archive.ClassLevel}",
+            AcademicYear = archive.AcademicYear,
+            Semester = archive.Semester.ToString(),
+            SemesterStartDate = archive.SemesterStartDate,
+            SemesterEndDate = archive.SemesterEndDate,
+            ReportGeneratedDateAndTime = archive.ArchivedDate,
+
+            TotalStudentsInPath = archive.TotalStudentsInPath,
+            TotalFeesForPath = archive.LearningPathExpectedRevenue,
+            TotalPaidForPath = archive.TotalPaid,
+            OutstandingForPath = archive.Outstanding,
+
+            LearningPathPaymentCompletionRate = archive.LearningPathPaymentCompletionRate,
+            AverageStudentPaymentCompletionRateInPath = archive.AverageStudentPaymentCompletionRateInPath,
+
+            LearningPathTimelyCompletionRateInPath = archive.LearningPathTimelyCompletionRate,
+            AverageStudentTimelyCompletionRate = archive.AverageStudentTimelyCompletionRateInPath
+        };
+    }
+
     #endregion
 
     #region GRADING METHODS
