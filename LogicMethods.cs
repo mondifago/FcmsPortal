@@ -560,6 +560,27 @@ public static class LogicMethods
         };
     }
 
+    public static SchoolPaymentReportEntry GenerateArchivedSchoolPaymentReport(ArchivedSchoolPaymentSummary archive)
+    {
+        return new SchoolPaymentReportEntry
+        {
+            AcademicYear = archive.AcademicYear,
+            Semester = archive.Semester.ToString(),
+            SemesterStartDate = archive.SemesterStartDate,
+            SemesterEndDate = archive.SemesterEndDate,
+            DateAndTimeReportGenerated = archive.ArchivedDate,
+
+            TotalStudents = archive.TotalStudents,
+            TotalSchoolFeesAmount = archive.TotalExpectedRevenue,
+            TotalAmountPaid = archive.TotalAmountReceived,
+            TotalOutstanding = archive.TotalOutstandingBalance,
+
+            SchoolPaymentCompletionRate = archive.SchoolWidePaymentCompletionRate,
+            AverageStudentPaymentCompletionRateInSchool = archive.AverageStudentPaymentCompletionRateInSchool,
+            AverageStudentTimelyCompletionRate = archive.AverageStudentTimelyCompletionRateInSchool
+        };
+    }
+
     #endregion
 
     #region GRADING METHODS
