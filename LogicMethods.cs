@@ -516,6 +516,55 @@ public static class LogicMethods
         };
     }
 
+    public static SchoolPaymentSummary CalculateSchoolPaymentSummary(List<LearningPath> learningPaths)
+    {
+        var summary = new SchoolPaymentSummary();
+
+        summary.TotalLearningPaths = learningPaths.Count;
+
+        var students = learningPaths
+            .SelectMany(lp => lp.Students)
+            .Distinct()
+            .ToList();
+
+        summary.TotalStudents = students.Count;
+
+        double totalExpected = 0;
+        double totalPaid = 0;
+
+        int fullyPaid = 0;
+        int withBalance = 0;
+
+        foreach (var lp in learningPaths)
+        {
+            totalExpected += lp.FeePerSemester * lp.Students.Count;
+        }
+
+        foreach (var student in students)
+        {
+            double paid = student.Person.SchoolFees?.TotalPaid ?? 0;
+            double fees = student.Person.SchoolFees?.TotalAmount ?? 0;
+
+            totalPaid += paid;
+
+            if (paid >= fees)
+                fullyPaid++;
+            else if (fees > 0)
+                withBalance++;
+        }
+
+        summary.FullyPaidStudents = fullyPaid;
+        summary.StudentsWithBalance = withBalance;
+        summary.TotalExpectedRevenue = totalExpected;
+        summary.TotalAmountReceived = totalPaid;
+        summary.TotalOutstanding = totalExpected - totalPaid;
+        summary.PaymentCompletionRate = CalculatePaymentCompletionRate(totalPaid, totalExpected);
+        summary.TimelyCompletionRate = CalculateOverallTimelyCompletionRate(learningPaths, students);
+
+        return summary;
+    }
+
+
     private static double GetTotalPaidForLearningPath(LearningPath learningPath)
     {
         double totalPaid = 0;
