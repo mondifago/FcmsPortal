@@ -1,4 +1,7 @@
-﻿namespace FcmsPortal.Models
+﻿using FcmsPortal.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace FcmsPortal.Models
 {
     public class CourseGrade
     {
@@ -10,8 +13,21 @@
         public string FinalGradeCode { get; set; } = string.Empty;
         public int StudentId { get; set; }
         public Student? Student { get; set; }
-        public int LearningPathId { get; set; }
-        public LearningPath? LearningPath { get; set; }
-        public bool IsFinalized { get; set; } = false;
+
+
+        public int? SemesterGradeId { get; set; }
+        public SemesterGrade? SemesterGrade { get; set; }
+
+
+        public Semester Semester { get; set; }
+        public ClassLevel ClassLevel { get; set; }
+        public EducationLevel EducationLevel { get; set; }
+        public DateTime AcademicYearStart { get; set; }
+        [NotMapped]
+        public string AcademicYear => $"{AcademicYearStart.Year}-{AcademicYearStart.Year + 1}";
+
+        public int LearningPathId { get; set; }   //remove
+        public LearningPath? LearningPath { get; set; } //remove
+        public bool IsFinalized { get; set; } = false;  //remove
     }
 }

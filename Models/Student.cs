@@ -20,7 +20,9 @@ public class Student
     public int GuardianId { get; set; }
     [ForeignKey("GuardianId")]
     public Guardian? Guardian { get; set; }
-    public List<CourseGrade> CourseGrades { get; set; } = new();
+    public List<CourseGrade> CourseGrades { get; set; } = new(); //remove
+    public List<SemesterGrade> SemesterGrades { get; set; } = new();
+    public List<AcademicYearGrade> AcademicYearGrades { get; set; } = new();
     public int? LearningPathId { get; set; }
     [ForeignKey("LearningPathId")]
     public LearningPath? LearningPath { get; set; }
