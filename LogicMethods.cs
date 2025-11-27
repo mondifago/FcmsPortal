@@ -683,7 +683,7 @@ public static class LogicMethods
                 if (courseGrade != null)
                 {
                     RecalculateCourseGrade(courseGrade);
-                    courseGrade.IsFinalized = true;
+                    //courseGrade.IsFinalized = true;
                 }
                 else
                 {
@@ -698,7 +698,7 @@ public static class LogicMethods
                         LearningPathId = learningPath.Id,
                         StudentId = student.Id,
                         GradingConfiguration = gradingConfig,
-                        IsFinalized = true
+                        //IsFinalized = true
                     });
                 }
             }

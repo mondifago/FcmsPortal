@@ -9,6 +9,5 @@ namespace FcmsPortal.Models
         public Semester Semester { get; set; }
         public Dictionary<Student, double> StudentSemesterGrades { get; set; } = new();
         public List<StudentGradeSummary> RankedStudents { get; set; } = new();
-        public bool IsFinalized { get; set; }
     }
 }

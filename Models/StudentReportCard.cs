@@ -21,12 +21,7 @@ namespace FcmsPortal.Models
         public double AttendanceRate { get; set; }
         public bool IsPromoted { get; set; }
         public string PromotionStatus { get; set; } = string.Empty;
-        public DateTime DateGenerated { get; set; } = DateTime.Now;
         public DateTime? DateFinalized { get; set; }
         public bool IsFinalized { get; set; } = false;
-        public int? GeneratedByTeacherId { get; set; }
-        public Staff? GeneratedByTeacher { get; set; }
-        public int? FinalizedByPrincipalId { get; set; }
-        public Staff? FinalizedByPrincipal { get; set; }
     }
 }

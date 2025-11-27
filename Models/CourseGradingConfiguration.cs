@@ -15,6 +15,5 @@ namespace FcmsPortal.Models
 
         [Range(0, 100, ErrorMessage = "Exam weight must be between 0 and 100")]
         public double FinalExamWeightPercentage { get; set; }
-        public LearningPath? LearningPath { get; set; }
     }
 }
