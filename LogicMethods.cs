@@ -667,101 +667,180 @@ public static class LogicMethods
     }
 
 
-    // Compute final semester grade for each course for each student in a learning path
-    public static void FinalizeSemesterGrades(LearningPath learningPath)
+    // Create or get course grade for a student in a specific semester
+    public static CourseGrade CreateOrGetCourseGrade(
+        SemesterGrade semesterGrade,
+        string courseName,
+        CourseGradingConfiguration? gradingConfig = null)
     {
-        if (learningPath == null)
-            throw new ArgumentNullException(nameof(learningPath), "Learning Path cannot be null.");
+        var existing = semesterGrade.CourseGrades
+            .FirstOrDefault(cg => cg.Course == courseName);
 
-        foreach (var student in learningPath.Students)
+        if (existing != null) return existing;
+
+        var newCourseGrade = new CourseGrade
         {
-            foreach (var course in CourseDefaults.GetCourseNames(learningPath.EducationLevel))
-            {
-                var courseGrade = student.CourseGrades.FirstOrDefault(cg =>
-                    cg.Course == course && cg.LearningPathId == learningPath.Id);
+            Course = courseName,
+            StudentId = semesterGrade.StudentId,
+            SemesterGradeId = semesterGrade.Id,
+            Semester = semesterGrade.Semester,
+            ClassLevel = semesterGrade.ClassLevel,
+            EducationLevel = semesterGrade.EducationLevel,
+            AcademicYearStart = semesterGrade.AcademicYearStart,
+            GradingConfiguration = gradingConfig,
+            TotalGrade = 0,
+            FinalGradeCode = "F"
+        };
 
-                if (courseGrade != null)
-                {
-                    RecalculateCourseGrade(courseGrade);
-                    //courseGrade.IsFinalized = true;
-                }
-                else
-                {
-                    var gradingConfig = learningPath.CourseGradingConfigurations
-                        .FirstOrDefault(c => c.Course == course);
-
-                    student.CourseGrades.Add(new CourseGrade
-                    {
-                        Course = course,
-                        TotalGrade = 0,
-                        FinalGradeCode = "F",
-                        LearningPathId = learningPath.Id,
-                        StudentId = student.Id,
-                        GradingConfiguration = gradingConfig,
-                        //IsFinalized = true
-                    });
-                }
-            }
-        }
+        semesterGrade.CourseGrades.Add(newCourseGrade);
+        return newCourseGrade;
     }
+
+    // Add test grade to a course
+    public static void AddTestGrade(CourseGrade courseGrade, TestGrade testGrade)
+    {
+        courseGrade.TestGrades.Add(testGrade);
+        RecalculateCourseGrade(courseGrade);
+    }
+
+
+    // Compute final semester grade for each course for each student in a learning path
+    public static SemesterGrade FinalizeSemesterGrade(
+     Student student,
+     Semester semester,
+     ClassLevel classLevel,
+     EducationLevel educationLevel,
+     DateTime academicYearStart,
+     List<CourseGradingConfiguration> gradingConfigs)
+    {
+        // Find or create SemesterGrade
+        var semesterGrade = student.SemesterGrades.FirstOrDefault(sg =>
+            sg.Semester == semester &&
+            sg.ClassLevel == classLevel &&
+            sg.AcademicYearStart == academicYearStart);
+
+        if (semesterGrade == null)
+        {
+            semesterGrade = new SemesterGrade
+            {
+                StudentId = student.Id,
+                Semester = semester,
+                ClassLevel = classLevel,
+                EducationLevel = educationLevel,
+                AcademicYearStart = academicYearStart
+            };
+            student.SemesterGrades.Add(semesterGrade);
+        }
+
+        // Get expected courses for this education level
+        var expectedCourses = CourseDefaults.GetCourseNames(educationLevel);
+
+        // Ensure all courses exist
+        foreach (var courseName in expectedCourses)
+        {
+            var gradingConfig = gradingConfigs.FirstOrDefault(gc => gc.Course == courseName);
+            var courseGrade = CreateOrGetCourseGrade(semesterGrade, courseName, gradingConfig);
+            RecalculateCourseGrade(courseGrade);
+        }
+
+        // Calculate semester overall grade
+        semesterGrade.SemesterOverallGrade = CalculateSemesterOverallGrade(semesterGrade);
+        semesterGrade.NumberOfCourses = semesterGrade.CourseGrades.Count(cg => cg.TotalGrade > 0);
+        semesterGrade.IsFinalized = true;
+        semesterGrade.DateFinalized = DateTime.UtcNow;
+
+        return semesterGrade;
+    }
+
 
     // Compute Semester overall grade average for a student
-    public static double CalculateSemesterOverallGrade(Student student, LearningPath learningPath)
+    public static double CalculateSemesterOverallGrade(SemesterGrade semesterGrade)
     {
-        if (student == null)
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
-
-        var courseGrades = student.CourseGrades
-            .Where(cg => cg.LearningPathId == learningPath.Id && cg.TotalGrade > 0)
-            .ToList();
-
-        if (!courseGrades.Any())
+        if (semesterGrade?.CourseGrades == null || !semesterGrade.CourseGrades.Any())
             return 0;
 
-        return Math.Round(courseGrades.Average(cg => cg.TotalGrade), FcmsConstants.GRADE_ROUNDING_DIGIT);
-    }
-
-
-    //method to arrange CalculateSemesterOverallGrade() of all students in a learning path in descending order
-    public static List<(Student Student, double SemesterGrade)> RankStudentsBySemesterGrade(LearningPath learningPath)
-    {
-        if (learningPath == null)
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-
-        if (learningPath.Students == null || learningPath.Students.Count == 0)
-            return new List<(Student, double)>();
-
-        var studentGrades = learningPath.Students
-            .Select(student => (Student: student, SemesterGrade: CalculateSemesterOverallGrade(student, learningPath)))
-            .OrderByDescending(sg => sg.SemesterGrade)
+        var validGrades = semesterGrade.CourseGrades
+            .Where(cg => cg.TotalGrade > 0)
             .ToList();
 
-        return studentGrades;
+        if (!validGrades.Any())
+            return 0;
+
+        return Math.Round(validGrades.Average(cg => cg.TotalGrade), FcmsConstants.GRADE_ROUNDING_DIGIT);
     }
 
-    public static (string CourseName, double Grade) GetHighestCourseGrade(Student student, int learningPathId)
+    // Rank students by semester grade
+    public static List<StudentGradeSummary> RankStudentsBySemesterGrade(
+        List<Student> students,
+        Semester semester,
+        int academicYearStartYear)
     {
-        var courseGrades = student.CourseGrades
-            .Where(cg => cg.LearningPathId == learningPathId && cg.TotalGrade > 0)
+        var rankedStudents = students
+            .Select(student =>
+            {
+                var semesterGrade = GetSemesterGrade(student, semester, academicYearStartYear);
+                return new StudentGradeSummary
+                {
+                    Student = student,
+                    SemesterOverallGrade = semesterGrade?.SemesterOverallGrade ?? 0
+                };
+            })
+            .Where(sg => sg.SemesterOverallGrade > 0)
+            .OrderByDescending(sg => sg.SemesterOverallGrade)
+            .ToList();
+
+        return rankedStudents;
+    }
+
+    // Rank students by academic year grade
+    public static List<StudentGradeSummary> RankStudentsByAcademicYearGrade(
+        List<Student> students,
+        int academicYearStartYear)
+    {
+        var rankedStudents = students
+            .Select(student =>
+            {
+                var yearGrade = student.AcademicYearGrades.FirstOrDefault(ayg =>
+                    ayg.AcademicYearStart.Year == academicYearStartYear);
+                return new StudentGradeSummary
+                {
+                    Student = student,
+                    SemesterOverallGrade = yearGrade?.AcademicYearCumulativeGrade ?? 0
+                };
+            })
+            .Where(sg => sg.SemesterOverallGrade > 0)
+            .OrderByDescending(sg => sg.SemesterOverallGrade)
+            .ToList();
+
+        return rankedStudents;
+    }
+
+
+
+    public static (string CourseName, double Grade) GetHighestCourseGrade(SemesterGrade semesterGrade)
+    {
+        var topCourse = semesterGrade.CourseGrades
+            .Where(cg => cg.TotalGrade > 0)
             .OrderByDescending(cg => cg.TotalGrade)
             .FirstOrDefault();
 
-        return courseGrades != null
-            ? (courseGrades.Course, courseGrades.TotalGrade)
+        return topCourse != null
+            ? (topCourse.Course, topCourse.TotalGrade)
             : ("N/A", 0);
     }
 
-    public static (string CourseName, double Grade) GetLowestCourseGrade(Student student, int learningPathId)
+    public static (string CourseName, double Grade) GetLowestCourseGrade(SemesterGrade semesterGrade)
     {
-        var courseGrades = student.CourseGrades
-            .Where(cg => cg.LearningPathId == learningPathId && cg.TotalGrade > 0)
+        var lowestCourse = semesterGrade.CourseGrades
+            .Where(cg => cg.TotalGrade > 0)
             .OrderBy(cg => cg.TotalGrade)
             .FirstOrDefault();
 
-        return courseGrades != null
-            ? (courseGrades.Course, courseGrades.TotalGrade)
+        return lowestCourse != null
+            ? (lowestCourse.Course, lowestCourse.TotalGrade)
             : ("N/A", 0);
     }
+
 
     public static double CalculateWeightedContribution(CourseGrade courseGrade, GradeType gradeType, double weightPercentage)
     {
@@ -833,7 +912,6 @@ public static class LogicMethods
         {
             LearningPath = learningPath,
             Semester = learningPath.Semester,
-            IsFinalized = false
         };
 
         foreach (var student in learningPath.Students)
