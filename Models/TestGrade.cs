@@ -10,7 +10,7 @@ namespace FcmsPortal.Models
         public Staff? Teacher { get; set; }
         [Range(0, 100, ErrorMessage = "Score must be between 0 and 100.")]
         public double Score { get; set; }
-
+        public double MaxScore { get; set; }
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
 
@@ -19,9 +19,10 @@ namespace FcmsPortal.Models
 
         [StringLength(50, ErrorMessage = "Remark must be 50 characters or fewer.")]
         public string TeacherRemark { get; set; } = string.Empty;
-
         public int CourseGradeId { get; set; }
-
         public CourseGrade? CourseGrade { get; set; }
+        // OPTIONALLY link this to HomeworkSubmission
+        //public int? HomeworkSubmissionId { get; set; }
+        //public HomeworkSubmission? HomeworkSubmission { get; set; }
     }
 }

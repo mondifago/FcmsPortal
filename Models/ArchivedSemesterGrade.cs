@@ -15,6 +15,8 @@ namespace FcmsPortal.Models
 
         [NotMapped]
         public string AcademicYear => $"{AcademicYearStart.Year}-{AcademicYearStart.Year + 1}";
+        public int LearningPathId { get; set; }
+        public string LearningPathName { get; set; } = string.Empty;
         public double SemesterOverallGrade { get; set; }
         public int Rank { get; set; }
         public int TotalStudentsInClass { get; set; }
