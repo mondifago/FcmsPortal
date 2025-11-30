@@ -56,6 +56,8 @@ namespace FcmsPortal.Models
 
         public List<DailyAttendanceLogEntry> AttendanceLog { get; set; } = new List<DailyAttendanceLogEntry>();
 
+        public List<CourseGradingConfiguration> CourseGradingConfigurations { get; set; } = new List<CourseGradingConfiguration>();
+
         public PrincipalApprovalStatus ApprovalStatus { get; set; } = PrincipalApprovalStatus.Pending;
 
         public bool IsTemplate { get; set; } = false;

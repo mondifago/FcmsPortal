@@ -633,6 +633,7 @@ public static class LogicMethods
     #endregion
 
     #region GRADING METHODS
+
     /// <summary>
     /// Methods for Grading, Grade Calculations and Academic Performance
     /// </summary>
