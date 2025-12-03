@@ -945,7 +945,7 @@ public static class LogicMethods
         return report;
     }
 
-    private static string GetLearningPathDisplayName(LearningPath learningPath)
+    public static string GetLearningPathDisplayName(LearningPath learningPath)
     {
         return $"{learningPath.EducationLevel} - {learningPath.ClassLevel} ({learningPath.AcademicYear} {learningPath.Semester})";
     }
@@ -1132,5 +1132,25 @@ public static class LogicMethods
                 null
             );
         }
+    }
+
+    public static string GetPromotionStatusForArchive(LearningPath learningPath, bool isPromoted)
+    {
+        if (!isPromoted)
+            return "NOT PROMOTED";
+
+        if (LogicMethods.IsLastClassInEducationLevel(learningPath.EducationLevel, learningPath.ClassLevel))
+            return "GRADUATED";
+
+        var (nextEducation, nextClass) = LogicMethods.GetNextEducationLevelAndClass(
+            learningPath.EducationLevel, learningPath.ClassLevel);
+
+        if (nextEducation.HasValue && nextEducation != learningPath.EducationLevel)
+        {
+            return $"PROMOTED to {nextEducation} {nextClass}";
+        }
+
+        var nextClassLevel = LogicMethods.GetNextClassLevel(learningPath.EducationLevel, learningPath.ClassLevel);
+        return $"PROMOTED to {learningPath.EducationLevel} {nextClassLevel}";
     }
 }
