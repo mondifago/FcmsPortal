@@ -16,5 +16,7 @@
         public bool IsPromoted { get; set; }
         public string PromotionStatus { get; set; } = string.Empty;
         public List<ArchivedCourseGrade> CourseGrades { get; set; } = new List<ArchivedCourseGrade>();
+        public StudentReportCard? ArchivedReportCard { get; set; }
+
     }
 }
