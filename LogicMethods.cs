@@ -792,36 +792,18 @@ public static class LogicMethods
 
         foreach (var learningPath in submittedLearningPaths)
         {
-            var teacher = GetPrimaryTeacherForLearningPath(school, learningPath);
-
             reports.Add(new GradesReport
             {
                 LearningPathId = learningPath.Id,
                 LearningPathName = GetLearningPathDisplayName(learningPath),
-                DateSubmitted = DateTime.Now,
-                SubmittedBy = $"{teacher.Person.FirstName} {teacher.Person.LastName}",
+                DateSubmitted = learningPath.DateSubmitted ?? DateTime.Now,
+                SubmittedBy = learningPath.SubmittedByName ?? "Unknown",
                 NumberOfStudents = learningPath.Students?.Count ?? 0,
                 Status = learningPath.ApprovalStatus
             });
         }
 
         return reports.OrderByDescending(r => r.DateSubmitted).ToList();
-    }
-
-    private static Staff GetPrimaryTeacherForLearningPath(School school, LearningPath learningPath)
-    {
-        var recentTeacher = learningPath.Schedule?
-            .Where(s => s.ClassSession?.Teacher != null)
-            .OrderByDescending(s => s.DateTime)
-            .FirstOrDefault()?.ClassSession?.Teacher;
-
-        if (recentTeacher != null)
-            return recentTeacher;
-
-        return school.Staff?.FirstOrDefault() ?? new Staff
-        {
-            Person = new Person { FirstName = "Unknown", LastName = "Teacher" }
-        };
     }
 
     public static LearningPathGradeReport GenerateLearningPathGradeReport(LearningPath learningPath)
