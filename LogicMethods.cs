@@ -125,14 +125,18 @@ public static class LogicMethods
         if (scheduleEntry?.ClassSession == null || learningPath == null)
             return null;
 
+        var classSession = scheduleEntry.ClassSession;
+
         return new ClassSessionReport
         {
-            ClassSessionId = scheduleEntry.ClassSession.Id,
+            ClassSessionId = classSession.Id,
             LearningPathName = GetLearningPathDisplayName(learningPath),
-            Course = scheduleEntry.ClassSession.Course,
-            Topic = scheduleEntry.ClassSession.Topic,
-            SubmittedBy = scheduleEntry.ClassSession.Teacher?.Person?.LastName ?? "Unknown",
-            TimeSubmitted = scheduleEntry.DateTime
+            Course = classSession.Course,
+            Topic = classSession.Topic,
+            SubmittedBy = !string.IsNullOrEmpty(classSession.RemarksSubmittedByName)
+                ? classSession.RemarksSubmittedByName
+                : classSession.Teacher?.Person?.LastName ?? "Unknown",
+            TimeSubmitted = classSession.RemarksSubmittedAt ?? scheduleEntry.DateTime
         };
     }
 
