@@ -81,7 +81,7 @@ public static class LogicMethods
             currentDate = baseEntry.RecurrencePattern switch
             {
                 RecurrenceType.Daily => currentDate.AddDays(baseEntry.RecurrenceInterval),
-                RecurrenceType.Weekly => currentDate.AddDays(7 * baseEntry.RecurrenceInterval),
+                RecurrenceType.Weekly => currentDate.AddDays(FcmsConstants.DAYS_IN_WEEK * baseEntry.RecurrenceInterval),
                 RecurrenceType.Monthly => currentDate.AddMonths(baseEntry.RecurrenceInterval),
                 _ => currentDate
             };
