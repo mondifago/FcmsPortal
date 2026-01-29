@@ -26,6 +26,6 @@ namespace FcmsPortal.Models
         public string AcademicYear => $"{AcademicYearStart.Year}-{AcademicYearStart.Year + 1}";
 
         [NotMapped]
-        public string DisplayName => $"{AcademicYear} - {Semester} Semester";
+        public string DisplayName => $"{AcademicYear} - {Semester} Term";
     }
 }
