@@ -120,9 +120,9 @@ public static class LogicMethods
             .ToList();
     }
 
-    public static ClassSessionReport? CreateClassSessionReport(ScheduleEntry? scheduleEntry, LearningPath? learningPath)
+    public static ClassSessionReport? CreateClassSessionReport(ScheduleEntry? scheduleEntry)
     {
-        if (scheduleEntry?.ClassSession == null || learningPath == null)
+        if (scheduleEntry?.ClassSession == null)
             return null;
 
         var classSession = scheduleEntry.ClassSession;
@@ -130,7 +130,7 @@ public static class LogicMethods
         return new ClassSessionReport
         {
             ClassSessionId = classSession.Id,
-            LearningPathName = GetLearningPathDisplayName(learningPath),
+            LearningPathName = "",
             Course = classSession.Course,
             Topic = classSession.Topic,
             SubmittedBy = !string.IsNullOrEmpty(classSession.RemarksSubmittedByName)
@@ -780,36 +780,6 @@ public static class LogicMethods
         return Math.Round(contribution, FcmsConstants.GRADE_ROUNDING_DIGIT);
     }
 
-    public static List<GradesReport> GetGradesReports(School school, string academicYear, string semester)
-    {
-        var reports = new List<GradesReport>();
-
-        if (string.IsNullOrEmpty(academicYear) || string.IsNullOrEmpty(semester))
-            return reports;
-
-        var submittedLearningPaths = school.LearningPaths
-            .Where(lp => lp.AcademicYear == academicYear &&
-                         lp.Semester.ToString() == semester && !lp.IsTemplate &&
-                         (lp.ApprovalStatus == PrincipalApprovalStatus.Review ||
-                          lp.ApprovalStatus == PrincipalApprovalStatus.Approved))
-            .ToList();
-
-        foreach (var learningPath in submittedLearningPaths)
-        {
-            reports.Add(new GradesReport
-            {
-                LearningPathId = learningPath.Id,
-                LearningPathName = GetLearningPathDisplayName(learningPath),
-                DateSubmitted = learningPath.DateSubmitted ?? DateTime.Now,
-                SubmittedBy = learningPath.SubmittedByName ?? "Unknown",
-                NumberOfStudents = learningPath.Students?.Count ?? 0,
-                Status = learningPath.ApprovalStatus
-            });
-        }
-
-        return reports.OrderByDescending(r => r.DateSubmitted).ToList();
-    }
-
     public static LearningPathGradeReport GenerateLearningPathGradeReport(LearningPath learningPath)
     {
         if (learningPath == null)
@@ -887,7 +857,7 @@ public static class LogicMethods
         var report = new SemesterAttendanceReport
         {
             LearningPathId = learningPath.Id,
-            LearningPathName = GetLearningPathDisplayName(learningPath),
+            LearningPathName = "",
             StartDate = learningPath.SemesterStartDate,
             EndDate = learningPath.SemesterEndDate
         };
@@ -929,11 +899,6 @@ public static class LogicMethods
         }
 
         return report;
-    }
-
-    public static string GetLearningPathDisplayName(LearningPath learningPath)
-    {
-        return $"{learningPath.EducationLevel} - {learningPath.ClassLevel} ({learningPath.AcademicYear} {learningPath.Semester})";
     }
     #endregion
 
@@ -1118,25 +1083,5 @@ public static class LogicMethods
                 null
             );
         }
-    }
-
-    public static string GetPromotionStatusForArchive(LearningPath learningPath, bool isPromoted)
-    {
-        if (!isPromoted)
-            return "NOT PROMOTED";
-
-        if (LogicMethods.IsLastClassInEducationLevel(learningPath.EducationLevel, learningPath.ClassLevel))
-            return "GRADUATED";
-
-        var (nextEducation, nextClass) = LogicMethods.GetNextEducationLevelAndClass(
-            learningPath.EducationLevel, learningPath.ClassLevel);
-
-        if (nextEducation.HasValue && nextEducation != learningPath.EducationLevel)
-        {
-            return $"PROMOTED to {nextEducation} {nextClass}";
-        }
-
-        var nextClassLevel = LogicMethods.GetNextClassLevel(learningPath.EducationLevel, learningPath.ClassLevel);
-        return $"PROMOTED to {learningPath.EducationLevel} {nextClassLevel}";
     }
 }
