@@ -4,6 +4,6 @@
     {
         Quiz,
         Homework,
-        FinalExam,
+        Exam,
     }
 }

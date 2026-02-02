@@ -657,7 +657,7 @@ public static class LogicMethods
         var config = courseGrade.GradingConfiguration;
         var homeworkGrades = courseGrade.TestGrades.Where(tg => tg.GradeType == GradeType.Homework);
         var quizGrades = courseGrade.TestGrades.Where(tg => tg.GradeType == GradeType.Quiz);
-        var examGrades = courseGrade.TestGrades.Where(tg => tg.GradeType == GradeType.FinalExam);
+        var examGrades = courseGrade.TestGrades.Where(tg => tg.GradeType == GradeType.Exam);
 
         double homeworkAvg = homeworkGrades.Any() ? homeworkGrades.Average(g => g.Score) : 0;
         double quizAvg = quizGrades.Any() ? quizGrades.Average(g => g.Score) : 0;
