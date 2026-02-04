@@ -196,14 +196,17 @@ public static class LogicMethods
     /// </summary>
 
     //Check if student has made upto half the school fees payment
-    public static bool HasMetPaymentThreshold(Student student)
+    public static bool HasMetPaymentThreshold(Student student, int learningPathId)
     {
         if (student?.Person?.SchoolFees == null)
         {
             throw new ArgumentException("Invalid student or school fees record.");
         }
 
-        double totalPayments = student.Person.SchoolFees.Payments.Sum(p => p.Amount);
+        double totalPayments = student.Person.SchoolFees.Payments
+            .Where(p => p.LearningPathId == learningPathId)
+            .Sum(p => p.Amount);
+
         return totalPayments >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR;
     }
 
@@ -213,7 +216,7 @@ public static class LogicMethods
         if (student?.Person?.SchoolFees == null || learningPath?.StudentsWithAccess == null)
             return;
 
-        bool hasAccess = HasMetPaymentThreshold(student);
+        bool hasAccess = HasMetPaymentThreshold(student, learningPath.Id);
 
         learningPath.StudentsWithAccess.RemoveAll(s => s.Id == student.Id);
 
@@ -539,6 +542,8 @@ public static class LogicMethods
         int fullyPaid = 0;
         int withBalance = 0;
 
+        var learningPathIds = learningPaths.Select(lp => lp.Id).ToHashSet();
+
         foreach (var lp in learningPaths)
         {
             totalExpected += lp.FeePerSemester * lp.Students.Count;
@@ -546,15 +551,26 @@ public static class LogicMethods
 
         foreach (var student in students)
         {
-            double paid = student.Person.SchoolFees?.TotalPaid ?? 0;
+            // Only count payments made to the learning paths in the current period
+            double paid = student.Person.SchoolFees?.Payments
+                .Where(p => learningPathIds.Contains(p.LearningPathId))
+                .Sum(p => p.Amount) ?? 0;
+
             double fees = student.Person.SchoolFees?.TotalAmount ?? 0;
 
             totalPaid += paid;
 
             if (paid >= fees)
+            {
                 fullyPaid++;
-            else if (fees > 0)
-                withBalance++;
+            }
+            else
+            {
+                if (fees > 0)
+                {
+                    withBalance++;
+                }
+            }
         }
 
         summary.FullyPaidStudents = fullyPaid;
