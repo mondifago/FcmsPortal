@@ -67,9 +67,9 @@
         public const double FAIR_GRADE_MIN = 50.0;
 
         // Dashboard/Pagination Defaults
-        public const int DEFAULT_DASHBOARD_LIST_COUNT = 5;
+        public const int DEFAULT_DASHBOARD_LIST_COUNT = 2;
         public const int MAX_QUOTES_COUNT = 10;
-        public const int MAX_ANNOUNCEMENTS_COUNT = 3;
+        public const int MAX_ANNOUNCEMENTS_COUNT = 2;
 
         // Metrics
         public const double PERCENTAGE_MULTIPLIER = 100.0;
