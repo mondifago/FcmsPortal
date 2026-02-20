@@ -32,5 +32,7 @@ namespace FcmsPortal.Models
         public DateTime? RemarksSubmittedAt { get; set; }
         public List<FileAttachment> StudyMaterials { get; set; } = new();
         public List<DiscussionThread> DiscussionThreads { get; set; } = new();
+        public string? VideoUrl { get; set; }
+        public string? VideoTitle { get; set; }
     }
 }
