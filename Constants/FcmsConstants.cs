@@ -74,5 +74,8 @@
         // Metrics
         public const double PERCENTAGE_MULTIPLIER = 100.0;
         public const double DEFAULT_COMPLETION_RATE = 0.0;
+
+        // String Lengths
+        public const int MAX_DISCUSSION_COMMENT_LENGTH = 500;
     }
 }

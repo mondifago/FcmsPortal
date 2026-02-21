@@ -11,7 +11,7 @@ namespace FcmsPortal.Models
         public Person Author { get; set; } = null!;
 
         [Required]
-        [StringLength(50)]
+        [StringLength(500, ErrorMessage = "your message cannot exceed 500 characters.")]
         public string Comment { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
