@@ -14,5 +14,7 @@ namespace FcmsPortal.Models
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
         public GradeType GradeType { get; set; }
+        public string TeacherName { get; set; } = string.Empty;
+        public string TeacherRemark { get; set; } = string.Empty;
     }
 }
