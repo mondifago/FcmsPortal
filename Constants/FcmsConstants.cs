@@ -77,5 +77,8 @@
 
         // String Lengths
         public const int MAX_DISCUSSION_COMMENT_LENGTH = 500;
+
+        // Pagination
+        public const int LIST_PAGE_SIZE = 10;
     }
 }
