@@ -80,5 +80,8 @@
 
         // Pagination
         public const int LIST_PAGE_SIZE = 10;
+
+        // Authentication
+        public const int AUTH_SESSION_HOURS = 1;
     }
 }
