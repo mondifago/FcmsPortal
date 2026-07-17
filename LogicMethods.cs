@@ -727,6 +727,21 @@ public static class LogicMethods
                              (examAvg * config.FinalExamWeightPercentage / FcmsConstants.PERCENTAGE_MULTIPLIER);
 
         courseGrade.TotalGrade = Math.Round(weightedSum, FcmsConstants.GRADE_ROUNDING_DIGIT);
+        courseGrade.FinalGradeCode = GetGradeCode(courseGrade.TotalGrade);
+    }
+
+    // Map a total grade to its letter grade code
+    public static string GetGradeCode(double totalGrade)
+    {
+        return totalGrade switch
+        {
+            >= FcmsConstants.A_GRADE_MIN => "A",
+            >= FcmsConstants.B_GRADE_MIN => "B",
+            >= FcmsConstants.C_GRADE_MIN => "C",
+            >= FcmsConstants.D_GRADE_MIN => "D",
+            >= FcmsConstants.E_GRADE_MIN => "E",
+            _ => "F",
+        };
     }
 
 
