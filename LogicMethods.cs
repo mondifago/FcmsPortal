@@ -1040,6 +1040,20 @@ public static class LogicMethods
     {
         return educationLevel == EducationLevel.SeniorCollege && classLevel == ClassLevel.SC_3;
     }
+
+    // Every report card must carry both teacher and principal remarks before finalization
+    public static List<Student> GetStudentsWithIncompleteReportCardRemarks(LearningPath learningPath,List<StudentReportCard> reportCards)
+    {
+        return learningPath.Students
+            .Where(student =>
+            {
+                var card = reportCards.FirstOrDefault(rc => rc.StudentId == student.Id);
+                return card == null ||
+                       string.IsNullOrWhiteSpace(card.TeacherRemarks) ||
+                       string.IsNullOrWhiteSpace(card.PrincipalRemarks);
+            })
+            .ToList();
+    }
     #endregion
 
     #region QUOTES
