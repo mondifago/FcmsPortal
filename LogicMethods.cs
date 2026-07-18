@@ -744,6 +744,14 @@ public static class LogicMethods
         };
     }
 
+    // Promotion grade averages only the semesters a student actually has,
+    // so a mid-year transfer is not averaged against terms never sat.
+    public static double CalculatePromotionGrade(Dictionary<Semester, double> semesterGrades)
+    {
+        return semesterGrades.Any()
+            ? Math.Round(semesterGrades.Values.Average(), FcmsConstants.GRADE_ROUNDING_DIGIT)
+            : 0;
+    }
 
     // Compute final semester grade for each course for each student in a learning path
     public static void FinalizeSemesterGrades(LearningPath learningPath)
