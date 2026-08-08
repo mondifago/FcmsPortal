@@ -1,4 +1,5 @@
-﻿using FcmsPortal.Enums;
+﻿using FcmsPortal.Constants;
+using FcmsPortal.Enums;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -53,9 +54,17 @@ namespace FcmsPortal.Models
         public SchoolFees? SchoolFees { get; set; }
         [StringLength(100, ErrorMessage = "Emergency contact details cannot exceed 100 characters.")]
         [Required(ErrorMessage = "Emergency contact number is required")]
-        [Phone(ErrorMessage = "Please enter a valid phone number")]
+        [RegularExpression(FcmsConstants.PHONE_PATTERN, ErrorMessage = "Enter a valid phone number, e.g. 08031234567.")]
         public string EmergencyContact { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
         public bool IsArchived { get; set; } = false;
+
+        [ProtectedPersonalData]
+        [RegularExpression(FcmsConstants.EMAIL_PATTERN, ErrorMessage = "Enter a valid email address.")]
+        public override string? Email { get; set; }
+
+        [ProtectedPersonalData]
+        [RegularExpression(FcmsConstants.PHONE_PATTERN, ErrorMessage = "Enter a valid phone number, e.g. 08031234567.")]
+        public override string? PhoneNumber { get; set; }
     }
 }

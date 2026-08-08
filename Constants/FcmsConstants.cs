@@ -83,5 +83,9 @@
 
         // Authentication
         public const int AUTH_SESSION_HOURS = 1;
+
+        // Validation
+        public const string EMAIL_PATTERN = @"^[^@\s]+@[^@\s]+\.[^@\s]{2,}$";
+        public const string PHONE_PATTERN = @"^\+?\d(?:[\s-]?\d){9,14}$";
     }
 }
