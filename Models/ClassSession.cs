@@ -14,6 +14,7 @@ namespace FcmsPortal.Models
         [StringLength(50, ErrorMessage = "Topic must be 50 characters or fewer.")]
         public string Topic { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Description is required.")]
         [StringLength(100, ErrorMessage = "Description must be 100 characters or fewer.")]
         public string Description { get; set; } = string.Empty;
 
