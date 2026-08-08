@@ -8,10 +8,8 @@ namespace FcmsPortal.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Date and time are required.")]
         public DateTime DateTime { get; set; }
 
-        [Required(ErrorMessage = "Duration is required.")]
         public TimeSpan Duration { get; set; }
 
         [Required(ErrorMessage = "Venue is required.")]
