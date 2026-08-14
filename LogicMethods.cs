@@ -1062,6 +1062,11 @@ public static class LogicMethods
             })
             .ToList();
     }
+
+    public static bool IsLearningPathReadOnly(PrincipalApprovalStatus approvalStatus)
+    {
+        return approvalStatus == PrincipalApprovalStatus.Approved;
+    }
     #endregion
 
     #region QUOTES
