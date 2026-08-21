@@ -51,7 +51,6 @@ namespace FcmsPortal.Models
 
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
-        public SchoolFees? SchoolFees { get; set; }
         [StringLength(100, ErrorMessage = "Emergency contact details cannot exceed 100 characters.")]
         [Required(ErrorMessage = "Emergency contact number is required")]
         [RegularExpression(FcmsConstants.PHONE_PATTERN, ErrorMessage = "Enter a valid phone number, e.g. 08031234567.")]

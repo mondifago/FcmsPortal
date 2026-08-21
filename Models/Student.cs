@@ -28,4 +28,5 @@ public class Student
     public List<FileAttachment> FinalResultAttachments { get; set; } = new();
     public List<StudentReportCard> ReportCards { get; set; } = new();
     public DateTime? ArchivedDate { get; set; }
+    public List<SchoolFees> SchoolFees { get; set; } = new();
 }

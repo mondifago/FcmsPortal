@@ -27,7 +27,7 @@ namespace FcmsPortal.Models
         public EducationLevel EducationLevel { get; set; }
         public ClassLevel ClassLevel { get; set; }
         public int LearningPathId { get; set; }
-
+        public LearningPath LearningPath { get; set; } = null!;
         [NotMapped]
         public string AcademicYear
         {

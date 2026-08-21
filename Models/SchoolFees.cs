@@ -5,13 +5,12 @@ namespace FcmsPortal.Models
     public class SchoolFees
     {
         public int Id { get; set; }
-        public int PersonId { get; set; }
-
-        [ForeignKey(nameof(PersonId))]
-        public Person Person { get; set; } = null!;
-        public double TotalAmount { get; set; }
-        public double Balance => TotalAmount - TotalPaid;
-        public double TotalPaid => Payments.Sum(payment => payment.Amount);
+        public int StudentId { get; set; }
+        public int LearningPathId { get; set; }
+        public LearningPath LearningPath { get; set; } = null!;
         public List<Payment> Payments { get; set; } = new List<Payment>();
+        [NotMapped] public double TotalAmount => LearningPath?.FeePerSemester ?? 0;
+        [NotMapped] public double TotalPaid => Payments.Sum(payment => payment.Amount);
+        [NotMapped] public double Balance => TotalAmount - TotalPaid;
     }
 }

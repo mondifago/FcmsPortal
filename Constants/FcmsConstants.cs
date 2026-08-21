@@ -87,5 +87,7 @@
         // Validation
         public const string EMAIL_PATTERN = @"^[^@\s]+@[^@\s]+\.[^@\s]{2,}$";
         public const string PHONE_PATTERN = @"^\+?\d(?:[\s-]?\d){9,14}$";
+        public const int MAX_PAYMENT_REFERENCE_LENGTH = 50;
+        public const string PAYMENT_REFERENCE_PATTERN = @"^[A-Za-z0-9][A-Za-z0-9\-/]{3,49}$";
     }
 }
