@@ -14,4 +14,6 @@ public class StudentPaymentReportEntry
     public string Semester { get; set; } = string.Empty;
     public double StudentTimelyCompletionRate { get; set; }
     public double StudentPaymentCompletionRate { get; set; }
+    public double BroughtForwardOutstanding { get; set; }
+    public double TotalOutstanding { get; set; }
 }

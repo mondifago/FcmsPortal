@@ -2,7 +2,6 @@
 {
     public enum FeeAdjustmentType
     {
-        Discount,
-        AdditionalCharge
+        Discount
     }
 }

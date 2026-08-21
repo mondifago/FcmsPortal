@@ -176,7 +176,37 @@ public static class LogicMethods
     /// <summary>
     /// Methods for Payment Processing, Fee Management and Financial Reporting
     /// </summary>
-  
+
+    public static SchoolFees? GetFeesForLearningPath(Student student, int learningPathId)
+    {
+        return student?.SchoolFees?.FirstOrDefault(fees => fees.LearningPathId == learningPathId);
+    }
+
+    public static double GetOutstandingBroughtForward(List<SchoolFees> studentFees, LearningPath currentLearningPath)
+    {
+        if (studentFees == null || currentLearningPath == null)
+            return 0;
+
+        return studentFees
+            .Where(fees => fees.LearningPathId != currentLearningPath.Id &&
+                           fees.LearningPath != null &&
+                           fees.LearningPath.SemesterStartDate < currentLearningPath.SemesterStartDate &&
+                           fees.Balance > 0)
+            .Sum(fees => fees.Balance);
+    }
+
+    public static bool IsPaymentWithinBalance(SchoolFees schoolFees, double paymentAmount, int excludePaymentId = 0)
+    {
+        if (schoolFees == null)
+            return false;
+
+        double alreadyPaid = schoolFees.Payments
+            .Where(payment => payment.Id != excludePaymentId)
+            .Sum(payment => payment.Amount);
+
+        return paymentAmount <= schoolFees.TotalAmount - alreadyPaid;
+    }
+
     private static List<PaymentDetails> GetPaymentDetails(List<Payment> payments)
     {
         return payments.Select(p => new PaymentDetails
@@ -184,58 +214,56 @@ public static class LogicMethods
             Date = p.Date,
             Amount = p.Amount,
             PaymentMethod = p.PaymentMethod.ToString(),
-            Reference = p.Reference
+            Reference = p.Reference.ToString(),
         }).ToList();
     }
 
     //generate Student payment summery
     public static StudentPaymentReportEntry GenerateStudentPaymentReportEntry(Student student, int learningPathId)
     {
-        if (student?.Person?.SchoolFees == null)
-        {
-            throw new ArgumentException("Invalid student or school fees record.");
-        }
+        var schoolFees = GetFeesForLearningPath(student, learningPathId);
 
-        var payments = student.Person.SchoolFees.Payments?
-            .Where(p => p.LearningPathId == learningPathId)
-            .ToList() ?? new List<Payment>();
+        if (schoolFees == null)
+            throw new ArgumentException("No school fees record found for this student in this learning path.");
 
-        var latestPayment = payments.OrderByDescending(p => p.Date).FirstOrDefault();
+        var learningPath = schoolFees.LearningPath;
+        var payments = schoolFees.Payments.OrderBy(payment => payment.Date).ToList();
+        var latestPayment = payments.LastOrDefault();
 
-        var learningPath = student.LearningPath?.Id == learningPathId ? student.LearningPath : null;
-
-        string academicYear = learningPath?.AcademicYear ?? latestPayment?.AcademicYear ?? string.Empty;
-        string semester = learningPath?.Semester.ToString() ?? latestPayment?.Semester.ToString() ?? string.Empty;
-
-        double totalPaidForLearningPath = payments.Sum(p => p.Amount);
-        double totalFees = student.Person.SchoolFees.TotalAmount;
-        double outstandingBalance = totalFees - totalPaidForLearningPath;
-
-        double paymentCompletionRate = CalculatePaymentCompletionRate(totalPaidForLearningPath, totalFees);
+        double broughtForward = GetOutstandingBroughtForward(student.SchoolFees, learningPath);
 
         double timelyCompletionRate = FcmsConstants.DEFAULT_COMPLETION_RATE;
         if (learningPath != null && latestPayment != null)
         {
             timelyCompletionRate = CalculateTimelyCompletionRate(
-                learningPath.SemesterStartDate,
-                learningPath.SemesterEndDate,
-                latestPayment.Date
-            );
+                learningPath.SemesterStartDate, learningPath.SemesterEndDate, latestPayment.Date);
         }
 
         return new StudentPaymentReportEntry
         {
             DateAndTimeReportGenerated = DateTime.Now,
-            AcademicYear = academicYear,
-            Semester = semester,
-            TotalFees = totalFees,
-            TotalPaid = totalPaidForLearningPath,
-            OutstandingBalance = outstandingBalance,
-            StudentPaymentCompletionRate = paymentCompletionRate,
-            StudentTimelyCompletionRate = timelyCompletionRate,
+            StudentFullName = student.Person != null
+                ? $"{student.Person.FirstName} {student.Person.LastName}"
+                : string.Empty,
             StudentAddress = student.Person?.Address != null
-             ? $"{student.Person.Address.Street}, {student.Person.Address.City}, {student.Person.Address.State}, {student.Person.Address.Country}"
-             : string.Empty,
+                ? $"{student.Person.Address.Street}, {student.Person.Address.City}, " +
+                  $"{student.Person.Address.State}, {student.Person.Address.Country}"
+                : string.Empty,
+            LearningPathName = learningPath != null
+                ? $"{learningPath.EducationLevel} - {learningPath.ClassLevel}"
+                : string.Empty,
+            AcademicYear = learningPath?.AcademicYear ?? string.Empty,
+            Semester = learningPath?.Semester.ToString() ?? string.Empty,
+
+            TotalFees = schoolFees.TotalAmount,
+            TotalPaid = schoolFees.TotalPaid,
+            OutstandingBalance = schoolFees.Balance,
+            BroughtForwardOutstanding = broughtForward,
+            TotalOutstanding = schoolFees.Balance + broughtForward,
+
+            StudentPaymentCompletionRate =
+                CalculatePaymentCompletionRate(schoolFees.TotalPaid, schoolFees.TotalAmount),
+            StudentTimelyCompletionRate = timelyCompletionRate,
             PaymentDetails = GetPaymentDetails(payments)
         };
     }
@@ -260,24 +288,15 @@ public static class LogicMethods
         return Math.Clamp(rate, FcmsConstants.DEFAULT_COMPLETION_RATE, FcmsConstants.PERCENTAGE_MULTIPLIER);
     }
 
-    public static double CalculateAveragePaymentCompletionRate(List<Student> students, HashSet<int> learningPathIds)
+    public static double CalculateAveragePaymentCompletionRate(List<SchoolFees> fees)
     {
-        if (students == null || !students.Any())
+        if (fees == null || !fees.Any())
             return FcmsConstants.DEFAULT_COMPLETION_RATE;
 
-        var completionRates = new List<double>();
-
-        foreach (var student in students)
-        {
-            if (student?.Person?.SchoolFees is { TotalAmount: > 0 } fees)
-            {
-                double paidForPeriod = fees.Payments
-                    .Where(p => learningPathIds.Contains(p.LearningPathId))
-                    .Sum(p => p.Amount);
-
-                completionRates.Add(CalculatePaymentCompletionRate(paidForPeriod, fees.TotalAmount));
-            }
-        }
+        var completionRates = fees
+            .Where(schoolFees => schoolFees.TotalAmount > 0)
+            .Select(schoolFees => CalculatePaymentCompletionRate(schoolFees.TotalPaid, schoolFees.TotalAmount))
+            .ToList();
 
         if (!completionRates.Any())
             return FcmsConstants.DEFAULT_COMPLETION_RATE;
@@ -285,43 +304,24 @@ public static class LogicMethods
         return completionRates.Average();
     }
 
-    public static double CalculateAverageTimelyCompletionRate(List<Student> students, HashSet<int> learningPathIds)
+    public static double CalculateAverageTimelyCompletionRate(List<SchoolFees> fees)
     {
-        if (students == null || !students.Any())
+        if (fees == null || !fees.Any())
             return FcmsConstants.DEFAULT_COMPLETION_RATE;
 
         var timelyRates = new List<double>();
 
-        foreach (var student in students)
+        foreach (var schoolFees in fees)
         {
-            if (student?.LearningPath == null || student?.Person?.SchoolFees?.Payments == null)
+            if (schoolFees.LearningPath == null || !schoolFees.Payments.Any())
                 continue;
 
-            var learningPath = student.LearningPath;
+            var latestPaymentDate = schoolFees.Payments.Max(payment => payment.Date);
 
-            if (!learningPathIds.Contains(learningPath.Id))
-                continue;
-
-            var paymentsForPeriod = student.Person.SchoolFees.Payments
-                .Where(p => p.LearningPathId == learningPath.Id)
-                .ToList();
-
-            if (!paymentsForPeriod.Any())
-                continue;
-
-            var latestPayment = paymentsForPeriod
-                .OrderByDescending(p => p.Date)
-                .FirstOrDefault();
-
-            if (latestPayment != null)
-            {
-                var rate = CalculateTimelyCompletionRate(
-                    learningPath.SemesterStartDate,
-                    learningPath.SemesterEndDate,
-                    latestPayment.Date);
-
-                timelyRates.Add(rate);
-            }
+            timelyRates.Add(CalculateTimelyCompletionRate(
+                schoolFees.LearningPath.SemesterStartDate,
+                schoolFees.LearningPath.SemesterEndDate,
+                latestPaymentDate));
         }
 
         if (!timelyRates.Any())
@@ -330,297 +330,161 @@ public static class LogicMethods
         return timelyRates.Average();
     }
 
-    public static double CalculateOverallPaymentCompletionRate(List<Student> students)
+
+    public static SchoolPaymentReportEntry GenerateSchoolPaymentReport(
+        List<LearningPath> currentLearningPaths, List<SchoolFees> allStudentFees)
     {
-        if (students == null || students.Count == 0)
-            return FcmsConstants.DEFAULT_COMPLETION_RATE;
+        if (currentLearningPaths == null || !currentLearningPaths.Any() || allStudentFees == null)
+            return new SchoolPaymentReportEntry();
 
-        double totalPaid = 0;
-        double totalFees = 0;
+        var currentLearningPathIds = currentLearningPaths.Select(learningPath => learningPath.Id).ToHashSet();
 
-        foreach (var student in students)
-        {
-            var fees = student.Person?.SchoolFees;
-            if (fees == null) continue;
+        var currentFees = allStudentFees
+            .Where(fees => currentLearningPathIds.Contains(fees.LearningPathId))
+            .ToList();
 
-            totalPaid += fees.TotalPaid;
-            totalFees += fees.TotalAmount;
-        }
+        var broughtForwardFees = allStudentFees
+            .Where(fees => !currentLearningPathIds.Contains(fees.LearningPathId) && fees.Balance > 0)
+            .ToList();
 
-        return CalculatePaymentCompletionRate(totalPaid, totalFees);
-    }
+        double totalFees = currentFees.Sum(fees => fees.TotalAmount);
+        double totalPaid = currentFees.Sum(fees => fees.TotalPaid);
+        double broughtForward = broughtForwardFees.Sum(fees => fees.Balance);
 
-    public static double CalculateOverallTimelyCompletionRate(List<LearningPath> learningPaths, List<Student> students)
-    {
-        if (students == null || learningPaths == null || students.Count == 0 || learningPaths.Count == 0)
-            return FcmsConstants.DEFAULT_COMPLETION_RATE;
-
-        var timelyRates = new List<double>();
-
-        foreach (var student in students)
-        {
-            var currentPath = student.LearningPath;
-            if (currentPath == null)
-                continue;
-
-            var path = learningPaths.FirstOrDefault(lp =>
-                lp.Id == currentPath.Id &&
-                lp.AcademicYear == currentPath.AcademicYear &&
-                lp.Semester == currentPath.Semester);
-
-            if (path == null)
-                continue;
-
-            var payments = student.Person?.SchoolFees?.Payments;
-            if (payments == null || payments.Count == 0)
-                continue;
-
-            var latestPaymentDate = payments
-                .Where(p => p.Date >= path.SemesterStartDate && p.Date <= path.SemesterEndDate)
-                .OrderByDescending(p => p.Date)
-                .Select(p => p.Date)
-                .FirstOrDefault();
-
-            if (latestPaymentDate == default)
-                continue;
-
-            double rate = CalculateTimelyCompletionRate(
-                path.SemesterStartDate,
-                path.SemesterEndDate,
-                latestPaymentDate
-            );
-
-            timelyRates.Add(rate);
-        }
-
-        if (timelyRates.Count == 0)
-            return FcmsConstants.DEFAULT_COMPLETION_RATE;
-
-        return timelyRates.Average();
-    }
-
-    private static (double totalFees, double totalPaid, double totalOutstanding) GetAggregatedFeeData(List<Student> students, HashSet<int> learningPathIds)
-    {
-        double totalFees = 0;
-        double totalPaid = 0;
-        double totalOutstanding = 0;
-
-        foreach (var student in students)
-        {
-            var schoolFees = student.Person?.SchoolFees;
-            if (schoolFees != null)
-            {
-                totalFees += schoolFees.TotalAmount;
-
-                double paidForPeriod = schoolFees.Payments
-                    .Where(p => learningPathIds.Contains(p.LearningPathId))
-                    .Sum(p => p.Amount);
-
-                totalPaid += paidForPeriod;
-                totalOutstanding += schoolFees.TotalAmount - paidForPeriod;
-            }
-        }
-
-        return (totalFees, totalPaid, totalOutstanding);
-    }
-
-    public static SchoolPaymentReportEntry GenerateSchoolPaymentReport(List<LearningPath> allLearningPaths, List<Student> allStudents)
-    {
-        var semesterStart = allLearningPaths.Min(lp => lp.SemesterStartDate);
-        var semesterEnd = allLearningPaths.Max(lp => lp.SemesterEndDate);
-        var firstLearningPath = allLearningPaths.FirstOrDefault();
-
-        var learningPathIds = allLearningPaths.Select(lp => lp.Id).ToHashSet();
-        var (totalFees, totalPaid, totalOutstanding) = GetAggregatedFeeData(allStudents, learningPathIds);
+        var firstLearningPath = currentLearningPaths.First();
 
         return new SchoolPaymentReportEntry
         {
-            AcademicYear = firstLearningPath?.AcademicYear ?? "",
-            Semester = firstLearningPath?.Semester.ToString() ?? "",
-            SemesterStartDate = semesterStart,
-            SemesterEndDate = semesterEnd,
+            AcademicYear = firstLearningPath.AcademicYear,
+            Semester = firstLearningPath.Semester.ToString(),
+            SemesterStartDate = currentLearningPaths.Min(learningPath => learningPath.SemesterStartDate),
+            SemesterEndDate = currentLearningPaths.Max(learningPath => learningPath.SemesterEndDate),
             DateAndTimeReportGenerated = DateTime.Now,
-            TotalStudents = allStudents.Count,
+
+            TotalStudents = currentFees.Select(fees => fees.StudentId).Distinct().Count(),
             TotalSchoolFeesAmount = totalFees,
             TotalAmountPaid = totalPaid,
-            TotalOutstanding = totalOutstanding,
+            TotalOutstanding = totalFees - totalPaid,
+            TotalBroughtForwardOutstanding = broughtForward,
+            TotalOutstandingIncludingBroughtForward = (totalFees - totalPaid) + broughtForward,
+
             SchoolPaymentCompletionRate = CalculatePaymentCompletionRate(totalPaid, totalFees),
-            AverageStudentPaymentCompletionRateInSchool = CalculateAveragePaymentCompletionRate(allStudents, learningPathIds),
-            AverageStudentTimelyCompletionRate = CalculateAverageTimelyCompletionRate(allStudents, learningPathIds)
+            AverageStudentPaymentCompletionRateInSchool = CalculateAveragePaymentCompletionRate(currentFees),
+            AverageStudentTimelyCompletionRate = CalculateAverageTimelyCompletionRate(currentFees)
         };
     }
 
     //Generate payment report of all students in a learning path
-    public static LearningPathPaymentReportEntry GenerateLearningPathPaymentReport(LearningPath learningPath, List<Student> studentsInPath)
+    public static LearningPathPaymentReportEntry GenerateLearningPathPaymentReport(
+     LearningPath learningPath, List<SchoolFees> feesInPath)
     {
-        var semesterStart = learningPath.SemesterStartDate;
-        var semesterEnd = learningPath.SemesterEndDate;
+        if (learningPath == null || feesInPath == null)
+            return new LearningPathPaymentReportEntry();
 
-        var learningPathIds = new HashSet<int> { learningPath.Id };
-        var (totalFees, totalPaid, totalOutstanding) = GetAggregatedFeeData(studentsInPath, learningPathIds);
+        double totalFees = feesInPath.Sum(fees => fees.TotalAmount);
+        double totalPaid = feesInPath.Sum(fees => fees.TotalPaid);
 
-        var allPayments = studentsInPath
-            .SelectMany(s => s.Person?.SchoolFees?.Payments ?? new List<Payment>())
-            .Where(p => p.LearningPathId == learningPath.Id)
-            .ToList();
+        var latestPaymentDate = feesInPath
+            .SelectMany(fees => fees.Payments)
+            .OrderByDescending(payment => payment.Date)
+            .Select(payment => payment.Date)
+            .FirstOrDefault();
 
-        var latestPaymentDate = allPayments.OrderByDescending(p => p.Date).FirstOrDefault()?.Date ?? semesterEnd;
+        if (latestPaymentDate == default)
+            latestPaymentDate = learningPath.SemesterEndDate;
 
         return new LearningPathPaymentReportEntry
         {
             AcademicYear = learningPath.AcademicYear,
             Semester = learningPath.Semester.ToString(),
-            SemesterStartDate = semesterStart,
-            SemesterEndDate = semesterEnd,
+            LearningPathName = $"{learningPath.EducationLevel} - {learningPath.ClassLevel}",
+            SemesterStartDate = learningPath.SemesterStartDate,
+            SemesterEndDate = learningPath.SemesterEndDate,
             ReportGeneratedDateAndTime = DateTime.Now,
-            TotalStudentsInPath = studentsInPath.Count,
+            TotalStudentsInPath = feesInPath.Count,
             TotalFeesForPath = totalFees,
             TotalPaidForPath = totalPaid,
-            OutstandingForPath = totalOutstanding,
+            OutstandingForPath = totalFees - totalPaid,
             LearningPathPaymentCompletionRate = CalculatePaymentCompletionRate(totalPaid, totalFees),
-            AverageStudentPaymentCompletionRateInPath = CalculateAveragePaymentCompletionRate(studentsInPath, learningPathIds),
-            LearningPathTimelyCompletionRateInPath = CalculateTimelyCompletionRate(semesterStart, semesterEnd, latestPaymentDate),
-            AverageStudentTimelyCompletionRate = CalculateAverageTimelyCompletionRate(studentsInPath, learningPathIds)
+            AverageStudentPaymentCompletionRateInPath = CalculateAveragePaymentCompletionRate(feesInPath),
+            LearningPathTimelyCompletionRateInPath = CalculateTimelyCompletionRate(
+                learningPath.SemesterStartDate, learningPath.SemesterEndDate, latestPaymentDate),
+            AverageStudentTimelyCompletionRate = CalculateAverageTimelyCompletionRate(feesInPath)
         };
     }
 
-    public static LearningPathPaymentSummary CalculateLearningPathPaymentSummary(LearningPath learningPath)
+    public static LearningPathPaymentSummary CalculateLearningPathPaymentSummary(
+    LearningPath learningPath, List<SchoolFees> feesInPath)
     {
-        if (learningPath == null)
+        if (learningPath == null || feesInPath == null)
             return new LearningPathPaymentSummary();
 
-        var expectedRevenue = learningPath.FeePerSemester * learningPath.Students.Count;
-        var totalPaid = GetTotalPaidForLearningPath(learningPath);
-        var outstanding = expectedRevenue - totalPaid;
-        var paymentRate = CalculatePaymentCompletionRate(totalPaid, expectedRevenue);
+        double expectedRevenue = feesInPath.Sum(fees => fees.TotalAmount);
+        double totalPaid = feesInPath.Sum(fees => fees.TotalPaid);
 
-        var lastPaymentDate = learningPath.Students
-            .SelectMany(s => s.Person?.SchoolFees?.Payments ?? new List<Payment>())
-            .Where(p => p.Date >= learningPath.SemesterStartDate && p.Date <= learningPath.SemesterEndDate)
-            .OrderByDescending(p => p.Date)
-            .Select(p => p.Date)
+        var lastPaymentDate = feesInPath
+            .SelectMany(fees => fees.Payments)
+            .Where(payment => payment.Date >= learningPath.SemesterStartDate &&
+                              payment.Date <= learningPath.SemesterEndDate)
+            .OrderByDescending(payment => payment.Date)
+            .Select(payment => payment.Date)
             .FirstOrDefault();
 
-        var timelyRate = lastPaymentDate == default
+        double timelyRate = lastPaymentDate == default
             ? FcmsConstants.DEFAULT_COMPLETION_RATE
-            : CalculateTimelyCompletionRate(learningPath.SemesterStartDate, learningPath.SemesterEndDate, lastPaymentDate);
+            : CalculateTimelyCompletionRate(
+                learningPath.SemesterStartDate, learningPath.SemesterEndDate, lastPaymentDate);
 
         return new LearningPathPaymentSummary
         {
             ExpectedRevenue = expectedRevenue,
             TotalPaid = totalPaid,
-            Outstanding = outstanding,
-            PaymentCompletionRate = paymentRate,
+            Outstanding = expectedRevenue - totalPaid,
+            PaymentCompletionRate = CalculatePaymentCompletionRate(totalPaid, expectedRevenue),
             TimelyCompletionRate = timelyRate,
             LastPaymentDate = lastPaymentDate == default ? null : lastPaymentDate,
-            StudentCount = learningPath.Students.Count,
+            StudentCount = feesInPath.Count,
             FeePerSemester = learningPath.FeePerSemester
         };
     }
 
-    public static SchoolPaymentSummary CalculateSchoolPaymentSummary(List<LearningPath> learningPaths)
+    public static SchoolPaymentSummary CalculateSchoolPaymentSummary(
+    List<LearningPath> currentLearningPaths, List<SchoolFees> allStudentFees)
     {
         var summary = new SchoolPaymentSummary();
 
-        summary.TotalLearningPaths = learningPaths.Count;
+        if (currentLearningPaths == null || allStudentFees == null)
+            return summary;
 
-        var students = learningPaths
-            .SelectMany(lp => lp.Students)
-            .Distinct()
+        var currentLearningPathIds = currentLearningPaths.Select(learningPath => learningPath.Id).ToHashSet();
+
+        var currentFees = allStudentFees
+            .Where(fees => currentLearningPathIds.Contains(fees.LearningPathId))
             .ToList();
 
-        summary.TotalStudents = students.Count;
+        var broughtForwardFees = allStudentFees
+            .Where(fees => !currentLearningPathIds.Contains(fees.LearningPathId) && fees.Balance > 0)
+            .ToList();
 
-        double totalExpected = 0;
-        double totalPaid = 0;
+        summary.TotalLearningPaths = currentLearningPaths.Count;
+        summary.TotalStudents = currentFees.Select(fees => fees.StudentId).Distinct().Count();
 
-        int fullyPaid = 0;
-        int withBalance = 0;
+        summary.TotalExpectedRevenue = currentFees.Sum(fees => fees.TotalAmount);
+        summary.TotalAmountReceived = currentFees.Sum(fees => fees.TotalPaid);
+        summary.TotalOutstanding = summary.TotalExpectedRevenue - summary.TotalAmountReceived;
 
-        var learningPathIds = learningPaths.Select(lp => lp.Id).ToHashSet();
+        summary.TotalBroughtForwardOutstanding = broughtForwardFees.Sum(fees => fees.Balance);
+        summary.TotalOutstandingIncludingBroughtForward =
+            summary.TotalOutstanding + summary.TotalBroughtForwardOutstanding;
 
-        foreach (var lp in learningPaths)
-        {
-            totalExpected += lp.FeePerSemester * lp.Students.Count;
-        }
+        summary.FullyPaidStudents = currentFees.Count(fees => fees.TotalAmount > 0 && fees.Balance <= 0);
+        summary.StudentsWithBalance = currentFees.Count(fees => fees.TotalAmount > 0 && fees.Balance > 0);
 
-        foreach (var student in students)
-        {
-            double paid = student.Person.SchoolFees?.Payments
-                .Where(p => learningPathIds.Contains(p.LearningPathId))
-                .Sum(p => p.Amount) ?? 0;
-
-            double fees = student.Person.SchoolFees?.TotalAmount ?? 0;
-
-            totalPaid += paid;
-
-            if (paid >= fees)
-            {
-                fullyPaid++;
-            }
-            else
-            {
-                if (fees > 0)
-                {
-                    withBalance++;
-                }
-            }
-        }
-
-        summary.FullyPaidStudents = fullyPaid;
-        summary.StudentsWithBalance = withBalance;
-        summary.TotalExpectedRevenue = totalExpected;
-        summary.TotalAmountReceived = totalPaid;
-        summary.TotalOutstanding = totalExpected - totalPaid;
-        summary.PaymentCompletionRate = CalculatePaymentCompletionRate(totalPaid, totalExpected);
-        summary.TimelyCompletionRate = CalculateOverallTimelyCompletionRate(learningPaths, students);
+        summary.PaymentCompletionRate =
+            CalculatePaymentCompletionRate(summary.TotalAmountReceived, summary.TotalExpectedRevenue);
+        summary.TimelyCompletionRate = CalculateAverageTimelyCompletionRate(currentFees);
 
         return summary;
-    }
-
-
-    private static double GetTotalPaidForLearningPath(LearningPath learningPath)
-    {
-        double totalPaid = 0;
-
-        foreach (var student in learningPath.Students)
-        {
-            var studentFees = student.Person.SchoolFees;
-            if (studentFees != null)
-            {
-                var studentPayments = studentFees.Payments
-                    .Where(p => p.LearningPathId == learningPath.Id)
-                    .Sum(p => p.Amount);
-
-                totalPaid += studentPayments;
-            }
-        }
-
-        return totalPaid;
-    }
-
-    public static LearningPathPaymentReportEntry GenerateArchivedLearningPathPaymentReport(ArchivedLearningPathPayment archive)
-    {
-        return new LearningPathPaymentReportEntry
-        {
-            LearningPathName = $"{archive.EducationLevel} - {archive.ClassLevel}",
-            AcademicYear = archive.AcademicYear,
-            Semester = archive.Semester.ToString(),
-            SemesterStartDate = archive.SemesterStartDate,
-            SemesterEndDate = archive.SemesterEndDate,
-            ReportGeneratedDateAndTime = archive.ArchivedDate,
-
-            TotalStudentsInPath = archive.TotalStudentsInPath,
-            TotalFeesForPath = archive.LearningPathExpectedRevenue,
-            TotalPaidForPath = archive.TotalPaid,
-            OutstandingForPath = archive.Outstanding,
-
-            LearningPathPaymentCompletionRate = archive.LearningPathPaymentCompletionRate,
-            AverageStudentPaymentCompletionRateInPath = archive.AverageStudentPaymentCompletionRateInPath,
-
-            LearningPathTimelyCompletionRateInPath = archive.LearningPathTimelyCompletionRate,
-            AverageStudentTimelyCompletionRate = archive.AverageStudentTimelyCompletionRateInPath
-        };
     }
 
     public static SchoolPaymentReportEntry GenerateArchivedSchoolPaymentReport(ArchivedSchoolPaymentSummary archive)

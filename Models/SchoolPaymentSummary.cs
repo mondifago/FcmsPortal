@@ -14,5 +14,7 @@
 
         public double PaymentCompletionRate { get; set; }
         public double TimelyCompletionRate { get; set; }
+        public double TotalBroughtForwardOutstanding { get; set; }
+        public double TotalOutstandingIncludingBroughtForward { get; set; }
     }
 }
