@@ -176,38 +176,7 @@ public static class LogicMethods
     /// <summary>
     /// Methods for Payment Processing, Fee Management and Financial Reporting
     /// </summary>
-
-    //Check if student has made upto half the school fees payment
-    public static bool HasMetPaymentThreshold(Student student, int learningPathId)
-    {
-        if (student?.Person?.SchoolFees == null)
-        {
-            throw new ArgumentException("Invalid student or school fees record.");
-        }
-
-        double totalPayments = student.Person.SchoolFees.Payments
-            .Where(p => p.LearningPathId == learningPathId)
-            .Sum(p => p.Amount);
-
-        return totalPayments >= student.Person.SchoolFees.TotalAmount * FcmsConstants.PAYMENT_THRESHOLD_FACTOR;
-    }
-
-    //Update payment status of a student in a learning path
-    public static void UpdatePaymentStatus(Student student, LearningPath learningPath)
-    {
-        if (student?.Person?.SchoolFees == null || learningPath?.StudentsWithAccess == null)
-            return;
-
-        bool hasAccess = HasMetPaymentThreshold(student, learningPath.Id);
-
-        learningPath.StudentsWithAccess.RemoveAll(s => s.Id == student.Id);
-
-        if (hasAccess)
-        {
-            learningPath.StudentsWithAccess.Add(student);
-        }
-    }
-
+  
     private static List<PaymentDetails> GetPaymentDetails(List<Payment> payments)
     {
         return payments.Select(p => new PaymentDetails

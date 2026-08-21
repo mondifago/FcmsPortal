@@ -41,7 +41,6 @@
         public const double DEFAULT_HOMEWORK_WEIGHT = 20.0;
         public const double DEFAULT_QUIZ_WEIGHT = 20.0;
         public const double DEFAULT_EXAM_WEIGHT = 60.0;
-        public const double PAYMENT_THRESHOLD_FACTOR = 0.5;
         public const int FIRST_PLACE = 1;
         public const int SECOND_PLACE = 2;
         public const int THIRD_PLACE = 3;
@@ -77,7 +76,7 @@
 
         // String Lengths
         public const int MAX_DISCUSSION_COMMENT_LENGTH = 500;
-
+        public const int MAX_ADJUSTMENT_REASON_LENGTH = 50;
         // Pagination
         public const int LIST_PAGE_SIZE = 10;
 

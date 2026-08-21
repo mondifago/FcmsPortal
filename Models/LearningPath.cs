@@ -48,11 +48,9 @@ namespace FcmsPortal.Models
         [Required(ErrorMessage = "Fee per semester is required.")]
         [Range(0, double.MaxValue, ErrorMessage = "Fee must be a positive value.")]
         public double FeePerSemester { get; set; }
-
         public List<ScheduleEntry> Schedule { get; set; } = new List<ScheduleEntry>();
         public List<Student> Students { get; set; } = new List<Student>();
         public List<StudentReportCard> ReportCards { get; set; } = new List<StudentReportCard>();
-        public List<Student> StudentsWithAccess { get; set; } = new List<Student>();
 
         public List<DailyAttendanceLogEntry> AttendanceLog { get; set; } = new List<DailyAttendanceLogEntry>();
 
@@ -60,7 +58,6 @@ namespace FcmsPortal.Models
         public int? SubmittedById { get; set; }
         public string? SubmittedByName { get; set; }
         public DateTime? DateSubmitted { get; set; }
-
         public PrincipalApprovalStatus ApprovalStatus { get; set; } = PrincipalApprovalStatus.Pending;
 
         public bool IsTemplate { get; set; } = false;
