@@ -214,7 +214,7 @@ public static class LogicMethods
             Date = p.Date,
             Amount = p.Amount,
             PaymentMethod = p.PaymentMethod.ToString(),
-            Reference = p.Reference.ToString(),
+            Reference = p.Reference,
         }).ToList();
     }
 
@@ -505,6 +505,30 @@ public static class LogicMethods
             SchoolPaymentCompletionRate = archive.SchoolWidePaymentCompletionRate,
             AverageStudentPaymentCompletionRateInSchool = archive.AverageStudentPaymentCompletionRateInSchool,
             AverageStudentTimelyCompletionRate = archive.AverageStudentTimelyCompletionRateInSchool
+        };
+    }
+
+    public static LearningPathPaymentReportEntry GenerateArchivedLearningPathPaymentReport(ArchivedLearningPathPayment archive)
+    {
+        return new LearningPathPaymentReportEntry
+        {
+            LearningPathName = $"{archive.EducationLevel} - {archive.ClassLevel}",
+            AcademicYear = archive.AcademicYear,
+            Semester = archive.Semester.ToString(),
+            SemesterStartDate = archive.SemesterStartDate,
+            SemesterEndDate = archive.SemesterEndDate,
+            ReportGeneratedDateAndTime = archive.ArchivedDate,
+
+            TotalStudentsInPath = archive.TotalStudentsInPath,
+            TotalFeesForPath = archive.LearningPathExpectedRevenue,
+            TotalPaidForPath = archive.TotalPaid,
+            OutstandingForPath = archive.Outstanding,
+
+            LearningPathPaymentCompletionRate = archive.LearningPathPaymentCompletionRate,
+            AverageStudentPaymentCompletionRateInPath = archive.AverageStudentPaymentCompletionRateInPath,
+
+            LearningPathTimelyCompletionRateInPath = archive.LearningPathTimelyCompletionRate,
+            AverageStudentTimelyCompletionRate = archive.AverageStudentTimelyCompletionRateInPath
         };
     }
 

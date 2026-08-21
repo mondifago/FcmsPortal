@@ -1,4 +1,5 @@
-﻿using FcmsPortal.Enums;
+﻿using FcmsPortal.Constants;
+using FcmsPortal.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -18,8 +19,9 @@ namespace FcmsPortal.Models
         public PaymentMethod PaymentMethod { get; set; }
 
         [Required(ErrorMessage = "Reference is required.")]
-        [Range(1, int.MaxValue, ErrorMessage = "Reference must be a positive number.")]
-        public int Reference { get; set; }
+        [StringLength(FcmsConstants.MAX_PAYMENT_REFERENCE_LENGTH, ErrorMessage = "Reference must be 50 characters or fewer.")]
+        [RegularExpression(FcmsConstants.PAYMENT_REFERENCE_PATTERN, ErrorMessage = "Reference may contain only letters, numbers, hyphens and slashes.")]
+        public string Reference { get; set; } = string.Empty;
         public int SchoolFeesId { get; set; }
         public SchoolFees SchoolFees { get; set; } = null!;
         public Semester Semester { get; set; }
