@@ -72,36 +72,6 @@ public static class LogicMethods
         return schedules;
     }
 
-    //To get all schedules in a learning path
-    public static List<ScheduleEntry> GetAllSchedulesInLearningPath(LearningPath learningPath)
-    {
-        if (learningPath == null)
-        {
-            throw new ArgumentNullException(nameof(learningPath), "Learning path cannot be null.");
-        }
-
-        if (learningPath.Schedule == null || !learningPath.Schedule.Any())
-        {
-            return new List<ScheduleEntry>();
-        }
-
-        return learningPath.Schedule
-        .OrderBy(s => s.DateTime)
-        .ToList();
-    }
-
-    //Get all schedules of a learning path for a particular date
-    public static List<ScheduleEntry> GetSchedulesByDateInLearningPath(LearningPath learningPath, DateTime date)
-    {
-        if (learningPath?.Schedule == null)
-            return new List<ScheduleEntry>();
-
-        return learningPath.Schedule
-            .Where(s => s.DateTime.Date == date.Date)
-            .OrderBy(s => s.DateTime.TimeOfDay)
-            .ToList();
-    }
-
     public static ClassSessionReport? CreateClassSessionReport(ScheduleEntry? scheduleEntry)
     {
         if (scheduleEntry?.ClassSession == null)
@@ -330,7 +300,6 @@ public static class LogicMethods
         return timelyRates.Average();
     }
 
-
     public static SchoolPaymentReportEntry GenerateSchoolPaymentReport(
         List<LearningPath> currentLearningPaths, List<SchoolFees> allStudentFees)
     {
@@ -375,8 +344,7 @@ public static class LogicMethods
     }
 
     //Generate payment report of all students in a learning path
-    public static LearningPathPaymentReportEntry GenerateLearningPathPaymentReport(
-     LearningPath learningPath, List<SchoolFees> feesInPath)
+    public static LearningPathPaymentReportEntry GenerateLearningPathPaymentReport(LearningPath learningPath, List<SchoolFees> feesInPath)
     {
         if (learningPath == null || feesInPath == null)
             return new LearningPathPaymentReportEntry();
@@ -448,8 +416,7 @@ public static class LogicMethods
         };
     }
 
-    public static SchoolPaymentSummary CalculateSchoolPaymentSummary(
-    List<LearningPath> currentLearningPaths, List<SchoolFees> allStudentFees)
+    public static SchoolPaymentSummary CalculateSchoolPaymentSummary(List<LearningPath> currentLearningPaths, List<SchoolFees> allStudentFees)
     {
         var summary = new SchoolPaymentSummary();
 
@@ -531,7 +498,6 @@ public static class LogicMethods
             AverageStudentTimelyCompletionRate = archive.AverageStudentTimelyCompletionRateInPath
         };
     }
-
     #endregion
 
     #region GRADING METHODS
@@ -583,8 +549,6 @@ public static class LogicMethods
         };
     }
 
-    // Promotion grade averages only the semesters a student actually has,
-    // so a mid-year transfer is not averaged against terms never sat.
     public static double CalculatePromotionGrade(Dictionary<Semester, double> semesterGrades)
     {
         return semesterGrades.Any()
@@ -645,7 +609,6 @@ public static class LogicMethods
 
         return Math.Round(courseGrades.Average(cg => cg.TotalGrade), FcmsConstants.GRADE_ROUNDING_DIGIT);
     }
-
 
     //method to arrange CalculateSemesterOverallGrade() of all students in a learning path in descending order
     public static List<(Student Student, double SemesterGrade)> RankStudentsBySemesterGrade(LearningPath learningPath)
@@ -744,8 +707,7 @@ public static class LogicMethods
         return Math.Round((double)presentCount / totalCount * FcmsConstants.PERCENTAGE_MULTIPLIER, 1);
     }
 
-    public static (int presentDays, int totalDays, double attendanceRate) CalculateStudentAttendance(
-    List<DailyAttendanceLogEntry> attendanceLog, int studentId)
+    public static (int presentDays, int totalDays, double attendanceRate) CalculateStudentAttendance(List<DailyAttendanceLogEntry> attendanceLog, int studentId)
     {
         if (attendanceLog == null || !attendanceLog.Any())
             return (0, 0, 0);
@@ -758,16 +720,6 @@ public static class LogicMethods
 
         return (presentDays, totalDays, rate);
     }
-
-    // Get attendance data for a specific date across multiple learning paths
-    public static DailyAttendanceLogEntry? GetDailyAttendanceEntry(LearningPath learningPath, DateTime date)
-    {
-        if (learningPath?.AttendanceLog == null) return null;
-
-        return learningPath.AttendanceLog
-            .FirstOrDefault(log => log.TimeStamp.Date == date.Date);
-    }
-
 
     // Generate semester attendance report for a learning path
     public static SemesterAttendanceReport GenerateSemesterAttendanceReport(LearningPath learningPath)
@@ -827,7 +779,6 @@ public static class LogicMethods
     /// <summary>
     /// Methods for Student Progression, Class Level Management and Archiving
     /// </summary>
-
     public static bool IsLastClassInEducationLevel(EducationLevel educationLevel, ClassLevel classLevel)
     {
         var classLevelMapping = new ClassLevelMapping();
@@ -901,7 +852,6 @@ public static class LogicMethods
             })
             .ToList();
     }
-
     public static bool IsLearningPathReadOnly(PrincipalApprovalStatus approvalStatus)
     {
         return approvalStatus == PrincipalApprovalStatus.Approved;
