@@ -2,6 +2,9 @@
 {
     public enum FeeAdjustmentType
     {
-        Discount
+        Discount,
+        Scholarship,
+        Promo,
+        SiblingsRebate
     }
 }

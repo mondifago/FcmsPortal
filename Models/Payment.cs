@@ -18,10 +18,9 @@ namespace FcmsPortal.Models
 
         public PaymentMethod PaymentMethod { get; set; }
 
-        [Required(ErrorMessage = "Reference is required.")]
         [StringLength(FcmsConstants.MAX_PAYMENT_REFERENCE_LENGTH, ErrorMessage = "Reference must be 50 characters or fewer.")]
         [RegularExpression(FcmsConstants.PAYMENT_REFERENCE_PATTERN, ErrorMessage = "Reference may contain only letters, numbers, hyphens and slashes.")]
-        public string Reference { get; set; } = string.Empty;
+        public string? Reference { get; set; }
         public int SchoolFeesId { get; set; }
         public SchoolFees SchoolFees { get; set; } = null!;
         public Semester Semester { get; set; }

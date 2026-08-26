@@ -152,6 +152,11 @@ public static class LogicMethods
         return student?.SchoolFees?.FirstOrDefault(fees => fees.LearningPathId == learningPathId);
     }
 
+    public static bool IsPaymentReferenceRequired(PaymentMethod paymentMethod)
+    {
+        return paymentMethod == PaymentMethod.BankTransfer;
+    }
+
     public static double GetOutstandingBroughtForward(List<SchoolFees> studentFees, LearningPath currentLearningPath)
     {
         if (studentFees == null || currentLearningPath == null)
@@ -184,7 +189,7 @@ public static class LogicMethods
             Date = p.Date,
             Amount = p.Amount,
             PaymentMethod = p.PaymentMethod.ToString(),
-            Reference = p.Reference,
+            Reference = p.Reference ?? string.Empty,
         }).ToList();
     }
 

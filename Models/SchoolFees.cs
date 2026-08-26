@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using FcmsPortal.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
 {
@@ -11,11 +12,17 @@ namespace FcmsPortal.Models
         public List<Payment> Payments { get; set; } = new List<Payment>();
         public List<FeeAdjustment> Adjustments { get; set; } = new();
         [NotMapped]
-        public double TotalAdjustments => Adjustments.Sum(adjustment =>
-            adjustment.Amount ?? (LearningPath?.FeePerSemester ?? 0) * (adjustment.Percentage ?? 0));
+        public double TotalAdjustments => Adjustments.Sum(ResolveAdjustment);
 
         [NotMapped]
         public double TotalAmount => (LearningPath?.FeePerSemester ?? 0) - TotalAdjustments;
+
+        public double ResolveAdjustment(FeeAdjustment adjustment)
+        {
+            return adjustment.Mode == FeeAdjustmentMode.Percentage
+                ? (LearningPath?.FeePerSemester ?? 0) * adjustment.Value / 100
+                : adjustment.Value;
+        }
         [NotMapped] public double TotalPaid => Payments.Sum(payment => payment.Amount);
         [NotMapped] public double Balance => TotalAmount - TotalPaid;
     }
