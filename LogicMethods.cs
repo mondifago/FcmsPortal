@@ -165,8 +165,7 @@ public static class LogicMethods
         return studentFees
             .Where(fees => fees.LearningPathId != currentLearningPath.Id &&
                            fees.LearningPath != null &&
-                           fees.LearningPath.SemesterStartDate < currentLearningPath.SemesterStartDate &&
-                           fees.Balance > 0)
+                           fees.LearningPath.SemesterStartDate < currentLearningPath.SemesterStartDate)
             .Sum(fees => fees.Balance);
     }
 
@@ -386,8 +385,7 @@ public static class LogicMethods
         };
     }
 
-    public static LearningPathPaymentSummary CalculateLearningPathPaymentSummary(
-    LearningPath learningPath, List<SchoolFees> feesInPath)
+    public static LearningPathPaymentSummary CalculateLearningPathPaymentSummary(LearningPath learningPath, List<SchoolFees> feesInPath, int enrolledStudentCount)
     {
         if (learningPath == null || feesInPath == null)
             return new LearningPathPaymentSummary();
@@ -416,7 +414,7 @@ public static class LogicMethods
             PaymentCompletionRate = CalculatePaymentCompletionRate(totalPaid, expectedRevenue),
             TimelyCompletionRate = timelyRate,
             LastPaymentDate = lastPaymentDate == default ? null : lastPaymentDate,
-            StudentCount = feesInPath.Count,
+            StudentCount = enrolledStudentCount,
             FeePerSemester = learningPath.FeePerSemester
         };
     }
