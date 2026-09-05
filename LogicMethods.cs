@@ -501,6 +501,26 @@ public static class LogicMethods
             AverageStudentTimelyCompletionRate = archive.AverageStudentTimelyCompletionRateInPath
         };
     }
+
+    public static double GetTotalPayable(List<SchoolFees> studentFees, SchoolFees fees)
+    {
+        if (fees == null)
+            return 0;
+
+        double broughtForward = fees.LearningPath == null
+            ? 0
+            : GetOutstandingBroughtForward(studentFees, fees.LearningPath);
+
+        return fees.TotalAmount + broughtForward;
+    }
+
+    public static double GetCarriedForward(List<SchoolFees> studentFees, SchoolFees fees)
+    {
+        if (fees == null)
+            return 0;
+
+        return GetTotalPayable(studentFees, fees) - fees.TotalPaid;
+    }
     #endregion
 
     #region GRADING METHODS
