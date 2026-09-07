@@ -6,7 +6,9 @@ public class StudentPaymentReportEntry
     public string StudentFullName { get; set; } = string.Empty;
     public string StudentAddress { get; set; } = string.Empty;
     public string LearningPathName { get; set; } = string.Empty;
+    public double TermFee { get; set; }
     public double TotalFees { get; set; }
+    public double Discount { get; set; }
     public double TotalPaid { get; set; }
     public double OutstandingBalance { get; set; }
     public List<PaymentDetails> PaymentDetails { get; set; } = new();

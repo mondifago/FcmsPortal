@@ -228,8 +228,9 @@ public static class LogicMethods
                 : string.Empty,
             AcademicYear = learningPath?.AcademicYear ?? string.Empty,
             Semester = learningPath?.Semester.ToString() ?? string.Empty,
-
+            TermFee = learningPath?.FeePerSemester ?? 0,
             TotalFees = schoolFees.TotalAmount,
+            Discount = schoolFees.TotalAdjustments,
             TotalPaid = schoolFees.TotalPaid,
             OutstandingBalance = schoolFees.Balance,
             BroughtForwardOutstanding = broughtForward,
