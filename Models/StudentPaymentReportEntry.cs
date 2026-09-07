@@ -18,4 +18,5 @@ public class StudentPaymentReportEntry
     public double StudentPaymentCompletionRate { get; set; }
     public double BroughtForwardOutstanding { get; set; }
     public double TotalOutstanding { get; set; }
+    public double TotalPayable { get; set; }
 }

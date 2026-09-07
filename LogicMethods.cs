@@ -235,7 +235,7 @@ public static class LogicMethods
             OutstandingBalance = schoolFees.Balance,
             BroughtForwardOutstanding = broughtForward,
             TotalOutstanding = schoolFees.Balance + broughtForward,
-
+            TotalPayable = GetTotalPayable(student.SchoolFees, schoolFees),
             StudentPaymentCompletionRate =
                 CalculatePaymentCompletionRate(schoolFees.TotalPaid, schoolFees.TotalAmount),
             StudentTimelyCompletionRate = timelyCompletionRate,
@@ -521,6 +521,45 @@ public static class LogicMethods
             return 0;
 
         return GetTotalPayable(studentFees, fees) - fees.TotalPaid;
+    }
+
+    public static StudentFeeLedger GenerateStudentFeeLedger(Student student)
+    {
+        var ledger = new StudentFeeLedger
+        {
+            DateAndTimeLedgerGenerated = DateTime.Now
+        };
+
+        if (student == null)
+            return ledger;
+
+        var allFees = student.SchoolFees ?? new List<SchoolFees>();
+
+        var ledgerRows = allFees
+            .Where(fees => fees.LearningPath != null)
+            .OrderBy(fees => fees.LearningPath!.SemesterStartDate)
+            .ToList();
+
+        foreach (var fees in ledgerRows)
+        {
+            ledger.Entries.Add(new StudentFeeLedgerEntry
+            {
+                AcademicYear = fees.LearningPath!.AcademicYear,
+                ClassLevel = fees.LearningPath.ClassLevel,
+                Semester = fees.LearningPath.Semester,
+                BroughtForward = GetOutstandingBroughtForward(allFees, fees.LearningPath),
+                TermFee = fees.LearningPath.FeePerSemester,
+                Discount = fees.TotalAdjustments,
+                TermPayable = fees.TotalAmount,
+                TotalPayable = GetTotalPayable(allFees, fees),
+                Paid = fees.TotalPaid,
+                CarriedForward = GetCarriedForward(allFees, fees)
+            });
+        }
+
+        ledger.ClosingBalance = ledger.Entries.LastOrDefault()?.CarriedForward ?? 0;
+
+        return ledger;
     }
     #endregion
 
