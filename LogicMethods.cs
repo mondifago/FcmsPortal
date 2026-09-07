@@ -169,7 +169,7 @@ public static class LogicMethods
             .Sum(fees => fees.Balance);
     }
 
-    public static bool IsPaymentWithinBalance(SchoolFees schoolFees, double paymentAmount, int excludePaymentId = 0)
+    public static bool IsPaymentWithinBalance(List<SchoolFees> studentFees, SchoolFees schoolFees, double paymentAmount, int excludePaymentId = 0)
     {
         if (schoolFees == null)
             return false;
@@ -178,7 +178,7 @@ public static class LogicMethods
             .Where(payment => payment.Id != excludePaymentId)
             .Sum(payment => payment.Amount);
 
-        return paymentAmount <= schoolFees.TotalAmount - alreadyPaid;
+        return paymentAmount <= GetTotalPayable(studentFees, schoolFees) - alreadyPaid;
     }
 
     private static List<PaymentDetails> GetPaymentDetails(List<Payment> payments)
@@ -236,8 +236,7 @@ public static class LogicMethods
             BroughtForwardOutstanding = broughtForward,
             TotalOutstanding = schoolFees.Balance + broughtForward,
             TotalPayable = GetTotalPayable(student.SchoolFees, schoolFees),
-            StudentPaymentCompletionRate =
-                CalculatePaymentCompletionRate(schoolFees.TotalPaid, schoolFees.TotalAmount),
+            StudentPaymentCompletionRate = CalculatePaymentCompletionRate(schoolFees.TotalPaid, GetTotalPayable(student.SchoolFees, schoolFees)),
             StudentTimelyCompletionRate = timelyCompletionRate,
             PaymentDetails = GetPaymentDetails(payments)
         };
