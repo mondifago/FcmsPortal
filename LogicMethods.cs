@@ -203,8 +203,8 @@ public static class LogicMethods
         var learningPath = schoolFees.LearningPath;
         var payments = schoolFees.Payments.OrderBy(payment => payment.Date).ToList();
         var latestPayment = payments.LastOrDefault();
-
         double broughtForward = GetOutstandingBroughtForward(student.SchoolFees, learningPath);
+        double totalPayable = GetTotalPayable(student.SchoolFees, schoolFees);
 
         double timelyCompletionRate = FcmsConstants.DEFAULT_COMPLETION_RATE;
         if (learningPath != null && latestPayment != null)
@@ -235,8 +235,8 @@ public static class LogicMethods
             OutstandingBalance = schoolFees.Balance,
             BroughtForwardOutstanding = broughtForward,
             TotalOutstanding = schoolFees.Balance + broughtForward,
-            TotalPayable = GetTotalPayable(student.SchoolFees, schoolFees),
-            StudentPaymentCompletionRate = CalculatePaymentCompletionRate(schoolFees.TotalPaid, GetTotalPayable(student.SchoolFees, schoolFees)),
+            TotalPayable = totalPayable,
+            StudentPaymentCompletionRate = CalculatePaymentCompletionRate(schoolFees.TotalPaid, totalPayable),
             StudentTimelyCompletionRate = timelyCompletionRate,
             PaymentDetails = GetPaymentDetails(payments)
         };
@@ -432,26 +432,46 @@ public static class LogicMethods
             .Where(fees => currentLearningPathIds.Contains(fees.LearningPathId))
             .ToList();
 
-        var broughtForwardFees = allStudentFees
-            .Where(fees => !currentLearningPathIds.Contains(fees.LearningPathId) && fees.Balance > 0)
+        var feesByStudent = allStudentFees
+            .GroupBy(fees => fees.StudentId)
+            .ToDictionary(group => group.Key, group => group.ToList());
+
+        var currentRowPerStudent = currentFees
+            .GroupBy(fees => fees.StudentId)
+            .Select(group => group.First())
             .ToList();
 
         summary.TotalLearningPaths = currentLearningPaths.Count;
-        summary.TotalStudents = currentFees.Select(fees => fees.StudentId).Distinct().Count();
+        summary.TotalStudents = currentRowPerStudent.Count;
 
-        summary.TotalExpectedRevenue = currentFees.Sum(fees => fees.TotalAmount);
+        summary.TotalBroughtForwardOutstanding = currentRowPerStudent.Sum(fees =>
+            fees.LearningPath == null
+                ? 0
+                : GetOutstandingBroughtForward(feesByStudent[fees.StudentId], fees.LearningPath));
+
+        summary.TotalExpectedRevenue =
+            currentFees.Sum(fees => fees.TotalAmount) + summary.TotalBroughtForwardOutstanding;
+
         summary.TotalAmountReceived = currentFees.Sum(fees => fees.TotalPaid);
         summary.TotalOutstanding = summary.TotalExpectedRevenue - summary.TotalAmountReceived;
 
-        summary.TotalBroughtForwardOutstanding = broughtForwardFees.Sum(fees => fees.Balance);
-        summary.TotalOutstandingIncludingBroughtForward =
-            summary.TotalOutstanding + summary.TotalBroughtForwardOutstanding;
+        var currentPositions = currentFees
+            .Select(fees => new
+            {
+                TotalPayable = GetTotalPayable(feesByStudent[fees.StudentId], fees),
+                CarriedForward = GetCarriedForward(feesByStudent[fees.StudentId], fees)
+            })
+            .ToList();
 
-        summary.FullyPaidStudents = currentFees.Count(fees => fees.TotalAmount > 0 && fees.Balance <= 0);
-        summary.StudentsWithBalance = currentFees.Count(fees => fees.TotalAmount > 0 && fees.Balance > 0);
+        summary.FullyPaidStudents = currentPositions.Count(position =>
+            position.TotalPayable > 0 && position.CarriedForward <= 0);
+
+        summary.StudentsWithBalance = currentPositions.Count(position =>
+            position.TotalPayable > 0 && position.CarriedForward > 0);
 
         summary.PaymentCompletionRate =
             CalculatePaymentCompletionRate(summary.TotalAmountReceived, summary.TotalExpectedRevenue);
+
         summary.TimelyCompletionRate = CalculateAverageTimelyCompletionRate(currentFees);
 
         return summary;
