@@ -262,14 +262,21 @@ public static class LogicMethods
         return Math.Clamp(rate, FcmsConstants.DEFAULT_COMPLETION_RATE, FcmsConstants.PERCENTAGE_MULTIPLIER);
     }
 
-    public static double CalculateAveragePaymentCompletionRate(List<SchoolFees> fees)
+    public static double CalculateAveragePaymentCompletionRate(List<SchoolFees> studentFeesPool, List<SchoolFees> feesToAverage)
     {
-        if (fees == null || !fees.Any())
+        if (studentFeesPool == null || feesToAverage == null || !feesToAverage.Any())
             return FcmsConstants.DEFAULT_COMPLETION_RATE;
 
-        var completionRates = fees
-            .Where(schoolFees => schoolFees.TotalAmount > 0)
-            .Select(schoolFees => CalculatePaymentCompletionRate(schoolFees.TotalPaid, schoolFees.TotalAmount))
+        var completionRates = feesToAverage
+            .Select(schoolFees => new
+            {
+                Paid = schoolFees.TotalPaid,
+                TotalPayable = GetTotalPayable(
+                    studentFeesPool.Where(fees => fees.StudentId == schoolFees.StudentId).ToList(),
+                    schoolFees)
+            })
+            .Where(position => position.TotalPayable > 0)
+            .Select(position => CalculatePaymentCompletionRate(position.Paid, position.TotalPayable))
             .ToList();
 
         if (!completionRates.Any())
@@ -305,7 +312,7 @@ public static class LogicMethods
     }
 
     public static SchoolPaymentReportEntry GenerateSchoolPaymentReport(
-        List<LearningPath> currentLearningPaths, List<SchoolFees> allStudentFees)
+     List<LearningPath> currentLearningPaths, List<SchoolFees> allStudentFees)
     {
         if (currentLearningPaths == null || !currentLearningPaths.Any() || allStudentFees == null)
             return new SchoolPaymentReportEntry();
@@ -316,14 +323,7 @@ public static class LogicMethods
             .Where(fees => currentLearningPathIds.Contains(fees.LearningPathId))
             .ToList();
 
-        var broughtForwardFees = allStudentFees
-            .Where(fees => !currentLearningPathIds.Contains(fees.LearningPathId) && fees.Balance > 0)
-            .ToList();
-
-        double totalFees = currentFees.Sum(fees => fees.TotalAmount);
-        double totalPaid = currentFees.Sum(fees => fees.TotalPaid);
-        double broughtForward = broughtForwardFees.Sum(fees => fees.Balance);
-
+        var summary = CalculateSchoolPaymentSummary(currentLearningPaths, allStudentFees);
         var firstLearningPath = currentLearningPaths.First();
 
         return new SchoolPaymentReportEntry
@@ -334,16 +334,16 @@ public static class LogicMethods
             SemesterEndDate = currentLearningPaths.Max(learningPath => learningPath.SemesterEndDate),
             DateAndTimeReportGenerated = DateTime.Now,
 
-            TotalStudents = currentFees.Select(fees => fees.StudentId).Distinct().Count(),
-            TotalSchoolFeesAmount = totalFees,
-            TotalAmountPaid = totalPaid,
-            TotalOutstanding = totalFees - totalPaid,
-            TotalBroughtForwardOutstanding = broughtForward,
-            TotalOutstandingIncludingBroughtForward = (totalFees - totalPaid) + broughtForward,
+            TotalStudents = summary.TotalStudents,
+            TotalSchoolFeesAmount = summary.TotalExpectedRevenue,
+            TotalAmountPaid = summary.TotalAmountReceived,
+            TotalOutstanding = summary.TotalOutstanding,
+            TotalBroughtForwardOutstanding = summary.TotalBroughtForwardOutstanding,
 
-            SchoolPaymentCompletionRate = CalculatePaymentCompletionRate(totalPaid, totalFees),
-            AverageStudentPaymentCompletionRateInSchool = CalculateAveragePaymentCompletionRate(currentFees),
-            AverageStudentTimelyCompletionRate = CalculateAverageTimelyCompletionRate(currentFees)
+            SchoolPaymentCompletionRate = summary.PaymentCompletionRate,
+            AverageStudentPaymentCompletionRateInSchool =
+                CalculateAveragePaymentCompletionRate(allStudentFees, currentFees),
+            AverageStudentTimelyCompletionRate = summary.TimelyCompletionRate
         };
     }
 
@@ -378,7 +378,7 @@ public static class LogicMethods
             TotalPaidForPath = totalPaid,
             OutstandingForPath = totalFees - totalPaid,
             LearningPathPaymentCompletionRate = CalculatePaymentCompletionRate(totalPaid, totalFees),
-            AverageStudentPaymentCompletionRateInPath = CalculateAveragePaymentCompletionRate(feesInPath),
+            AverageStudentPaymentCompletionRateInPath = CalculateAveragePaymentCompletionRate(feesInPath, feesInPath),
             LearningPathTimelyCompletionRateInPath = CalculateTimelyCompletionRate(
                 learningPath.SemesterStartDate, learningPath.SemesterEndDate, latestPaymentDate),
             AverageStudentTimelyCompletionRate = CalculateAverageTimelyCompletionRate(feesInPath)

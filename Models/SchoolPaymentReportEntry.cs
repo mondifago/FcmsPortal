@@ -15,7 +15,5 @@
         public double AverageStudentPaymentCompletionRateInSchool { get; set; }
         public double AverageStudentTimelyCompletionRate { get; set; }
         public double TotalBroughtForwardOutstanding { get; set; }
-        public double TotalOutstandingIncludingBroughtForward { get; set; }
-
     }
 }
