@@ -348,13 +348,12 @@ public static class LogicMethods
     }
 
     //Generate payment report of all students in a learning path
-    public static LearningPathPaymentReportEntry GenerateLearningPathPaymentReport(LearningPath learningPath, List<SchoolFees> feesInPath)
+    public static LearningPathPaymentReportEntry GenerateLearningPathPaymentReport(LearningPath learningPath, List<SchoolFees> allStudentFees, List<SchoolFees> feesInPath)
     {
-        if (learningPath == null || feesInPath == null)
+        if (learningPath == null || allStudentFees == null || feesInPath == null)
             return new LearningPathPaymentReportEntry();
 
-        double totalFees = feesInPath.Sum(fees => fees.TotalAmount);
-        double totalPaid = feesInPath.Sum(fees => fees.TotalPaid);
+        var summary = CalculateLearningPathPaymentSummary(learningPath, allStudentFees, feesInPath, feesInPath.Count);
 
         var latestPaymentDate = feesInPath
             .SelectMany(fees => fees.Payments)
@@ -373,24 +372,27 @@ public static class LogicMethods
             SemesterStartDate = learningPath.SemesterStartDate,
             SemesterEndDate = learningPath.SemesterEndDate,
             ReportGeneratedDateAndTime = DateTime.Now,
-            TotalStudentsInPath = feesInPath.Count,
-            TotalFeesForPath = totalFees,
-            TotalPaidForPath = totalPaid,
-            OutstandingForPath = totalFees - totalPaid,
-            LearningPathPaymentCompletionRate = CalculatePaymentCompletionRate(totalPaid, totalFees),
-            AverageStudentPaymentCompletionRateInPath = CalculateAveragePaymentCompletionRate(feesInPath, feesInPath),
+            TotalStudentsInPath = summary.StudentCount,
+            TotalFeesForPath = summary.ExpectedRevenue,
+            TotalPaidForPath = summary.TotalPaid,
+            OutstandingForPath = summary.Outstanding,
+            LearningPathPaymentCompletionRate = summary.PaymentCompletionRate,
+            AverageStudentPaymentCompletionRateInPath = CalculateAveragePaymentCompletionRate(allStudentFees, feesInPath),
             LearningPathTimelyCompletionRateInPath = CalculateTimelyCompletionRate(
                 learningPath.SemesterStartDate, learningPath.SemesterEndDate, latestPaymentDate),
             AverageStudentTimelyCompletionRate = CalculateAverageTimelyCompletionRate(feesInPath)
         };
     }
 
-    public static LearningPathPaymentSummary CalculateLearningPathPaymentSummary(LearningPath learningPath, List<SchoolFees> feesInPath, int enrolledStudentCount)
+    public static LearningPathPaymentSummary CalculateLearningPathPaymentSummary(LearningPath learningPath, List<SchoolFees> allStudentFees, List<SchoolFees> feesInPath, int enrolledStudentCount)
     {
-        if (learningPath == null || feesInPath == null)
+        if (learningPath == null || allStudentFees == null || feesInPath == null)
             return new LearningPathPaymentSummary();
 
-        double expectedRevenue = feesInPath.Sum(fees => fees.TotalAmount);
+        double expectedRevenue = feesInPath.Sum(fees => GetTotalPayable(
+            allStudentFees.Where(sibling => sibling.StudentId == fees.StudentId).ToList(),
+            fees));
+
         double totalPaid = feesInPath.Sum(fees => fees.TotalPaid);
 
         var lastPaymentDate = feesInPath
