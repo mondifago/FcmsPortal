@@ -7,6 +7,7 @@ namespace FcmsPortal.Models
         public int Id { get; set; }
         public int StudentId { get; set; }
         public string StudentName { get; set; } = string.Empty;
+        public string StudentAddress { get; set; } = string.Empty;
         public int LearningPathId { get; set; }
         public string LearningPathName { get; set; } = string.Empty;
         public EducationLevel EducationLevel { get; set; }
@@ -16,6 +17,11 @@ namespace FcmsPortal.Models
         public double TotalFees { get; set; }
         public double TotalPaid { get; set; }
         public double OutstandingBalance { get; set; }
+        public double CarriedForward { get; set; }
+        public double TermFee { get; set; }
+        public double Discount { get; set; }
+        public double BroughtForward { get; set; }
+        public double TotalPayable { get; set; }
         public double PaymentCompletionRate { get; set; }
         public double TimelyCompletionRate { get; set; }
         public DateTime ArchivedDate { get; set; }

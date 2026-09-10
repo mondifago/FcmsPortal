@@ -311,8 +311,7 @@ public static class LogicMethods
         return timelyRates.Average();
     }
 
-    public static SchoolPaymentReportEntry GenerateSchoolPaymentReport(
-     List<LearningPath> currentLearningPaths, List<SchoolFees> allStudentFees)
+    public static SchoolPaymentReportEntry GenerateSchoolPaymentReport(List<LearningPath> currentLearningPaths, List<SchoolFees> allStudentFees)
     {
         if (currentLearningPaths == null || !currentLearningPaths.Any() || allStudentFees == null)
             return new SchoolPaymentReportEntry();
@@ -521,6 +520,44 @@ public static class LogicMethods
 
             LearningPathTimelyCompletionRateInPath = archive.LearningPathTimelyCompletionRate,
             AverageStudentTimelyCompletionRate = archive.AverageStudentTimelyCompletionRateInPath
+        };
+    }
+
+    public static StudentPaymentReportEntry GenerateArchivedStudentPaymentReport(ArchivedStudentPayment archive, List<ArchivedPaymentDetail> paymentDetails)
+    {
+        if (archive == null)
+            return new StudentPaymentReportEntry();
+
+        return new StudentPaymentReportEntry
+        {
+            DateAndTimeReportGenerated = archive.ArchivedDate,
+            StudentFullName = archive.StudentName,
+            StudentAddress = archive.StudentAddress,
+            LearningPathName = archive.LearningPathName,
+            AcademicYear = archive.AcademicYear,
+            Semester = archive.Semester.ToString(),
+
+            TermFee = archive.TermFee,
+            Discount = archive.Discount,
+            TotalFees = archive.TotalFees,
+            BroughtForwardOutstanding = archive.BroughtForward,
+            TotalPayable = archive.TotalPayable,
+            TotalPaid = archive.TotalPaid,
+            OutstandingBalance = archive.OutstandingBalance,
+            TotalOutstanding = archive.CarriedForward,
+
+            StudentPaymentCompletionRate = archive.PaymentCompletionRate,
+            StudentTimelyCompletionRate = archive.TimelyCompletionRate,
+
+            PaymentDetails = paymentDetails == null
+                ? new List<PaymentDetails>()
+                : paymentDetails.Select(detail => new PaymentDetails
+                {
+                    Date = detail.Date,
+                    Amount = detail.Amount,
+                    PaymentMethod = detail.PaymentMethod.ToString(),
+                    Reference = detail.Reference
+                }).ToList()
         };
     }
 
