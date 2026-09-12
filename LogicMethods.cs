@@ -262,53 +262,37 @@ public static class LogicMethods
         return Math.Clamp(rate, FcmsConstants.DEFAULT_COMPLETION_RATE, FcmsConstants.PERCENTAGE_MULTIPLIER);
     }
 
-    public static double CalculateAveragePaymentCompletionRate(List<SchoolFees> studentFeesPool, List<SchoolFees> feesToAverage)
+    public static double CalculateWeightedTimelyCompletionRate(List<SchoolFees> feesInScope, double totalPayable)
     {
-        if (studentFeesPool == null || feesToAverage == null || !feesToAverage.Any())
+        if (feesInScope == null || totalPayable <= 0)
             return FcmsConstants.DEFAULT_COMPLETION_RATE;
 
-        var completionRates = feesToAverage
-            .Select(schoolFees => new
-            {
-                Paid = schoolFees.TotalPaid,
-                TotalPayable = GetTotalPayable(
-                    studentFeesPool.Where(fees => fees.StudentId == schoolFees.StudentId).ToList(),
-                    schoolFees)
-            })
-            .Where(position => position.TotalPayable > 0)
-            .Select(position => CalculatePaymentCompletionRate(position.Paid, position.TotalPayable))
-            .ToList();
+        double timelyValue = 0;
 
-        if (!completionRates.Any())
-            return FcmsConstants.DEFAULT_COMPLETION_RATE;
-
-        return completionRates.Average();
-    }
-
-    public static double CalculateAverageTimelyCompletionRate(List<SchoolFees> fees)
-    {
-        if (fees == null || !fees.Any())
-            return FcmsConstants.DEFAULT_COMPLETION_RATE;
-
-        var timelyRates = new List<double>();
-
-        foreach (var schoolFees in fees)
+        foreach (var schoolFees in feesInScope)
         {
-            if (schoolFees.LearningPath == null || !schoolFees.Payments.Any())
+            if (schoolFees.LearningPath == null)
                 continue;
 
-            var latestPaymentDate = schoolFees.Payments.Max(payment => payment.Date);
+            double termDurationDays =
+                (schoolFees.LearningPath.SemesterEndDate - schoolFees.LearningPath.SemesterStartDate).TotalDays;
 
-            timelyRates.Add(CalculateTimelyCompletionRate(
-                schoolFees.LearningPath.SemesterStartDate,
-                schoolFees.LearningPath.SemesterEndDate,
-                latestPaymentDate));
+            if (termDurationDays <= 0)
+                continue;
+
+            foreach (var payment in schoolFees.Payments)
+            {
+                double daysElapsed = (payment.Date - schoolFees.LearningPath.SemesterStartDate).TotalDays;
+                double clampedDays = Math.Clamp(daysElapsed, 0, termDurationDays);
+                double earliness = 1 - (clampedDays / termDurationDays);
+
+                timelyValue += payment.Amount * earliness;
+            }
         }
 
-        if (!timelyRates.Any())
-            return FcmsConstants.DEFAULT_COMPLETION_RATE;
+        double rate = (timelyValue / totalPayable) * FcmsConstants.PERCENTAGE_MULTIPLIER;
 
-        return timelyRates.Average();
+        return Math.Clamp(rate, FcmsConstants.DEFAULT_COMPLETION_RATE, FcmsConstants.PERCENTAGE_MULTIPLIER);
     }
 
     public static SchoolPaymentReportEntry GenerateSchoolPaymentReport(List<LearningPath> currentLearningPaths, List<SchoolFees> allStudentFees)
@@ -317,11 +301,6 @@ public static class LogicMethods
             return new SchoolPaymentReportEntry();
 
         var currentLearningPathIds = currentLearningPaths.Select(learningPath => learningPath.Id).ToHashSet();
-
-        var currentFees = allStudentFees
-            .Where(fees => currentLearningPathIds.Contains(fees.LearningPathId))
-            .ToList();
-
         var summary = CalculateSchoolPaymentSummary(currentLearningPaths, allStudentFees);
         var firstLearningPath = currentLearningPaths.First();
 
@@ -332,36 +311,21 @@ public static class LogicMethods
             SemesterStartDate = currentLearningPaths.Min(learningPath => learningPath.SemesterStartDate),
             SemesterEndDate = currentLearningPaths.Max(learningPath => learningPath.SemesterEndDate),
             DateAndTimeReportGenerated = DateTime.Now,
-
             TotalStudents = summary.TotalStudents,
             TotalSchoolFeesAmount = summary.TotalExpectedRevenue,
             TotalAmountPaid = summary.TotalAmountReceived,
             TotalOutstanding = summary.TotalOutstanding,
             TotalBroughtForwardOutstanding = summary.TotalBroughtForwardOutstanding,
-
             SchoolPaymentCompletionRate = summary.PaymentCompletionRate,
-            AverageStudentPaymentCompletionRateInSchool =
-                CalculateAveragePaymentCompletionRate(allStudentFees, currentFees),
-            AverageStudentTimelyCompletionRate = summary.TimelyCompletionRate
         };
     }
 
-    //Generate payment report of all students in a learning path
     public static LearningPathPaymentReportEntry GenerateLearningPathPaymentReport(LearningPath learningPath, List<SchoolFees> allStudentFees, List<SchoolFees> feesInPath)
     {
         if (learningPath == null || allStudentFees == null || feesInPath == null)
             return new LearningPathPaymentReportEntry();
 
         var summary = CalculateLearningPathPaymentSummary(learningPath, allStudentFees, feesInPath, feesInPath.Count);
-
-        var latestPaymentDate = feesInPath
-            .SelectMany(fees => fees.Payments)
-            .OrderByDescending(payment => payment.Date)
-            .Select(payment => payment.Date)
-            .FirstOrDefault();
-
-        if (latestPaymentDate == default)
-            latestPaymentDate = learningPath.SemesterEndDate;
 
         return new LearningPathPaymentReportEntry
         {
@@ -376,10 +340,7 @@ public static class LogicMethods
             TotalPaidForPath = summary.TotalPaid,
             OutstandingForPath = summary.Outstanding,
             LearningPathPaymentCompletionRate = summary.PaymentCompletionRate,
-            AverageStudentPaymentCompletionRateInPath = CalculateAveragePaymentCompletionRate(allStudentFees, feesInPath),
-            LearningPathTimelyCompletionRateInPath = CalculateTimelyCompletionRate(
-                learningPath.SemesterStartDate, learningPath.SemesterEndDate, latestPaymentDate),
-            AverageStudentTimelyCompletionRate = CalculateAverageTimelyCompletionRate(feesInPath)
+            LearningPathTimelyCompletionRateInPath = summary.TimelyCompletionRate
         };
     }
 
@@ -394,27 +355,18 @@ public static class LogicMethods
 
         double totalPaid = feesInPath.Sum(fees => fees.TotalPaid);
 
-        var lastPaymentDate = feesInPath
-            .SelectMany(fees => fees.Payments)
-            .Where(payment => payment.Date >= learningPath.SemesterStartDate &&
-                              payment.Date <= learningPath.SemesterEndDate)
-            .OrderByDescending(payment => payment.Date)
-            .Select(payment => payment.Date)
-            .FirstOrDefault();
-
-        double timelyRate = lastPaymentDate == default
-            ? FcmsConstants.DEFAULT_COMPLETION_RATE
-            : CalculateTimelyCompletionRate(
-                learningPath.SemesterStartDate, learningPath.SemesterEndDate, lastPaymentDate);
-
         return new LearningPathPaymentSummary
         {
             ExpectedRevenue = expectedRevenue,
             TotalPaid = totalPaid,
             Outstanding = expectedRevenue - totalPaid,
             PaymentCompletionRate = CalculatePaymentCompletionRate(totalPaid, expectedRevenue),
-            TimelyCompletionRate = timelyRate,
-            LastPaymentDate = lastPaymentDate == default ? null : lastPaymentDate,
+            TimelyCompletionRate = CalculateWeightedTimelyCompletionRate(feesInPath, expectedRevenue),
+            LastPaymentDate = feesInPath
+                .SelectMany(fees => fees.Payments)
+                .OrderByDescending(payment => payment.Date)
+                .Select(payment => (DateTime?)payment.Date)
+                .FirstOrDefault(),
             StudentCount = enrolledStudentCount,
             FeePerSemester = learningPath.FeePerSemester
         };
@@ -473,7 +425,8 @@ public static class LogicMethods
         summary.PaymentCompletionRate =
             CalculatePaymentCompletionRate(summary.TotalAmountReceived, summary.TotalExpectedRevenue);
 
-        summary.TimelyCompletionRate = CalculateAverageTimelyCompletionRate(currentFees);
+        summary.TimelyCompletionRate =
+            CalculateWeightedTimelyCompletionRate(currentFees, summary.TotalExpectedRevenue);
 
         return summary;
     }
@@ -487,15 +440,12 @@ public static class LogicMethods
             SemesterStartDate = archive.SemesterStartDate,
             SemesterEndDate = archive.SemesterEndDate,
             DateAndTimeReportGenerated = archive.ArchivedDate,
-
             TotalStudents = archive.TotalStudents,
             TotalSchoolFeesAmount = archive.TotalExpectedRevenue,
             TotalAmountPaid = archive.TotalAmountReceived,
             TotalOutstanding = archive.TotalOutstandingBalance,
-
+            TotalBroughtForwardOutstanding = archive.TotalBroughtForwardOutstanding,
             SchoolPaymentCompletionRate = archive.SchoolWidePaymentCompletionRate,
-            AverageStudentPaymentCompletionRateInSchool = archive.AverageStudentPaymentCompletionRateInSchool,
-            AverageStudentTimelyCompletionRate = archive.AverageStudentTimelyCompletionRateInSchool
         };
     }
 
@@ -509,17 +459,12 @@ public static class LogicMethods
             SemesterStartDate = archive.SemesterStartDate,
             SemesterEndDate = archive.SemesterEndDate,
             ReportGeneratedDateAndTime = archive.ArchivedDate,
-
             TotalStudentsInPath = archive.TotalStudentsInPath,
             TotalFeesForPath = archive.LearningPathExpectedRevenue,
             TotalPaidForPath = archive.TotalPaid,
             OutstandingForPath = archive.Outstanding,
-
             LearningPathPaymentCompletionRate = archive.LearningPathPaymentCompletionRate,
-            AverageStudentPaymentCompletionRateInPath = archive.AverageStudentPaymentCompletionRateInPath,
-
-            LearningPathTimelyCompletionRateInPath = archive.LearningPathTimelyCompletionRate,
-            AverageStudentTimelyCompletionRate = archive.AverageStudentTimelyCompletionRateInPath
+            //LearningPathTimelyCompletionRateInPath = archive.LearningPathTimelyCompletionRate
         };
     }
 

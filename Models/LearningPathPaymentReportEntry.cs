@@ -13,8 +13,6 @@
         public double TotalPaidForPath { get; set; }
         public double OutstandingForPath { get; set; }
         public double LearningPathPaymentCompletionRate { get; set; }
-        public double AverageStudentPaymentCompletionRateInPath { get; set; }
         public double LearningPathTimelyCompletionRateInPath { get; set; }
-        public double AverageStudentTimelyCompletionRate { get; set; }
     }
 }
