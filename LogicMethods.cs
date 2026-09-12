@@ -192,7 +192,6 @@ public static class LogicMethods
         }).ToList();
     }
 
-    //generate Student payment summery
     public static StudentPaymentReportEntry GenerateStudentPaymentReportEntry(Student student, int learningPathId)
     {
         var schoolFees = GetFeesForLearningPath(student, learningPathId);
@@ -202,16 +201,9 @@ public static class LogicMethods
 
         var learningPath = schoolFees.LearningPath;
         var payments = schoolFees.Payments.OrderBy(payment => payment.Date).ToList();
-        var latestPayment = payments.LastOrDefault();
         double broughtForward = GetOutstandingBroughtForward(student.SchoolFees, learningPath);
         double totalPayable = GetTotalPayable(student.SchoolFees, schoolFees);
-
-        double timelyCompletionRate = FcmsConstants.DEFAULT_COMPLETION_RATE;
-        if (learningPath != null && latestPayment != null)
-        {
-            timelyCompletionRate = CalculateTimelyCompletionRate(
-                learningPath.SemesterStartDate, learningPath.SemesterEndDate, latestPayment.Date);
-        }
+        double timelyCompletionRate = CalculateWeightedTimelyCompletionRate(new List<SchoolFees> { schoolFees }, totalPayable);
 
         return new StudentPaymentReportEntry
         {
