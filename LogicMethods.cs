@@ -244,7 +244,7 @@ public static class LogicMethods
 
     public static double CalculatePaymentCompletionRate(double totalPaid, double totalFees)
     {
-        if (totalFees <= FcmsConstants.DEFAULT_COMPLETION_RATE)
+        if (totalFees <= 0)
             return FcmsConstants.DEFAULT_COMPLETION_RATE;
 
         return (totalPaid / totalFees) * FcmsConstants.PERCENTAGE_MULTIPLIER;
@@ -317,6 +317,7 @@ public static class LogicMethods
             TotalOutstanding = summary.TotalOutstanding,
             TotalBroughtForwardOutstanding = summary.TotalBroughtForwardOutstanding,
             SchoolPaymentCompletionRate = summary.PaymentCompletionRate,
+            SchoolTimelyCompletionRate = summary.TimelyCompletionRate
         };
     }
 
@@ -446,6 +447,7 @@ public static class LogicMethods
             TotalOutstanding = archive.TotalOutstandingBalance,
             TotalBroughtForwardOutstanding = archive.TotalBroughtForwardOutstanding,
             SchoolPaymentCompletionRate = archive.SchoolWidePaymentCompletionRate,
+            SchoolTimelyCompletionRate = archive.SchoolWideTimelyCompletionRate
         };
     }
 
@@ -464,7 +466,7 @@ public static class LogicMethods
             TotalPaidForPath = archive.TotalPaid,
             OutstandingForPath = archive.Outstanding,
             LearningPathPaymentCompletionRate = archive.LearningPathPaymentCompletionRate,
-            //LearningPathTimelyCompletionRateInPath = archive.LearningPathTimelyCompletionRate
+            LearningPathTimelyCompletionRateInPath = archive.LearningPathTimelyCompletionRate
         };
     }
 

@@ -12,6 +12,7 @@
         public double TotalAmountPaid { get; set; }
         public double TotalOutstanding { get; set; }
         public double SchoolPaymentCompletionRate { get; set; }
+        public double SchoolTimelyCompletionRate { get; set; }
         public double TotalBroughtForwardOutstanding { get; set; }
     }
 }
