@@ -558,6 +558,14 @@ public static class LogicMethods
 
         return ledger;
     }
+
+    public static bool IsPaymentPeriodEditable(LearningPath? learningPath, AcademicPeriod? currentPeriod)
+    {
+        if (learningPath == null || currentPeriod == null)
+            return false;
+
+        return learningPath.AcademicPeriodId == currentPeriod.Id;
+    }
     #endregion
 
     #region GRADING METHODS
