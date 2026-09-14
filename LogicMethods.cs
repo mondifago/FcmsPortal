@@ -242,18 +242,6 @@ public static class LogicMethods
         return (totalPaid / totalFees) * FcmsConstants.PERCENTAGE_MULTIPLIER;
     }
 
-    public static double CalculateTimelyCompletionRate(DateTime semesterStart, DateTime semesterEnd, DateTime lastPaymentDate)
-    {
-        double semesterDurationDays = (semesterEnd - semesterStart).TotalDays;
-        double paymentDurationDays = (lastPaymentDate - semesterStart).TotalDays;
-
-        if (semesterDurationDays <= 0 || paymentDurationDays < 0)
-            return FcmsConstants.DEFAULT_COMPLETION_RATE;
-
-        double rate = (1 - (paymentDurationDays / semesterDurationDays)) * FcmsConstants.PERCENTAGE_MULTIPLIER;
-        return Math.Clamp(rate, FcmsConstants.DEFAULT_COMPLETION_RATE, FcmsConstants.PERCENTAGE_MULTIPLIER);
-    }
-
     public static double CalculateWeightedTimelyCompletionRate(List<SchoolFees> feesInScope, double totalPayable)
     {
         if (feesInScope == null || totalPayable <= 0)

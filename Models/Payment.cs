@@ -1,7 +1,6 @@
 ﻿using FcmsPortal.Constants;
 using FcmsPortal.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
 {
@@ -23,21 +22,8 @@ namespace FcmsPortal.Models
         public string? Reference { get; set; }
         public int SchoolFeesId { get; set; }
         public SchoolFees SchoolFees { get; set; } = null!;
-        public Semester Semester { get; set; }
-        public DateTime AcademicYearStart { get; set; }
-        public EducationLevel EducationLevel { get; set; }
-        public ClassLevel ClassLevel { get; set; }
+
         public int LearningPathId { get; set; }
         public LearningPath LearningPath { get; set; } = null!;
-        [NotMapped]
-        public string AcademicYear
-        {
-            get
-            {
-                int startYear = AcademicYearStart.Year;
-                int endYear = startYear + 1;
-                return $"{startYear}-{endYear}";
-            }
-        }
     }
 }
