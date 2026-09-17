@@ -26,6 +26,42 @@ public static class LogicMethods
     }
     #endregion
 
+    #region CLASS SESSION METHODS
+    /// <summary>
+    /// Methods for Class Session Numbering
+    /// </summary>
+
+    public static int GetNextSessionNumber(int? highestSessionNumber)
+    {
+        return (highestSessionNumber ?? 0) + 1;
+    }
+
+    public static List<int> MoveInSequence(List<int> orderedIds, int id, int newPosition)
+    {
+        var sequence = RemoveFromSequence(orderedIds, id);
+        var index = Math.Clamp(newPosition - 1, 0, sequence.Count);
+        sequence.Insert(index, id);
+        return sequence;
+    }
+
+    public static List<int> RemoveFromSequence(List<int> orderedIds, int id)
+    {
+        return orderedIds.Where(existingId => existingId != id).ToList();
+    }
+
+    public static Dictionary<int, int> AssignSequenceNumbers(List<int> orderedIds)
+    {
+        var sequenceNumbers = new Dictionary<int, int>();
+
+        for (int index = 0; index < orderedIds.Count; index++)
+        {
+            sequenceNumbers[orderedIds[index]] = index + 1;
+        }
+
+        return sequenceNumbers;
+    }
+    #endregion
+
     #region SCHEDULING METHODS
     /// <summary>
     /// Methods for Schedule Management and Calendar Operations

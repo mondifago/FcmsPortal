@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FcmsPortal.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
@@ -7,7 +8,17 @@ namespace FcmsPortal.Models
     {
         public int Id { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "Session number must be 1 or greater.")]
+        public int SessionNumber { get; set; }
+
+        [Required(ErrorMessage = "Class level is required.")]
+        public ClassLevel ClassLevel { get; set; }
+
+        [Required(ErrorMessage = "Term is required.")]
+        public Semester Semester { get; set; }
+
         [Required(ErrorMessage = "Course is required.")]
+        [StringLength(50, ErrorMessage = "Course must be 50 characters or fewer.")]
         public string Course { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Topic is required.")]
@@ -20,8 +31,7 @@ namespace FcmsPortal.Models
 
         public string LessonPlan { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Teacher is required.")]
-        public int TeacherId { get; set; }
+        public int? TeacherId { get; set; }
 
         [ForeignKey("TeacherId")]
         public Staff? Teacher { get; set; }
@@ -31,6 +41,7 @@ namespace FcmsPortal.Models
         public string TeacherRemarks { get; set; } = string.Empty;
         public string RemarksSubmittedByName { get; set; } = string.Empty;
         public DateTime? RemarksSubmittedAt { get; set; }
+        public DateTime? ClosedAt { get; set; }
         public List<FileAttachment> StudyMaterials { get; set; } = new();
         public List<DiscussionThread> DiscussionThreads { get; set; } = new();
         public string? VideoUrl { get; set; }
