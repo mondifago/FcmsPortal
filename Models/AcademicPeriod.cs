@@ -22,6 +22,10 @@ namespace FcmsPortal.Models
 
         public DateTime? ExamsStartDate { get; set; }
 
+        public DateTime? MidTermBreakStart { get; set; }
+
+        public DateTime? MidTermBreakEnd { get; set; }
+
         [NotMapped]
         public string AcademicYear => $"{AcademicYearStart.Year}-{AcademicYearStart.Year + 1}";
 
