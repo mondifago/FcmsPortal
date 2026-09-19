@@ -50,9 +50,7 @@ namespace FcmsPortal.Models
         public double FeePerSemester { get; set; }
         public List<Student> Students { get; set; } = new List<Student>();
         public List<StudentReportCard> ReportCards { get; set; } = new List<StudentReportCard>();
-
         public List<DailyAttendanceLogEntry> AttendanceLog { get; set; } = new List<DailyAttendanceLogEntry>();
-
         public List<CourseGradingConfiguration> CourseGradingConfigurations { get; set; } = new List<CourseGradingConfiguration>();
         public int? SubmittedById { get; set; }
         public string? SubmittedByName { get; set; }
