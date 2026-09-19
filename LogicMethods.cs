@@ -60,6 +60,90 @@ public static class LogicMethods
 
         return sequenceNumbers;
     }
+
+    public static SessionState GetSessionState(DateTime? scheduledStart, TimeSpan? duration, DateTime? closedAt, DateTime now)
+    {
+        if (closedAt.HasValue)
+            return SessionState.Completed;
+
+        if (!scheduledStart.HasValue)
+            return SessionState.Uncompleted;
+
+        var start = scheduledStart.Value;
+        var end = start.Add(duration ?? TimeSpan.Zero);
+
+        if (now >= start && now < end)
+            return SessionState.InProgress;
+
+        return SessionState.Uncompleted;
+    }
+    #endregion
+
+    #region CLASS SCHEDULE METHODS
+    public static List<DateTime> GenerateOccurrenceDates(RecurrencePlan plan)
+    {
+        var occurrences = new List<DateTime>();
+
+        if (plan.Interval < 1)
+            return occurrences;
+
+        var current = plan.StartDateTime;
+
+        while (current.Date <= plan.EndDate.Date)
+        {
+            occurrences.Add(current);
+
+            var next = plan.Pattern switch
+            {
+                RecurrenceType.Daily => current.AddDays(plan.Interval),
+                RecurrenceType.Weekly => current.AddDays(FcmsConstants.DAYS_IN_WEEK * plan.Interval),
+                RecurrenceType.Monthly => current.AddMonths(plan.Interval),
+                _ => current
+            };
+
+            if (next == current)
+                break;
+
+            current = next;
+        }
+
+        return occurrences;
+    }
+
+    public static List<ScheduleEntry> GenerateRecurringSchedules(ScheduleEntry baseEntry)
+    {
+        var schedules = new List<ScheduleEntry>();
+
+        if (!baseEntry.IsRecurring || baseEntry.RecurrencePattern == null || baseEntry.EndDate == null)
+        {
+            schedules.Add(baseEntry);
+            return schedules;
+        }
+
+        var plan = new RecurrencePlan
+        {
+            StartDateTime = baseEntry.DateTime,
+            Pattern = baseEntry.RecurrencePattern.Value,
+            Interval = baseEntry.RecurrenceInterval,
+            EndDate = baseEntry.EndDate.Value
+        };
+
+        foreach (var occurrence in GenerateOccurrenceDates(plan))
+        {
+            schedules.Add(new ScheduleEntry
+            {
+                DateTime = occurrence,
+                Duration = baseEntry.Duration,
+                Venue = baseEntry.Venue,
+                Title = baseEntry.Title,
+                Event = baseEntry.Event,
+                Meeting = baseEntry.Meeting,
+                IsRecurring = false
+            });
+        }
+
+        return schedules;
+    }
     #endregion
 
     #region SCHEDULING METHODS
@@ -87,7 +171,6 @@ public static class LogicMethods
                 DateTime = currentDate,
                 Duration = baseEntry.Duration,
                 Venue = baseEntry.Venue,
-                ClassSession = baseEntry.ClassSession,
                 Title = baseEntry.Title,
                 Event = baseEntry.Event,
                 Meeting = baseEntry.Meeting,
