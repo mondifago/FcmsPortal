@@ -146,70 +146,10 @@ public static class LogicMethods
     }
     #endregion
 
-    #region SCHEDULING METHODS
+    #region GENERAL CALENDAR SCHEDULING METHODS
     /// <summary>
-    /// Methods for Schedule Management and Calendar Operations
+    /// Methods for Schedule Management in the General Calendar
     /// </summary>
-
-    // Method to Generate Recurring Schedule Entries
-    public static List<ScheduleEntry> GenerateRecurringSchedules(ScheduleEntry baseEntry)
-    {
-        var schedules = new List<ScheduleEntry>();
-
-        if (!baseEntry.IsRecurring)
-        {
-            schedules.Add(baseEntry);
-            return schedules;
-        }
-
-        DateTime currentDate = baseEntry.DateTime;
-
-        while (currentDate.Date <= baseEntry.EndDate?.Date)
-        {
-            var newEntry = new ScheduleEntry
-            {
-                DateTime = currentDate,
-                Duration = baseEntry.Duration,
-                Venue = baseEntry.Venue,
-                Title = baseEntry.Title,
-                Event = baseEntry.Event,
-                Meeting = baseEntry.Meeting,
-                IsRecurring = false,
-            };
-
-            schedules.Add(newEntry);
-
-            currentDate = baseEntry.RecurrencePattern switch
-            {
-                RecurrenceType.Daily => currentDate.AddDays(baseEntry.RecurrenceInterval),
-                RecurrenceType.Weekly => currentDate.AddDays(FcmsConstants.DAYS_IN_WEEK * baseEntry.RecurrenceInterval),
-                RecurrenceType.Monthly => currentDate.AddMonths(baseEntry.RecurrenceInterval),
-                _ => currentDate
-            };
-        }
-
-        return schedules;
-    }
-
-    public static ClassSessionReport? CreateClassSessionReport(ScheduleEntry? scheduleEntry)
-    {
-        if (scheduleEntry?.ClassSession == null)
-            return null;
-
-        var classSession = scheduleEntry.ClassSession;
-
-        return new ClassSessionReport
-        {
-            ClassSessionId = classSession.Id,
-            LearningPathName = "",
-            Course = classSession.Course,
-            Topic = classSession.Topic,
-            SubmittedBy = !string.IsNullOrEmpty(classSession.RemarksSubmittedByName)
-                ? classSession.RemarksSubmittedByName
-                : classSession.Teacher?.Person?.LastName ?? "Unknown",
-            TimeSubmitted = classSession.RemarksSubmittedAt ?? scheduleEntry.DateTime
-        };
-    }
 
     #endregion
 
@@ -218,47 +158,7 @@ public static class LogicMethods
     /// Methods for Curriculum Generation and Management
     /// </summary>
 
-    //Generate Curriculum from Learning Paths 
-    public static List<Curriculum> GenerateCurriculumFromLearningPaths(List<LearningPath> learningPaths)
-    {
-        var curriculumByClass = new Dictionary<(EducationLevel, ClassLevel), Curriculum>();
-
-        foreach (var lp in learningPaths)
-        {
-            var key = (lp.EducationLevel, lp.ClassLevel);
-            if (!curriculumByClass.ContainsKey(key))
-            {
-                curriculumByClass[key] = new Curriculum
-                {
-                    AcademicYear = lp.AcademicYear,
-                    EducationLevel = lp.EducationLevel,
-                    ClassLevel = lp.ClassLevel,
-                    Semesters = new List<SemesterCurriculum>()
-                };
-            }
-
-            var curriculum = curriculumByClass[key];
-            var semesterCurriculum = curriculum.Semesters.FirstOrDefault(s => s.Semester == lp.Semester);
-            if (semesterCurriculum == null)
-            {
-                semesterCurriculum = new SemesterCurriculum
-                {
-                    Semester = lp.Semester,
-                    ClassSessions = new List<ClassSession>()
-                };
-                curriculum.Semesters.Add(semesterCurriculum);
-            }
-
-            var classSessions = lp.Schedule
-                .Select(s => s.ClassSession)
-                .OfType<ClassSession>()
-                .ToList();
-
-            semesterCurriculum.ClassSessions.AddRange(classSessions);
-        }
-
-        return curriculumByClass.Values.ToList();
-    }
+    
     #endregion
 
     #region PAYMENT METHODS
