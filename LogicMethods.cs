@@ -61,7 +61,7 @@ public static class LogicMethods
         return sequenceNumbers;
     }
 
-    public static SessionState GetSessionState(DateTime? scheduledStart, TimeSpan? duration, DateTime? closedAt, DateTime now)
+    public static SessionState GetSessionState(DateTime? scheduledStart, DateTime? closedAt, DateTime now)
     {
         if (closedAt.HasValue)
             return SessionState.Completed;
@@ -69,10 +69,7 @@ public static class LogicMethods
         if (!scheduledStart.HasValue)
             return SessionState.Uncompleted;
 
-        var start = scheduledStart.Value;
-        var end = start.Add(duration ?? TimeSpan.Zero);
-
-        if (now >= start && now < end)
+        if (now >= scheduledStart.Value)
             return SessionState.InProgress;
 
         return SessionState.Uncompleted;
