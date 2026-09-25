@@ -3,8 +3,8 @@
     public class DiscussionThread
     {
         public int Id { get; set; }
-        public int ClassSessionId { get; set; }
-        public ClassSession ClassSession { get; set; } = null!;
+        public int ClassSessionRecordId { get; set; }
+        public ClassSessionRecord ClassSessionRecord { get; set; } = null!;
 
         public FirstPost FirstPost { get; set; } = null!;
         public List<Reply> Replies { get; set; } = new();

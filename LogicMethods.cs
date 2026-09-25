@@ -1,6 +1,7 @@
 ﻿using FcmsPortal.Constants;
 using FcmsPortal.Enums;
 using FcmsPortal.Models;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FcmsPortal;
 
@@ -73,6 +74,16 @@ public static class LogicMethods
             return SessionState.InProgress;
 
         return SessionState.Uncompleted;
+    }
+
+    public static bool IsSessionInPeriod(Semester sessionSemester, [NotNullWhen(true)] AcademicPeriod? period)
+    {
+        return period != null && period.Semester == sessionSemester;
+    }
+
+    public static bool IsClassSessionRecordOpen(DateTime? closedAt, bool gradesFinalized)
+    {
+        return !closedAt.HasValue && !gradesFinalized;
     }
     #endregion
 

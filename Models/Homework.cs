@@ -15,10 +15,10 @@ namespace FcmsPortal.Models
 
         public DateTime DueDate { get; set; }
 
-        public int ClassSessionId { get; set; }
+        public int ClassSessionRecordId { get; set; }
 
-        [ForeignKey(nameof(ClassSessionId))]
-        public ClassSession? ClassSession { get; set; }
+        [ForeignKey(nameof(ClassSessionRecordId))]
+        public ClassSessionRecord? ClassSessionRecord { get; set; }
 
         [Required(ErrorMessage = "Question is required.")]
         [StringLength(2000, ErrorMessage = "Question must be 2000 characters or fewer.")]

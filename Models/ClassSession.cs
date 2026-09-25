@@ -32,18 +32,10 @@ namespace FcmsPortal.Models
         public string LessonPlan { get; set; } = string.Empty;
 
         public int? TeacherId { get; set; }
-
         [ForeignKey("TeacherId")]
         public Staff? Teacher { get; set; }
-        public Homework? HomeworkDetails { get; set; }
 
-        [StringLength(500, ErrorMessage = "Teacher remarks must be 500 characters or fewer.")]
-        public string TeacherRemarks { get; set; } = string.Empty;
-        public string RemarksSubmittedByName { get; set; } = string.Empty;
-        public DateTime? RemarksSubmittedAt { get; set; }
-        public DateTime? ClosedAt { get; set; }
         public List<FileAttachment> StudyMaterials { get; set; } = new();
-        public List<DiscussionThread> DiscussionThreads { get; set; } = new();
         public string? VideoUrl { get; set; }
         public string? VideoTitle { get; set; }
     }
