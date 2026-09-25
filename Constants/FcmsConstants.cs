@@ -75,6 +75,7 @@
         public const double DEFAULT_COMPLETION_RATE = 0.0;
 
         // String Lengths
+        public const int MAX_SESSION_REMARK_LENGTH = 1000;
         public const int MAX_DISCUSSION_COMMENT_LENGTH = 500;
         public const int MAX_ADJUSTMENT_REASON_LENGTH = 50;
         // Pagination

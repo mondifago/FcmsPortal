@@ -85,6 +85,20 @@ public static class LogicMethods
     {
         return !closedAt.HasValue && !gradesFinalized;
     }
+
+    public static string? GetClassSessionCloseBlocker(SessionState state, bool hasRemark, bool hasUngradedSubmissions)
+    {
+        if (state == SessionState.Uncompleted)
+            return "This session has not started yet.";
+
+        if (!hasRemark)
+            return "Submit the teacher's remark before closing this session.";
+
+        if (hasUngradedSubmissions)
+            return "Grade all homework submissions before closing this session.";
+
+        return null;
+    }
     #endregion
 
     #region CLASS SCHEDULE METHODS

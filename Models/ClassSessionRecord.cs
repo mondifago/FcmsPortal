@@ -13,7 +13,7 @@ namespace FcmsPortal.Models
         public int AcademicPeriodId { get; set; }
         public AcademicPeriod? AcademicPeriod { get; set; }
 
-        [StringLength(1000, ErrorMessage = "Teacher remarks must be 1000 characters or fewer.")]
+        [StringLength(FcmsConstants.MAX_SESSION_REMARK_LENGTH, ErrorMessage = "Teacher remarks must be {1} characters or fewer.")]
         public string TeacherRemarks { get; set; } = string.Empty;
         public string RemarksSubmittedByName { get; set; } = string.Empty;
         public DateTime? RemarksSubmittedAt { get; set; }
