@@ -8,7 +8,7 @@
 
         public FirstPost FirstPost { get; set; } = null!;
         public List<Reply> Replies { get; set; } = new();
-
+        public List<DiscussionThreadLike> Likes { get; set; } = new();
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime LastUpdatedAt { get; set; } = DateTime.Now;
     }

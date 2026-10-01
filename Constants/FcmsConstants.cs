@@ -80,6 +80,7 @@
         public const int MAX_ADJUSTMENT_REASON_LENGTH = 50;
         // Pagination
         public const int LIST_PAGE_SIZE = 10;
+        public const int DISCUSSION_REPLY_PREVIEW_COUNT = 2;
 
         // Authentication
         public const int AUTH_SESSION_HOURS = 1;
