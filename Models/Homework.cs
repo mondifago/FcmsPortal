@@ -15,6 +15,8 @@ namespace FcmsPortal.Models
         public DateTime AssignedDate { get; set; }
 
         public DateTime DueDate { get; set; }
+
+        [Range(FcmsConstants.MIN_HOMEWORK_MAX_SCORE, int.MaxValue, ErrorMessage = "Out of must be at least {1}.")]
         public int MaxScore { get; set; } = (int)FcmsConstants.TOTAL_SCORE;
 
         public int ClassSessionRecordId { get; set; }

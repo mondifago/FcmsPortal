@@ -98,5 +98,6 @@
         public const int MAX_HOMEWORK_ANSWER_LENGTH = 2000;
         public const int MAX_GRADE_REMARK_LENGTH = 50;
         public const int DEFAULT_HOMEWORK_DUE_DAYS = 7;
+        public const int MIN_HOMEWORK_MAX_SCORE = 1;
     }
 }
