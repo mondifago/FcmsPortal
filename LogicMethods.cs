@@ -99,6 +99,29 @@ public static class LogicMethods
 
         return null;
     }
+
+    public static HomeworkSubmissionStatus GetHomeworkSubmissionStatus(HomeworkSubmission? submission)
+    {
+        if (submission == null)
+            return HomeworkSubmissionStatus.NotSubmitted;
+
+        return submission.IsGraded ? HomeworkSubmissionStatus.Graded : HomeworkSubmissionStatus.ToGrade;
+    }
+
+    public static bool IsLateSubmission(DateTime submittedAt, DateTime dueDate)
+    {
+        return submittedAt.Date > dueDate.Date;
+    }
+
+    public static double NormalizeHomeworkScore(double score, int maxScore)
+    {
+        return Math.Round(score / maxScore * FcmsConstants.TOTAL_SCORE, FcmsConstants.GRADE_ROUNDING_DIGIT);
+    }
+
+    public static double ToHomeworkScale(double normalizedScore, int maxScore)
+    {
+        return Math.Round(normalizedScore / FcmsConstants.TOTAL_SCORE * maxScore, FcmsConstants.GRADE_ROUNDING_DIGIT);
+    }
     #endregion
 
     #region CLASS SCHEDULE METHODS

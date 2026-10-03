@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FcmsPortal.Constants;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
@@ -8,12 +9,13 @@ namespace FcmsPortal.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Title is required.")]
-        [StringLength(50, ErrorMessage = "Title must be 50 characters or fewer.")]
+        [StringLength(FcmsConstants.MAX_HOMEWORK_TITLE_LENGTH, ErrorMessage = "Title must be {1} characters or fewer.")]
         public string Title { get; set; } = string.Empty;
 
         public DateTime AssignedDate { get; set; }
 
         public DateTime DueDate { get; set; }
+        public int MaxScore { get; set; } = (int)FcmsConstants.TOTAL_SCORE;
 
         public int ClassSessionRecordId { get; set; }
 
@@ -21,7 +23,7 @@ namespace FcmsPortal.Models
         public ClassSessionRecord? ClassSessionRecord { get; set; }
 
         [Required(ErrorMessage = "Question is required.")]
-        [StringLength(2000, ErrorMessage = "Question must be 2000 characters or fewer.")]
+        [StringLength(FcmsConstants.MAX_HOMEWORK_QUESTION_LENGTH, ErrorMessage = "Question must be {1} characters or fewer.")]
         public string Question { get; set; } = string.Empty;
 
         public List<HomeworkSubmission> Submissions { get; set; } = new();

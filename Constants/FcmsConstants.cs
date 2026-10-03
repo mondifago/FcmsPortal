@@ -91,5 +91,12 @@
         public const string PHONE_PATTERN = @"^\+?\d(?:[\s-]?\d){9,14}$";
         public const int MAX_PAYMENT_REFERENCE_LENGTH = 50;
         public const string PAYMENT_REFERENCE_PATTERN = @"^$|^[A-Za-z0-9][A-Za-z0-9\-/]{3,49}$";
+
+        // Homework
+        public const int MAX_HOMEWORK_TITLE_LENGTH = 50;
+        public const int MAX_HOMEWORK_QUESTION_LENGTH = 2000;
+        public const int MAX_HOMEWORK_ANSWER_LENGTH = 2000;
+        public const int MAX_GRADE_REMARK_LENGTH = 50;
+        public const int DEFAULT_HOMEWORK_DUE_DAYS = 7;
     }
 }

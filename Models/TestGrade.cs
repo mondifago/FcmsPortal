@@ -1,4 +1,5 @@
-﻿using FcmsPortal.Enums;
+﻿using FcmsPortal.Constants;
+using FcmsPortal.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace FcmsPortal.Models
@@ -17,7 +18,7 @@ namespace FcmsPortal.Models
         [Required(ErrorMessage = "Grade type is required.")]
         public GradeType GradeType { get; set; }
 
-        [StringLength(50, ErrorMessage = "Remark must be 50 characters or fewer.")]
+        [StringLength(FcmsConstants.MAX_GRADE_REMARK_LENGTH, ErrorMessage = "Remark must be {1} characters or fewer.")]
         public string TeacherRemark { get; set; } = string.Empty;
 
         public int CourseGradeId { get; set; }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FcmsPortal.Constants;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcmsPortal.Models
@@ -14,7 +15,7 @@ namespace FcmsPortal.Models
         public Student? Student { get; set; }
 
         [Required(ErrorMessage = "Answer is required.")]
-        [StringLength(2000, ErrorMessage = "Answer must be 2000 characters or fewer.")]
+        [StringLength(FcmsConstants.MAX_HOMEWORK_ANSWER_LENGTH, ErrorMessage = "Answer must be {1} characters or fewer.")]
         public string Answer { get; set; } = string.Empty;
 
         [Required]
